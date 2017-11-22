@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#18728B</color>
+    <color name="colorPrimaryDark">#004c61</color>
+    <color name="colorBackground">#e0f2f1</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorPositive">#A5F776</color>
+    <color name="colorNegative">#F76565</color>
+
+    <color name="colorDrawerText">#DE000000</color>
+    <color name="colorDrawerIcon">#99000000</color>
+</resources>

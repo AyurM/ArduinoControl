@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Arduino Control</string>
+
+    <!--UI надписи-->
+    <string name="ui_ok_text">OK</string>
+    <string name="ui_cancel_text">Отмена</string>
+    <string name="ui_widget_button_details_description">Подробнее</string>
+    <string name="ui_widget_button_edit_description">Правка</string>
+    <string name="ui_widget_button_delete_description">Удалить</string>
+    <string name="ui_widget_button_sms_description">Отправить SMS</string>
+    <string name="ui_drawer_header_description">Заголовок панели</string>
+    <string name="ui_no_widgets_found_text">Виджеты не найдены</string>
+    <string name="ui_widget_edit_title_text">Настройки виджета</string>
+
+    <string name="ui_add_widget_edit_name_hint">Введите название виджета</string>
+    <string name="ui_add_widget_edit_pin_hint">Введите номер пина Arduino</string>
+
+    <string name="ui_menu_add_widget_text">Добавить виджет</string>
+    <string name="ui_menu_edit_widget_text">Правка виджета</string>
+    <string name="ui_menu_device_status_text">Статус устройства</string>
+    <string name="ui_menu_settings_text">Настройки</string>
+    <string name="ui_menu_about_text">Инфо</string>
+
+    <string name="ui_today_at_text">сегодня в</string>
+    <string name="ui_yesterday_at_text">вчера в</string>
+
+    <!--Сообщения-->
+    <string name="message_no_connection_text">Нет подключения к Интернету! Попробуйте
+        связаться с устройством через SMS</string>
+    <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>
+    <string name="message_add_edit_error_text">Необходимо заполнить все поля!</string>
+    <string name="message_device_online_text">Устройство онлайн</string>
+    <string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>
+
+    <!--Заготовки-->
+    <string name="placeholder_widget_name_text">Имя виджета</string>
+    <string name="placeholder_widget_pin_text">Пин</string>
+    <string name="placeholder_widget_type_text">Тип виджета</string>
+    <string name="placeholder_widget_date_text">19.11.17 16:42</string>
+    <string name="placeholder_widget_value_text">36.6</string>
+
+    <!--Навигационная панель-->
+    <string name="drawer_list_item">Элемент навигационной панели</string>
+    <string name="drawer_open">Показать</string>
+    <string name="drawer_close">Скрыть</string>
+
+    <string-array name="widget_types_array">
+        <item>Кнопка</item>
+        <item>Дисплей</item>
+        <item>Датчик тревоги</item>
+    </string-array>
+</resources>

@@ -1,0 +1,79 @@
+package ru.ayurmar.arduinocontrol.presenter;
+
+import java.util.UUID;
+
+import javax.inject.Inject;
+
+import io.reactivex.Completable;
+import io.reactivex.disposables.CompositeDisposable;
+import ru.ayurmar.arduinocontrol.R;
+import ru.ayurmar.arduinocontrol.interfaces.presenter.IAddEditWidgetPresenter;
+import ru.ayurmar.arduinocontrol.interfaces.view.IAddEditWidgetView;
+import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
+import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
+import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
+import ru.ayurmar.arduinocontrol.model.BlynkWidget;
+import ru.ayurmar.arduinocontrol.model.WidgetType;
+
+
+public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
+        extends BasicPresenter<V> implements IAddEditWidgetPresenter<V> {
+
+    private IWidget mWidget;
+
+    @Inject
+    public AddEditWidgetPresenter(IRepository repository, CompositeDisposable disposable,
+                                  IScheduler scheduler){
+        super(repository, disposable, scheduler);
+    }
+
+    @Override
+    public void onCancelClick(){
+        getBasicView().closeDialog(false);
+    }
+
+    @Override
+    public void onOkClick(boolean isEditMode){
+        String name = getBasicView().getWidgetName();
+        String pin = getBasicView().getWidgetPin();
+        WidgetType type = getBasicView().getWidgetType();
+        if(name == null || pin == null || type == null){
+            getBasicView().showMessage(R.string.message_add_edit_error_text);
+            return;
+        }
+
+        Completable addEditResult;
+
+        if(isEditMode){
+            mWidget.setName(name);
+            mWidget.setPin(pin);
+            mWidget.setWidgetType(type);
+            addEditResult = getRepository().updateWidget(mWidget);
+        } else {
+            mWidget = new BlynkWidget(name, pin, BlynkWidget.UNDEFINED, type);
+            addEditResult = getRepository().addWidget(mWidget);
+        }
+
+        getDisposable().add(addEditResult
+                .subscribeOn(getScheduler().computation())
+                .observeOn(getScheduler().main())
+                .doOnError(throwable -> getBasicView()
+                        .showMessage(R.string.message_database_error_text))
+                .subscribe(() -> getBasicView().closeDialog(true))
+        );
+    }
+
+    @Override
+    public void loadWidgetToEdit(String widgetId){
+        getDisposable().add(getRepository().loadWidget(UUID.fromString(widgetId))
+                .subscribeOn(getScheduler().computation())
+                .observeOn(getScheduler().main())
+                .subscribe(widget -> {
+                    mWidget = widget;
+                    getBasicView().fillEditForm(mWidget);
+                },
+                        throwable -> getBasicView()
+                                .showMessage(R.string.message_database_error_text))
+        );
+    }
+}
