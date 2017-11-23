@@ -10,4 +10,6 @@ public interface IRepository extends IDbHelper, IPrefHelper {
     Single<ResponseBody> requestValueForWidget(IWidget widget);
 
     Single<ResponseBody> isDeviceOnline();
+
+    void setAuthToken(String authToken);
 }

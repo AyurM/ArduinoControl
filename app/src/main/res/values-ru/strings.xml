@@ -11,7 +11,6 @@
     <string name="ui_widget_button_sms_description">Отправить SMS</string>
     <string name="ui_drawer_header_description">Заголовок панели</string>
     <string name="ui_no_widgets_found_text">Виджеты не найдены</string>
-    <string name="ui_widget_edit_title_text">Настройки виджета</string>
 
     <string name="ui_add_widget_edit_name_hint">Введите название виджета</string>
     <string name="ui_add_widget_edit_pin_hint">Введите номер пина Arduino</string>
@@ -35,6 +34,7 @@
         связаться с устройством через SMS</string>
     <string name="message_no_phone_number_text">Не указан номер GSM-устройства!</string>
     <string name="message_error_phone_number_text">Ошибка при поиске номера GSM-устройства!</string>
+    <string name="message_error_auth_token_text">Не удалось прочитать токен аутентификации!</string>
     <string name="message_wrong_number_format_error_text">Неправильный формат номера!</string>
     <string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>

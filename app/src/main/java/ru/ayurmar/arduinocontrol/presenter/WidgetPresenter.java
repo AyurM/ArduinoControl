@@ -37,6 +37,14 @@ public class WidgetPresenter<V extends IWidgetView>
                            IScheduler scheduler, Context context){
         super(repository, disposable, scheduler);
         this.mContext = context;
+        getDisposable().add(getRepository()
+                .getStringPreference(PreferencesActivity.KEY_PREF_AUTH_TOKEN)
+                .subscribeOn(getScheduler().computation())
+                .observeOn(getScheduler().main())
+                .doAfterSuccess(token -> onDeviceStatusClick())
+                .subscribe(token -> getRepository().setAuthToken(token),
+                        throwable -> getView()
+                                .showMessage(R.string.message_error_auth_token_text)));
     }
 
     @Override
@@ -97,7 +105,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void onSendSmsClick(IWidget widget){
-        String message = widget.getName() + " " + widget.getValue();
+        String message = widget.getName() + " " + widget.getValue(); //заменить на команды для GSM-модуля
         getDisposable().add(getRepository()
                 .getStringPreference(PreferencesActivity.KEY_PREF_PHONE_NUMBER)
                 .subscribeOn(getScheduler().io())
@@ -120,31 +128,6 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void checkDeviceOnlineStatus(){
-        if(Utils.isOnline(mContext)){
-            getDisposable().add(getRepository().isDeviceOnline()
-                    .subscribeOn(getScheduler().io())
-                    .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
-                    .observeOn(getScheduler().main())
-                    .subscribe(response -> {
-                                String responseString = response.string();
-                                mIsDeviceOnline = Boolean.parseBoolean(responseString);
-                                getView().showDeviceOnlineStatus(mIsDeviceOnline);
-                            },
-                            throwable -> {
-                                if(throwable instanceof TimeoutException){
-                                    getView()
-                                            .showLongMessage(R.string.message_timeout_error_text);
-                                } else {
-                                    getView().showMessage(throwable.getMessage());
-                                }
-                            }));
-        } else {
-            getView().showLongMessage(R.string.message_no_connection_text);
-        }
-    }
-
-    @Override
     public void onWidgetValueClick(int position){
         IWidget widget = getView().getWidgetList().get(position);
         WidgetType widgetType = widget.getWidgetType();
@@ -153,7 +136,7 @@ public class WidgetPresenter<V extends IWidgetView>
         }
         if(Utils.isOnline(mContext)){
             widget.setValueLoading(true);
-            getView().updateWidgetValue(position);
+            getView().updateWidgetValue(position);  //включить анимацию загрузки значения
             Single<ResponseBody> blynkRequest;
             if(widgetType == WidgetType.DISPLAY){
                 blynkRequest = getRepository().requestValueForWidget(widget);
@@ -192,8 +175,34 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void onDeviceStatusClick(){
-        getView().showLongMessage(mIsDeviceOnline ?
-                R.string.message_device_online_text : R.string.message_device_offline_text);
+        if(Utils.isOnline(mContext)){
+            getDisposable().add(getRepository().isDeviceOnline()
+                    .subscribeOn(getScheduler().io())
+                    .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
+                    .observeOn(getScheduler().main())
+                    .subscribe(response -> {
+                                String responseString = response.string();
+                                mIsDeviceOnline = Boolean.parseBoolean(responseString);
+                                getView().showDeviceOnlineStatus(mIsDeviceOnline);
+                                getView().showLongMessage(mIsDeviceOnline ?
+                                        R.string.message_device_online_text : R.string.message_device_offline_text);
+                            },
+                            throwable -> {
+                                if(throwable instanceof TimeoutException){
+                                    getView()
+                                            .showLongMessage(R.string.message_timeout_error_text);
+                                } else {
+                                    getView().showMessage(throwable.getMessage());
+                                }
+                            }));
+        } else {
+            getView().showLongMessage(R.string.message_no_connection_text);
+        }
+    }
+
+    @Override
+    public boolean isDeviceOnline(){
+        return mIsDeviceOnline;
     }
 
     private boolean isCorrectPhoneNumber(String phoneNumber){

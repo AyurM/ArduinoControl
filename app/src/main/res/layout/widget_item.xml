@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:weightSum="5"
+        android:baselineAligned="false">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -47,7 +48,7 @@
 
                 <ImageButton
                     android:id="@+id/widget_item_button_delete"
-                    android:contentDescription="@string/ui_widget_button_edit_description"
+                    android:contentDescription="@string/ui_widget_button_delete_description"
                     android:src="@drawable/ic_delete"
                     style="@style/WidgetImageButton"/>
 

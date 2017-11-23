@@ -24,7 +24,7 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onWidgetValueClick(int position);
 
-    void checkDeviceOnlineStatus();
-
     void onDeviceStatusClick();
+
+    boolean isDeviceOnline();
 }

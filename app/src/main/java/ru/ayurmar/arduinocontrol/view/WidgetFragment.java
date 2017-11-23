@@ -82,7 +82,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void onResume(){
         super.onResume();
         mPresenter.loadWidgetListFromDb();
-        mPresenter.checkDeviceOnlineStatus();
     }
 
     @Override
@@ -90,6 +89,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         super.onCreateOptionsMenu(menu, inflater);
         mMenu = menu;
         inflater.inflate(R.menu.menu_main_widget, menu);
+        showDeviceOnlineStatus(mPresenter.isDeviceOnline());
     }
 
     @Override
