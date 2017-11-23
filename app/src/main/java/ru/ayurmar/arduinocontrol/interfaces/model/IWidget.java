@@ -28,4 +28,8 @@ public interface IWidget {
     void setLastUpdateTime(Date date);
 
     UUID getId();
+
+    boolean isValueLoading();
+
+    void setValueLoading(boolean isLoading);
 }

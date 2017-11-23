@@ -35,7 +35,7 @@ public class BasicPresenter<V extends IBasicView> implements IBasicPresenter<V> 
         mBasicView = null;
     }
 
-    V getBasicView() {
+    V getView() {
         return mBasicView;
     }
 

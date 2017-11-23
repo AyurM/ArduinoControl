@@ -5,10 +5,14 @@ import android.content.Context;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
+import okhttp3.ResponseBody;
 import ru.ayurmar.arduinocontrol.PreferencesActivity;
 import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
@@ -18,9 +22,12 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 import ru.ayurmar.arduinocontrol.model.BlynkWidget;
+import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 public class WidgetPresenter<V extends IWidgetView>
         extends BasicPresenter<V> implements IWidgetPresenter<V> {
+
+    private static final int TIMEOUT_DURATION_S = 10;
     
     private Context mContext;
     private boolean mIsDeviceOnline;
@@ -34,17 +41,17 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void loadWidgetListFromDb(){
-        getBasicView().showLoadingUI(true);
+        getView().showLoadingUI(true);
         getDisposable().add(getRepository().loadWidgetList()
                 .subscribeOn(getScheduler().computation())
                 .observeOn(getScheduler().main())
                 .subscribe(widgets -> {
-                    getBasicView().showLoadingUI(false);
-                    getBasicView().showWidgetList(widgets);
+                    getView().showLoadingUI(false);
+                    getView().showWidgetList(widgets);
                         },
                         throwable -> {
-                    getBasicView().showLoadingUI(false);
-                    getBasicView().showMessage(R.string.message_database_error_text);
+                    getView().showLoadingUI(false);
+                    getView().showMessage(R.string.message_database_error_text);
                         }));
     }
 
@@ -53,7 +60,7 @@ public class WidgetPresenter<V extends IWidgetView>
         getDisposable().add(getRepository().addWidgetList(widgets)
                 .subscribeOn(getScheduler().computation())
                 .observeOn(getScheduler().main())
-                .doOnError(throwable -> getBasicView()
+                .doOnError(throwable -> getView()
                         .showMessage(R.string.message_database_error_text))
                 .subscribe());
     }
@@ -63,19 +70,19 @@ public class WidgetPresenter<V extends IWidgetView>
         getDisposable().add(getRepository().updateWidget(widget)
                 .subscribeOn(getScheduler().computation())
                 .observeOn(getScheduler().main())
-                .doOnError(throwable -> getBasicView()
+                .doOnError(throwable -> getView()
                         .showMessage(R.string.message_database_error_text))
                 .subscribe());
     }
 
     @Override
     public void onAddWidgetClick(){
-        getBasicView().showAddWidgetDialog();
+        getView().showAddWidgetDialog();
     }
 
     @Override
     public void onEditWidgetClick(IWidget widget){
-        getBasicView().showEditWidgetDialog(widget);
+        getView().showEditWidgetDialog(widget);
     }
 
     @Override
@@ -83,7 +90,7 @@ public class WidgetPresenter<V extends IWidgetView>
         getDisposable().add(getRepository().deleteWidget(widget)
                 .subscribeOn(getScheduler().computation())
                 .observeOn(getScheduler().main())
-                .doOnError(throwable -> getBasicView()
+                .doOnError(throwable -> getView()
                         .showMessage(R.string.message_database_error_text))
                 .subscribe(() -> loadWidgetListFromDb()));
     }
@@ -97,17 +104,17 @@ public class WidgetPresenter<V extends IWidgetView>
                 .observeOn(getScheduler().main())
                 .subscribe(phoneNumber -> {
                     if(phoneNumber == null){
-                        getBasicView().showMessage(R.string.message_no_phone_number_text);
+                        getView().showMessage(R.string.message_no_phone_number_text);
                     } else {
                         if(isCorrectPhoneNumber(phoneNumber)){
-                            getBasicView().showSendSmsDialog(message, phoneNumber);
+                            getView().showSendSmsDialog(message, phoneNumber);
                         } else {
-                            getBasicView()
+                            getView()
                                     .showMessage(R.string.message_wrong_number_format_error_text);
                         }
                     }
                 },
-                        throwable -> getBasicView()
+                        throwable -> getView()
                                 .showMessage(R.string.message_error_phone_number_text))
         );
     }
@@ -117,52 +124,102 @@ public class WidgetPresenter<V extends IWidgetView>
         if(Utils.isOnline(mContext)){
             getDisposable().add(getRepository().isDeviceOnline()
                     .subscribeOn(getScheduler().io())
+                    .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
                     .observeOn(getScheduler().main())
                     .subscribe(response -> {
                                 String responseString = response.string();
                                 mIsDeviceOnline = Boolean.parseBoolean(responseString);
-                                getBasicView().showDeviceOnlineStatus(mIsDeviceOnline);
+                                getView().showDeviceOnlineStatus(mIsDeviceOnline);
                             },
-                            throwable -> getBasicView().showMessage(throwable.getMessage() )));
+                            throwable -> {
+                                if(throwable instanceof TimeoutException){
+                                    getView()
+                                            .showLongMessage(R.string.message_timeout_error_text);
+                                } else {
+                                    getView().showMessage(throwable.getMessage());
+                                }
+                            }));
         } else {
-            getBasicView().showLongMessage(R.string.message_no_connection_text);
+            getView().showLongMessage(R.string.message_no_connection_text);
         }
     }
 
     @Override
     public void onWidgetValueClick(int position){
+        IWidget widget = getView().getWidgetList().get(position);
+        WidgetType widgetType = widget.getWidgetType();
+        if(widgetType == WidgetType.ALARM_SENSOR){
+            return;
+        }
         if(Utils.isOnline(mContext)){
-            IWidget widget = getBasicView().getWidgetList().get(position);
-            getDisposable().add(getRepository().requestValueForWidget(widget)
+            widget.setValueLoading(true);
+            getView().updateWidgetValue(position);
+            Single<ResponseBody> blynkRequest;
+            if(widgetType == WidgetType.DISPLAY){
+                blynkRequest = getRepository().requestValueForWidget(widget);
+            } else {
+                blynkRequest = getRepository().sendValueFromWidget(widget);
+            }
+            getDisposable().add(blynkRequest
                     .subscribeOn(getScheduler().io())
+                    .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
                     .observeOn(getScheduler().main())
                     .doOnSuccess(response -> updateWidgetInDb(widget))
                     .subscribe(response -> {
                                 String responseString = response.string();
-                                if(responseString.startsWith("[\"")){
-                                    responseString = responseString
-                                            .substring(2, responseString.length() - 2);
+                                if(widgetType == WidgetType.DISPLAY){
+                                    handleDisplayRequestResponse(responseString, widget);
                                 } else {
-                                    responseString = BlynkWidget.UNDEFINED;
+                                    handleButtonSendResponse(responseString, widget);
                                 }
-                                widget.setValue(responseString);
                                 widget.setLastUpdateTime(new Date());
-                                getBasicView().updateWidgetValue(position);},
-                            throwable -> getBasicView().showMessage(throwable.getMessage() )));
+                                widget.setValueLoading(false);
+                                getView().updateWidgetValue(position);},
+                            throwable -> {
+                                widget.setValueLoading(false);
+                                getView().updateWidgetValue(position);
+                                if(throwable instanceof TimeoutException){
+                                    getView()
+                                            .showLongMessage(R.string.message_timeout_error_text);
+                                } else {
+                                    getView().showMessage(throwable.getMessage());
+                                }
+                            }));
         } else {
-            getBasicView().showLongMessage(R.string.message_no_connection_text);
+            getView().showLongMessage(R.string.message_no_connection_text);
         }
     }
 
     @Override
     public void onDeviceStatusClick(){
-        getBasicView().showLongMessage(mIsDeviceOnline ?
+        getView().showLongMessage(mIsDeviceOnline ?
                 R.string.message_device_online_text : R.string.message_device_offline_text);
     }
 
     private boolean isCorrectPhoneNumber(String phoneNumber){
         return ((phoneNumber.startsWith("+7") && phoneNumber.length() == 12) ||
                 (phoneNumber.startsWith("8") && phoneNumber.length() == 11));
+    }
+
+    private void handleDisplayRequestResponse(String responseString,
+                                                   IWidget widget){
+        if(responseString.startsWith("[\"")){
+            responseString = responseString
+                    .substring(2, responseString.length() - 2);
+        } else {
+            responseString = BlynkWidget.UNDEFINED;
+        }
+        widget.setValue(responseString);
+    }
+
+    private void handleButtonSendResponse(String responseString,
+                                          IWidget widget){
+        if(responseString.isEmpty()){
+            widget.setValue(widget.getValue().equals(BlynkWidget.ON) ?
+                    BlynkWidget.OFF : BlynkWidget.ON);
+        } else {
+            widget.setValue(BlynkWidget.UNDEFINED);
+        }
     }
 
 //    private void addTestWidgets(){
@@ -174,6 +231,6 @@ public class WidgetPresenter<V extends IWidgetView>
 //        widgets.add(widget1);
 //        widgets.add(widget2);
 //        saveWidgetListToDb(widgets);
-//        getBasicView().showMessage("Test widgets added");
+//        getView().showMessage("Test widgets added");
 //    }
 }

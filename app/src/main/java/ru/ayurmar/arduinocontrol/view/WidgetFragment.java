@@ -1,5 +1,7 @@
 package ru.ayurmar.arduinocontrol.view;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private static final int sAddWidgetRequestCode = 0;
+    private static final int sValueAnimationDuration = 100;
     private RecyclerView mRecyclerView;
     private TextView mTextViewNoItems;
     private ProgressBar mProgressBar;
@@ -181,15 +184,22 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         private ImageButton mButtonEdit;
         private ImageButton mButtonSms;
         private ImageButton mButtonDelete;
+        private ObjectAnimator mAnimator;
 
         WidgetHolder(View itemView){
             super(itemView);
-            mTextViewName = itemView.findViewById(R.id.widget_text_view_name);
-            mTextViewValue = itemView.findViewById(R.id.widget_text_view_value);
-            mTextViewDate = itemView.findViewById(R.id.widget_text_view_last_update_time);
-            mButtonEdit = itemView.findViewById(R.id.widget_button_edit);
-            mButtonSms = itemView.findViewById(R.id.widget_button_sms);
-            mButtonDelete = itemView.findViewById(R.id.widget_button_delete);
+            mTextViewName = itemView.findViewById(R.id.widget_item_text_view_name);
+            mTextViewValue = itemView.findViewById(R.id.widget_item_text_view_value);
+            mTextViewDate = itemView.findViewById(R.id.widget_item_text_view_last_update_time);
+            mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
+            mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
+            mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
+
+            mAnimator = ObjectAnimator.ofFloat(mTextViewValue, "alpha",
+                    1f, 0.0f);
+            mAnimator.setDuration(sValueAnimationDuration);
+            mAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            mAnimator.setRepeatCount(ValueAnimator.INFINITE);
 
             Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
                     "fonts/OpenSans-Regular.ttf");
@@ -210,10 +220,21 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewValue.setText(mWidget.getValue());
             mTextViewDate.setText(Utils.formatDate(mWidget.getLastUpdateTime(), getContext()));
 
+            toggleValueLoadingUI(mWidget.isValueLoading());
+
             mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
             mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
             mButtonSms.setOnClickListener(view -> mPresenter.onSendSmsClick(mWidget));
             mButtonDelete.setOnClickListener(view -> mPresenter.onDeleteWidgetClick(mWidget));
+        }
+
+        private void toggleValueLoadingUI(boolean isLoading){
+            if(isLoading){
+                mAnimator.start();
+            } else {
+                mAnimator.end();
+                mTextViewValue.setAlpha(1f);
+            }
         }
     }
 

@@ -34,6 +34,7 @@
     <string name="message_no_phone_number_text">No phone number available!</string>
     <string name="message_error_phone_number_text">Error while getting phone number!</string>
     <string name="message_wrong_number_format_error_text">Wrong number format!</string>
+    <string name="message_timeout_error_text">Timeout error! Check your internet connection</string>
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
     <string name="message_device_online_text">Device is online</string>

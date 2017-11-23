@@ -58,7 +58,8 @@ public class AppRepository implements IRepository {
 
     @Override
     public Single<ResponseBody> sendValueFromWidget(IWidget widget){
-        return mBlynkApi.setValue(sAuthToken, widget.getPin(), widget.getValue());
+        return mBlynkApi.setValue(sAuthToken, widget.getPin(),
+                widget.getValue().equals(BlynkWidget.ON) ? "0" : "1");
     }
 
     @Override

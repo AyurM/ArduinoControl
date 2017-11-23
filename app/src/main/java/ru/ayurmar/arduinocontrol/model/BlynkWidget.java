@@ -8,8 +8,8 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 
 public class BlynkWidget implements IWidget {
 
-    private static final String ON = "ВКЛ";
-    private static final String OFF = "ВЫКЛ";
+    public static final String ON = "ВКЛ";
+    public static final String OFF = "ВЫКЛ";
     public static final String UNDEFINED = "--";
 
     private String mName;
@@ -18,6 +18,7 @@ public class BlynkWidget implements IWidget {
     private WidgetType mWidgetType;
     private Date mLastUpdateTime;
     private UUID mId;
+    private boolean mIsValueLoading = false;
 
     public BlynkWidget(String name, String pin, String value, WidgetType type){
         this.mName = name;
@@ -104,5 +105,15 @@ public class BlynkWidget implements IWidget {
     @Override
     public UUID getId() {
         return mId;
+    }
+
+    @Override
+    public boolean isValueLoading(){
+        return mIsValueLoading;
+    }
+
+    @Override
+    public void setValueLoading(boolean isLoading){
+        mIsValueLoading = isLoading;
     }
 }

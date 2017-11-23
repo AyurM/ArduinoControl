@@ -20,7 +20,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/widget_text_view_name"
+                android:id="@+id/widget_item_text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -34,34 +34,22 @@
                 >
 
                 <ImageButton
-                    android:id="@+id/widget_button_sms"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@android:color/transparent"
+                    android:id="@+id/widget_item_button_sms"
                     android:contentDescription="@string/ui_widget_button_sms_description"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_sms"/>
+                    android:src="@drawable/ic_sms"
+                    style="@style/WidgetImageButton"/>
 
                 <ImageButton
-                    android:id="@+id/widget_button_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@android:color/transparent"
+                    android:id="@+id/widget_item_button_edit"
                     android:contentDescription="@string/ui_widget_button_edit_description"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_edit"/>
+                    android:src="@drawable/ic_edit"
+                    style="@style/WidgetImageButton"/>
 
                 <ImageButton
-                    android:id="@+id/widget_button_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@android:color/transparent"
+                    android:id="@+id/widget_item_button_delete"
                     android:contentDescription="@string/ui_widget_button_edit_description"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_delete"/>
+                    android:src="@drawable/ic_delete"
+                    style="@style/WidgetImageButton"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -71,8 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:orientation="vertical">
+
             <TextView
-                android:id="@+id/widget_text_view_value"
+                android:id="@+id/widget_item_text_view_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -83,7 +72,7 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/widget_text_view_last_update_time"
+                android:id="@+id/widget_item_text_view_last_update_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
