@@ -1,5 +1,6 @@
 package ru.ayurmar.arduinocontrol;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -100,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
     private void selectDrawerItem(MenuItem menuItem){
         switch(menuItem.getItemId()){
             case R.id.menu_settings:
-//                Intent intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(this, PreferencesActivity.class);
+                startActivity(intent);
                 break;
             case R.id.menu_about:
                 break;

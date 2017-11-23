@@ -8,6 +8,7 @@ import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import ru.ayurmar.arduinocontrol.interfaces.model.BlynkApi;
 import ru.ayurmar.arduinocontrol.interfaces.model.IDbHelper;
+import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 
@@ -17,10 +18,12 @@ public class AppRepository implements IRepository {
     private static final String sAuthToken = "9bcbd25ea1db4c30ad34f32fb686d768";
     private final BlynkApi mBlynkApi;
     private final IDbHelper mDbHelper;
+    private final IPrefHelper mPrefHelper;
 
-    public AppRepository(BlynkApi blynkApi, IDbHelper dbHelper){
+    public AppRepository(BlynkApi blynkApi, IDbHelper dbHelper, IPrefHelper prefHelper){
         this.mBlynkApi = blynkApi;
         this.mDbHelper = dbHelper;
+        this.mPrefHelper = prefHelper;
     }
 
     @Override
@@ -66,5 +69,10 @@ public class AppRepository implements IRepository {
     @Override
     public Single<ResponseBody> isDeviceOnline(){
         return mBlynkApi.isDeviceOnline(sAuthToken);
+    }
+
+    @Override
+    public Single<String> getStringPreference(String key){
+        return mPrefHelper.getStringPreference(key);
     }
 }

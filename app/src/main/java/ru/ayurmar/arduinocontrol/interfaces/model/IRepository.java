@@ -3,7 +3,7 @@ package ru.ayurmar.arduinocontrol.interfaces.model;
 import io.reactivex.Single;
 import okhttp3.ResponseBody;
 
-public interface IRepository extends IDbHelper {
+public interface IRepository extends IDbHelper, IPrefHelper {
 
     Single<ResponseBody> sendValueFromWidget(IWidget widget);
 

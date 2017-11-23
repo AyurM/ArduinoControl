@@ -17,7 +17,7 @@ public class BasicPresenter<V extends IBasicView> implements IBasicPresenter<V> 
     private final IScheduler mScheduler;
 
     @Inject
-    public BasicPresenter(IRepository repository, CompositeDisposable disposable,
+    BasicPresenter(IRepository repository, CompositeDisposable disposable,
                           IScheduler scheduler){
         this.mRepository = repository;
         this.mDisposable = disposable;
@@ -35,19 +35,19 @@ public class BasicPresenter<V extends IBasicView> implements IBasicPresenter<V> 
         mBasicView = null;
     }
 
-    protected V getBasicView() {
+    V getBasicView() {
         return mBasicView;
     }
 
-    protected IRepository getRepository() {
+    IRepository getRepository() {
         return mRepository;
     }
 
-    protected CompositeDisposable getDisposable(){
+    CompositeDisposable getDisposable(){
         return mDisposable;
     }
 
-    protected IScheduler getScheduler(){
+    IScheduler getScheduler(){
         return mScheduler;
     }
 }

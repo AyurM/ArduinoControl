@@ -22,12 +22,20 @@
     <string name="ui_menu_settings_text">Настройки</string>
     <string name="ui_menu_about_text">Инфо</string>
 
+    <string name="ui_pref_phone_number_title">Номер GSM-устройства</string>
+    <string name="ui_pref_phone_number_default_value">Введите номер телефона</string>
+    <string name="ui_pref_auth_token_title">Аутентификационный токен</string>
+    <string name="ui_pref_auth_token_default_value">Введите токен устройства</string>
+
     <string name="ui_today_at_text">сегодня в</string>
     <string name="ui_yesterday_at_text">вчера в</string>
 
     <!--Сообщения-->
     <string name="message_no_connection_text">Нет подключения к Интернету! Попробуйте
         связаться с устройством через SMS</string>
+    <string name="message_no_phone_number_text">Не указан номер GSM-устройства!</string>
+    <string name="message_error_phone_number_text">Ошибка при поиске номера GSM-устройства!</string>
+    <string name="message_wrong_number_format_error_text">Неправильный формат номера!</string>
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>
     <string name="message_add_edit_error_text">Необходимо заполнить все поля!</string>
     <string name="message_device_online_text">Устройство онлайн</string>

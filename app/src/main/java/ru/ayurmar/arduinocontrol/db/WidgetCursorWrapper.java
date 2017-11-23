@@ -11,7 +11,7 @@ import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 public class WidgetCursorWrapper extends CursorWrapper {
 
-    public WidgetCursorWrapper(Cursor cursor) {
+    WidgetCursorWrapper(Cursor cursor) {
         super(cursor);
     }
 
@@ -23,8 +23,7 @@ public class WidgetCursorWrapper extends CursorWrapper {
         long date = getLong(getColumnIndex(WidgetTable.Columns.DATE));
         String type = getString(getColumnIndex(WidgetTable.Columns.TYPE));
 
-        IWidget widget = new BlynkWidget(name, pin, value, WidgetType.valueOf(type),
+        return new BlynkWidget(name, pin, value, WidgetType.valueOf(type),
                 uuid, date);
-        return widget;
     }
 }

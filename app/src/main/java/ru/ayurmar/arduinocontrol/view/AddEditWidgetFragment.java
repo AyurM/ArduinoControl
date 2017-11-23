@@ -4,6 +4,7 @@ package ru.ayurmar.arduinocontrol.view;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +62,7 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_widget, container, false);
         mEditTextName = view.findViewById(R.id.add_widget_name_edit_text);

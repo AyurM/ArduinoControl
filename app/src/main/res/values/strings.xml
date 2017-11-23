@@ -21,11 +21,19 @@
     <string name="ui_menu_settings_text">Settings</string>
     <string name="ui_menu_about_text">About</string>
 
+    <string name="ui_pref_phone_number_title">GSM-device phone number</string>
+    <string name="ui_pref_phone_number_default_value">Enter your phone number</string>
+    <string name="ui_pref_auth_token_title">Authentication token</string>
+    <string name="ui_pref_auth_token_default_value">Enter your device token</string>
+
     <string name="ui_today_at_text">today at</string>
     <string name="ui_yesterday_at_text">yesterday at</string>
 
     <!--Messages-->
     <string name="message_no_connection_text">No internet connection!</string>
+    <string name="message_no_phone_number_text">No phone number available!</string>
+    <string name="message_error_phone_number_text">Error while getting phone number!</string>
+    <string name="message_wrong_number_format_error_text">Wrong number format!</string>
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
     <string name="message_device_online_text">Device is online</string>

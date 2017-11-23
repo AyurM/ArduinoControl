@@ -9,6 +9,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import ru.ayurmar.arduinocontrol.PreferencesActivity;
 import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
@@ -90,8 +91,25 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onSendSmsClick(IWidget widget){
         String message = widget.getName() + " " + widget.getValue();
-        String phoneNumber = "+79140508579";
-        getBasicView().showSendSmsDialog(message, phoneNumber);
+        getDisposable().add(getRepository()
+                .getStringPreference(PreferencesActivity.KEY_PREF_PHONE_NUMBER)
+                .subscribeOn(getScheduler().io())
+                .observeOn(getScheduler().main())
+                .subscribe(phoneNumber -> {
+                    if(phoneNumber == null){
+                        getBasicView().showMessage(R.string.message_no_phone_number_text);
+                    } else {
+                        if(isCorrectPhoneNumber(phoneNumber)){
+                            getBasicView().showSendSmsDialog(message, phoneNumber);
+                        } else {
+                            getBasicView()
+                                    .showMessage(R.string.message_wrong_number_format_error_text);
+                        }
+                    }
+                },
+                        throwable -> getBasicView()
+                                .showMessage(R.string.message_error_phone_number_text))
+        );
     }
 
     @Override
@@ -140,6 +158,11 @@ public class WidgetPresenter<V extends IWidgetView>
     public void onDeviceStatusClick(){
         getBasicView().showLongMessage(mIsDeviceOnline ?
                 R.string.message_device_online_text : R.string.message_device_offline_text);
+    }
+
+    private boolean isCorrectPhoneNumber(String phoneNumber){
+        return ((phoneNumber.startsWith("+7") && phoneNumber.length() == 12) ||
+                (phoneNumber.startsWith("8") && phoneNumber.length() == 11));
     }
 
 //    private void addTestWidgets(){

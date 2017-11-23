@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:dialogMessage="@string/ui_pref_phone_number_default_value"
+        android:inputType="phone"
+        android:key="pref_phone_number"
+        android:persistent="true"
+        android:summary="@string/ui_pref_phone_number_default_value"
+        android:title="@string/ui_pref_phone_number_title" />
+    <EditTextPreference
+        android:dialogMessage="@string/ui_pref_auth_token_default_value"
+        android:key="pref_auth_token"
+        android:persistent="true"
+        android:summary="@string/ui_pref_auth_token_default_value"
+        android:title="@string/ui_pref_auth_token_title" />
+</PreferenceScreen>
