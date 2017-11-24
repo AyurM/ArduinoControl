@@ -3,6 +3,7 @@ package ru.ayurmar.arduinocontrol.view;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -38,6 +39,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private static final int sAddWidgetRequestCode = 0;
     private static final int sValueAnimationDuration = 100;
+    private static final int sConfirmDeleteCode = 1;
+    private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
+
     private RecyclerView mRecyclerView;
     private TextView mTextViewNoItems;
     private ProgressBar mProgressBar;
@@ -108,8 +112,13 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == sAddWidgetRequestCode) {
-            mPresenter.loadWidgetListFromDb();
+        if (resultCode == Activity.RESULT_OK) {
+            if(requestCode == sAddWidgetRequestCode){
+                mPresenter.loadWidgetListFromDb();
+            } else if (requestCode == sConfirmDeleteCode){
+                mPresenter.deleteWidget(data
+                        .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
+            }
         }
     }
 
@@ -172,7 +181,18 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         smsIntent.setType("vnd.android-dir/mms-sms");
         smsIntent.putExtra("sms_body", message);
         smsIntent.putExtra("address"  , phoneNumber);
-        startActivity(smsIntent);
+        try{
+            startActivity(smsIntent);
+        } catch (ActivityNotFoundException e){
+            showMessage(R.string.message_cant_send_sms_text);
+        }
+    }
+
+    @Override
+    public void showConfirmDeleteDialog(int position){
+        DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
+        fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
+        fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
@@ -225,7 +245,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
             mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
             mButtonSms.setOnClickListener(view -> mPresenter.onSendSmsClick(mWidget));
-            mButtonDelete.setOnClickListener(view -> mPresenter.onDeleteWidgetClick(mWidget));
+            mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));
         }
 
         private void toggleValueLoadingUI(boolean isLoading){

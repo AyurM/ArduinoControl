@@ -18,7 +18,7 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onEditWidgetClick(IWidget widget);
 
-    void onDeleteWidgetClick(IWidget widget);
+    void deleteWidget(int position);
 
     void onSendSmsClick(IWidget widget);
 

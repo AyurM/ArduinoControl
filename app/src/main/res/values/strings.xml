@@ -10,6 +10,8 @@
     <string name="ui_widget_button_sms_description">Send SMS</string>
     <string name="ui_drawer_header_description">Drawer header</string>
     <string name="ui_no_widgets_found_text">No widgets found. Add your widgets to start</string>
+    <string name="ui_delete_confirmation_title">Delete this widget?</string>
+    <string name="ui_delete_confirmation_text">This widget will be deleted permanently</string>
 
     <string name="ui_add_widget_edit_name_hint">Enter widget name</string>
     <string name="ui_add_widget_edit_pin_hint">Enter Arduino pin</string>
@@ -31,6 +33,7 @@
     <!--Messages-->
     <string name="message_no_connection_text">No internet connection!</string>
     <string name="message_no_phone_number_text">No phone number available!</string>
+    <string name="message_cant_send_sms_text">No SMS application found!</string>
     <string name="message_error_phone_number_text">Error while getting phone number!</string>
     <string name="message_error_auth_token_text">Failed to load auth token!</string>
     <string name="message_wrong_number_format_error_text">Wrong number format!</string>

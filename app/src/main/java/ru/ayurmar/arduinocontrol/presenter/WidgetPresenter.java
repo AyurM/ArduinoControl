@@ -93,9 +93,14 @@ public class WidgetPresenter<V extends IWidgetView>
         getView().showEditWidgetDialog(widget);
     }
 
+
     @Override
-    public void onDeleteWidgetClick(IWidget widget){
-        getDisposable().add(getRepository().deleteWidget(widget)
+    public void deleteWidget(int position){
+        if (position == -1) {
+            return;
+        }
+        getDisposable().add(getRepository()
+                .deleteWidget(getView().getWidgetList().get(position))
                 .subscribeOn(getScheduler().computation())
                 .observeOn(getScheduler().main())
                 .doOnError(throwable -> getView()

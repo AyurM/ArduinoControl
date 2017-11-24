@@ -15,6 +15,8 @@ public interface IWidgetView extends IBasicView {
 
     void showAddWidgetDialog();
 
+    void showConfirmDeleteDialog(int position);
+
     void showEditWidgetDialog(IWidget widget);
 
     void showSendSmsDialog(String message, String phoneNumber);
