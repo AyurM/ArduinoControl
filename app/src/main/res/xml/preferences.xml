@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference
-        android:dialogMessage="@string/ui_pref_phone_number_default_value"
-        android:inputType="phone"
-        android:key="pref_phone_number"
-        android:persistent="true"
-        android:summary="@string/ui_pref_phone_number_default_value"
-        android:title="@string/ui_pref_phone_number_title" />
-    <EditTextPreference
-        android:dialogMessage="@string/ui_pref_auth_token_default_value"
-        android:key="pref_auth_token"
-        android:persistent="true"
-        android:summary="@string/ui_pref_auth_token_default_value"
-        android:title="@string/ui_pref_auth_token_title" />
+    <PreferenceCategory android:title="@string/ui_pref_general_settings_category">
+        <EditTextPreference
+            android:icon="@drawable/ic_smartphone"
+            android:dialogMessage="@string/ui_pref_phone_number_default_value"
+            android:inputType="phone"
+            android:key="pref_phone_number"
+            android:persistent="true"
+            android:summary="@string/ui_pref_phone_number_default_value"
+            android:title="@string/ui_pref_phone_number_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/ui_pref_developer_settings_category">
+        <EditTextPreference
+            android:icon="@drawable/ic_key"
+            android:dialogMessage="@string/ui_pref_auth_token_default_value"
+            android:key="pref_auth_token"
+            android:persistent="true"
+            android:summary="@string/ui_pref_auth_token_default_value"
+            android:title="@string/ui_pref_auth_token_title" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

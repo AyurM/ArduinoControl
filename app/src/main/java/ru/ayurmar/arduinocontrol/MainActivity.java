@@ -13,10 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import ru.ayurmar.arduinocontrol.view.InfoFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -105,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.menu_about:
+                InfoFragment fragment = new InfoFragment();
+                fragment.show(getSupportFragmentManager(), sInfoDialogTag);
                 break;
             default:
         }
