@@ -46,6 +46,7 @@
     <string name="message_timeout_error_text">Timeout error! Check your internet connection</string>
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
+    <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
     <string name="message_device_online_text">Device is online</string>
     <string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>
 

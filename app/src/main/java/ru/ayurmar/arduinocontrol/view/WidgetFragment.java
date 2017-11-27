@@ -250,11 +250,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         }
 
         private void toggleValueLoadingUI(boolean isLoading){
-            if(isLoading){
-                mTextViewValue.setAlpha(0.1f);
-            } else {
-                mTextViewValue.setAlpha(1f);
-            }
+            mTextViewValue.setAlpha(isLoading ? 0.1f : 1f);
         }
     }
 

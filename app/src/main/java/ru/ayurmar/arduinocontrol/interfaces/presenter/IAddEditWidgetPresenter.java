@@ -8,7 +8,7 @@ public interface IAddEditWidgetPresenter<V extends IAddEditWidgetView>
 
     void onCancelClick();
 
-    void onOkClick(boolean isEditMode);
+    void onOkClick(boolean isEditMode, boolean isDevMode);
 
     void loadWidgetToEdit(String widgetId);
 }

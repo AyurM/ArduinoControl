@@ -33,21 +33,30 @@ public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
     }
 
     @Override
-    public void onOkClick(boolean isEditMode){
+    public void onOkClick(boolean isEditMode, boolean isDevMode){
         String name = getView().getWidgetName();
         String pin = getView().getWidgetPin();
         WidgetType type = getView().getWidgetType();
-        if(name == null || pin == null || type == null){
-            getView().showMessage(R.string.message_add_edit_error_text);
-            return;
+        if(isEditMode && !isDevMode){
+            if(name == null){
+                getView().showMessage(R.string.message_add_edit_empty_name_text);
+                return;
+            }
+        } else {
+            if(name == null || pin == null || type == null){
+                getView().showMessage(R.string.message_add_edit_error_text);
+                return;
+            }
         }
 
         Completable addEditResult;
 
         if(isEditMode){
             mWidget.setName(name);
-            mWidget.setPin(pin);
-            mWidget.setWidgetType(type);
+            if(isDevMode){
+                mWidget.setPin(pin);
+                mWidget.setWidgetType(type);
+            }
             addEditResult = getRepository().updateWidget(mWidget);
         } else {
             mWidget = new BlynkWidget(name, pin, BlynkWidget.UNDEFINED, type);

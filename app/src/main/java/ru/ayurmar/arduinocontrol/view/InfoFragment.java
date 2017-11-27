@@ -18,7 +18,7 @@ import ru.ayurmar.arduinocontrol.R;
 
 public class InfoFragment extends DialogFragment{
 
-    private static final int sClicksToUnlockDevMode = 12;
+    private static final int sClicksToUnlockDevMode = 10;
     private int mUnlockDevModeClicks = 0;
     private InfoDialogListener mListener;
 

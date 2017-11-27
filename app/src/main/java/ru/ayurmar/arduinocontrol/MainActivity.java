@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             default:
         }
-        menuItem.setChecked(true);
+//        menuItem.setChecked(true);
         mDrawerLayout.closeDrawers();
     }
 }

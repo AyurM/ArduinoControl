@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-
 import javax.inject.Inject;
 
 import ru.ayurmar.arduinocontrol.MainApp;
@@ -76,8 +75,8 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         TextView textViewType = view.findViewById(R.id.add_widget_type_text_view);
 
         mEditTextPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
-        textViewPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
         mSpinnerType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        textViewPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
         textViewType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
 
         fillTypeSpinner();
@@ -111,7 +110,7 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         Button buttonOk = view.findViewById(R.id.add_widget_ok_button);
 
         buttonCancel.setOnClickListener(view1 -> mPresenter.onCancelClick());
-        buttonOk.setOnClickListener(view1 -> mPresenter.onOkClick(mIsEditMode));
+        buttonOk.setOnClickListener(view1 -> mPresenter.onOkClick(mIsEditMode, mIsDevMode));
         mPresenter.onAttach(this);
         return view;
     }

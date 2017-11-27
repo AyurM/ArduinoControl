@@ -48,6 +48,7 @@
     <string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>
     <string name="message_add_edit_error_text">Необходимо заполнить все поля!</string>
+    <string name="message_add_edit_empty_name_text">Укажите имя виджета!</string>
     <string name="message_device_online_text">Устройство онлайн</string>
     <string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>
 

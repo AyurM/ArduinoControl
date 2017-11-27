@@ -22,5 +22,4 @@
             android:summary="@string/ui_pref_auth_token_default_value"
             android:title="@string/ui_pref_auth_token_title" />
     </PreferenceCategory>
-
 </PreferenceScreen>
