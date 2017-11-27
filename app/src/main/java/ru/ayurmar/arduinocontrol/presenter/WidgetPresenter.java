@@ -152,7 +152,7 @@ public class WidgetPresenter<V extends IWidgetView>
                     .subscribeOn(getScheduler().io())
                     .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
                     .observeOn(getScheduler().main())
-                    .doOnSuccess(response -> updateWidgetInDb(widget))
+                    .doAfterSuccess(response -> updateWidgetInDb(widget))
                     .subscribe(response -> {
                                 String responseString = response.string();
                                 if(widgetType == WidgetType.DISPLAY){

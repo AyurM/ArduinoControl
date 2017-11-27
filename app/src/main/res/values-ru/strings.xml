@@ -30,6 +30,9 @@
     <string name="ui_pref_auth_token_default_value">Введите токен устройства</string>
     <string name="ui_pref_general_settings_category">Общие настройки</string>
     <string name="ui_pref_developer_settings_category">Настройки для разработчика</string>
+    <string name="ui_pref_developer_settings_available">Доступны настройки разработчика</string>
+    <string name="preferenceScreen">preferenceScreen</string>
+    <string name="devPreferencesCategory">devPreferencesCategory</string>
 
     <string name="ui_today_at_text">сегодня в</string>
     <string name="ui_yesterday_at_text">вчера в</string>

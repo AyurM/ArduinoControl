@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="@string/preferenceScreen">
     <PreferenceCategory android:title="@string/ui_pref_general_settings_category">
         <EditTextPreference
             android:icon="@drawable/ic_smartphone"
@@ -11,7 +12,8 @@
             android:title="@string/ui_pref_phone_number_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/ui_pref_developer_settings_category">
+    <PreferenceCategory android:title="@string/ui_pref_developer_settings_category"
+        android:key="@string/devPreferencesCategory">
         <EditTextPreference
             android:icon="@drawable/ic_key"
             android:dialogMessage="@string/ui_pref_auth_token_default_value"

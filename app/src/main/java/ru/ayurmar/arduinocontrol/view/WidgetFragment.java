@@ -1,7 +1,5 @@
 package ru.ayurmar.arduinocontrol.view;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -27,6 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import ru.ayurmar.arduinocontrol.AddWidgetActivity;
+import ru.ayurmar.arduinocontrol.MainActivity;
 import ru.ayurmar.arduinocontrol.MainApp;
 import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
@@ -38,7 +37,6 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private static final int sAddWidgetRequestCode = 0;
-    private static final int sValueAnimationDuration = 100;
     private static final int sConfirmDeleteCode = 1;
     private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
 
@@ -46,6 +44,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private TextView mTextViewNoItems;
     private ProgressBar mProgressBar;
     private Menu mMenu;
+    private boolean mIsDevMode;
 
     @Inject
     IWidgetPresenter<IWidgetView> mPresenter;
@@ -93,6 +92,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         super.onCreateOptionsMenu(menu, inflater);
         mMenu = menu;
         inflater.inflate(R.menu.menu_main_widget, menu);
+        MenuItem addWidgetItem = mMenu.findItem(R.id.menu_item_add_widget);
+        addWidgetItem.setVisible(mIsDevMode);   //hide "Add Widget" menu item
         showDeviceOnlineStatus(mPresenter.isDeviceOnline());
     }
 
@@ -159,9 +160,17 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
+    public void updateWidgetList(){
+        mIsDevMode = ((MainActivity) getActivity()).isDevMode();
+        getActivity().invalidateOptionsMenu();
+        mPresenter.loadWidgetListFromDb();
+    }
+
+    @Override
     public void showAddWidgetDialog(){
         Intent intent = new Intent(getContext(), AddWidgetActivity.class);
         intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, false);
+        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
         intent.putExtra(AddWidgetActivity.WIDGET_ID, "");
         startActivityForResult(intent, sAddWidgetRequestCode);
     }
@@ -170,6 +179,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void showEditWidgetDialog(IWidget widget){
         Intent intent = new Intent(getContext(), AddWidgetActivity.class);
         intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
+        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
         intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
         startActivityForResult(intent, sAddWidgetRequestCode);
     }
@@ -204,7 +214,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         private ImageButton mButtonEdit;
         private ImageButton mButtonSms;
         private ImageButton mButtonDelete;
-        private ObjectAnimator mAnimator;
 
         WidgetHolder(View itemView){
             super(itemView);
@@ -214,12 +223,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
             mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
             mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
-
-            mAnimator = ObjectAnimator.ofFloat(mTextViewValue, "alpha",
-                    1f, 0.0f);
-            mAnimator.setDuration(sValueAnimationDuration);
-            mAnimator.setRepeatMode(ValueAnimator.REVERSE);
-            mAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            mButtonDelete.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
 
             Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
                     "fonts/OpenSans-Regular.ttf");
@@ -250,9 +254,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
         private void toggleValueLoadingUI(boolean isLoading){
             if(isLoading){
-                mAnimator.start();
+                mTextViewValue.setAlpha(0.1f);
             } else {
-                mAnimator.end();
                 mTextViewValue.setAlpha(1f);
             }
         }

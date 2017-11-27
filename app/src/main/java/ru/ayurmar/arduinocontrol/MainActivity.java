@@ -16,13 +16,16 @@ import android.view.View;
 import ru.ayurmar.arduinocontrol.view.InfoFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements InfoFragment.InfoDialogListener {
 
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
+    public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar mToolbar;
+    private boolean mIsDevMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +68,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onFinishDialog(boolean isDevMode){
+        mIsDevMode = isDevMode;
+        FragmentManager fm = getSupportFragmentManager();
+        WidgetFragment fragment = (WidgetFragment) fm.findFragmentById(R.id.main_fragment_container);
+        if(fragment != null){
+            fragment.updateWidgetList();
+        }
+    }
+
+    public boolean isDevMode(){
+        return mIsDevMode;
+    }
+
     private void setupToolbarAndDrawer(){
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -104,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         switch(menuItem.getItemId()){
             case R.id.menu_settings:
                 Intent intent = new Intent(this, PreferencesActivity.class);
+                intent.putExtra(DEV_MODE, mIsDevMode);
                 startActivity(intent);
                 break;
             case R.id.menu_about:

@@ -25,5 +25,7 @@ public interface IWidgetView extends IBasicView {
 
     void updateWidgetValue(int position);
 
+    void updateWidgetList();
+
     List<IWidget> getWidgetList();
 }

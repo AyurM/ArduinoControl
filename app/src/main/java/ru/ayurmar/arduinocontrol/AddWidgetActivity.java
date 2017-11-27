@@ -11,9 +11,11 @@ import ru.ayurmar.arduinocontrol.view.AddEditWidgetFragment;
 public class AddWidgetActivity extends AppCompatActivity {
 
     public static final String IS_EDIT_MODE = "IS_EDIT_MODE_ADD_WIDGET_ACTIVITY";
+    public static final String IS_DEV_MODE = "IS_DEV_MODE_ADD_WIDGET_ACTIVITY";
     public static final String WIDGET_ID = "WIDGET_ID_ADD_WIDGET_ACTIVITY";
 
     private boolean mIsEditMode;
+    private boolean mIsDevMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,7 @@ public class AddWidgetActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mIsEditMode = getIntent().getBooleanExtra(IS_EDIT_MODE, false);
+        mIsDevMode = getIntent().getBooleanExtra(IS_DEV_MODE, false);
         getSupportActionBar().setTitle(mIsEditMode ?
                 R.string.ui_menu_edit_widget_text : R.string.ui_menu_add_widget_text);
 
@@ -41,6 +44,6 @@ public class AddWidgetActivity extends AppCompatActivity {
 
     private Fragment createFragment(){
         String widget_id = getIntent().getStringExtra(WIDGET_ID);
-        return AddEditWidgetFragment.newInstance(mIsEditMode, widget_id);
+        return AddEditWidgetFragment.newInstance(mIsEditMode, mIsDevMode, widget_id);
     }
 }

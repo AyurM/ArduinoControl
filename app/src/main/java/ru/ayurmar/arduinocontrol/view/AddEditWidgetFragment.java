@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 
 import javax.inject.Inject;
@@ -27,25 +28,31 @@ import ru.ayurmar.arduinocontrol.model.WidgetType;
 public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidgetView {
 
     private static final String sIsEditMode = "IS_EDIT_MODE";
+    private static final String sIsDevMode = "IS_DEV_MODE_EDIT_FRAGMENT";
     private static final String sWidgetId = "WIDGET_ID";
 
     private EditText mEditTextName;
     private EditText mEditTextPin;
+    private TextView mTextViewPin;
+    private TextView mTextViewType;
     private Spinner mSpinnerType;
     private Button mButtonCancel;
     private Button mButtonOk;
 
     private WidgetType mSelectedType = null;
     private boolean mIsEditMode;
+    private boolean mIsDevMode;
     private String mWidgetId;
 
     @Inject
     IAddEditWidgetPresenter<IAddEditWidgetView> mPresenter;
 
     public static AddEditWidgetFragment newInstance(boolean isEditMode,
+                                                    boolean isDevMode,
                                                     String widgetId) {
         Bundle args = new Bundle();
         args.putBoolean(sIsEditMode, isEditMode);
+        args.putBoolean(sIsDevMode, isDevMode);
         args.putString(sWidgetId, widgetId);
         AddEditWidgetFragment fragment = new AddEditWidgetFragment();
         fragment.setArguments(args);
@@ -56,6 +63,7 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIsEditMode = getArguments().getBoolean(sIsEditMode);
+        mIsDevMode = getArguments().getBoolean(sIsDevMode);
         if(mIsEditMode){
             mWidgetId = getArguments().getString(sWidgetId);
         }
@@ -67,7 +75,15 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         View view = inflater.inflate(R.layout.fragment_add_widget, container, false);
         mEditTextName = view.findViewById(R.id.add_widget_name_edit_text);
         mEditTextPin = view.findViewById(R.id.add_widget_pin_edit_text);
+        mTextViewPin = view.findViewById(R.id.add_widget_pin_text_view);
         mSpinnerType = view.findViewById(R.id.add_widget_type_spinner);
+        mTextViewType = view.findViewById(R.id.add_widget_type_text_view);
+
+        mEditTextPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        mTextViewPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        mSpinnerType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        mTextViewType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+
         fillTypeSpinner();
 
         if(mIsEditMode){
