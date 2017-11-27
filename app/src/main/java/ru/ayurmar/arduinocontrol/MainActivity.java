@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
-    private Toolbar mToolbar;
     private boolean mIsDevMode;
 
     @Override
@@ -83,8 +82,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupToolbarAndDrawer(){
-        mToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = findViewById(R.id.navigation_drawer);
         setupDrawerContent(mNavigationView);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.drawer_open,
                 R.string.drawer_close){
             public void onDrawerClosed(View view) {

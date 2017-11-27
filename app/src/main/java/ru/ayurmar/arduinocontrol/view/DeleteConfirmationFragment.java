@@ -46,17 +46,17 @@ public class DeleteConfirmationFragment extends DialogFragment {
                 .setTitle(R.string.ui_delete_confirmation_title)
                 .setNegativeButton(android.R.string.cancel, null)
                 .setNeutralButton(android.R.string.ok,
-                        ((dialogInterface, i) -> sendResult(Activity.RESULT_OK, widgetPosition)))
+                        ((dialogInterface, i) -> sendResult(widgetPosition)))
                 .create();
     }
 
-    private void sendResult(int resultCode, int position) {
+    private void sendResult(int position) {
         if (getTargetFragment() == null) {
             return;
         }
         Intent intent = new Intent();
         intent.putExtra(EXTRA_POSITION, position);
         getTargetFragment()
-                .onActivityResult(getTargetRequestCode(), resultCode, intent);
+                .onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 }

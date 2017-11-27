@@ -131,12 +131,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showNoItemsUI(boolean isEmpty){
-        mTextViewNoItems.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
     public void showLoadingUI(boolean isLoading){
         mTextViewNoItems.setAlpha(isLoading ? 0.1f : 1f);
         mRecyclerView.setAlpha(isLoading ? 0.1f : 1f);
@@ -159,7 +153,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mRecyclerView.getAdapter().notifyItemChanged(position);
     }
 
-    @Override
     public void updateWidgetList(){
         mIsDevMode = ((MainActivity) getActivity()).isDevMode();
         getActivity().invalidateOptionsMenu();
@@ -198,11 +191,15 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         }
     }
 
-    @Override
-    public void showConfirmDeleteDialog(int position){
+    private void showConfirmDeleteDialog(int position){
         DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
         fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
         fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
+    }
+
+    private void showNoItemsUI(boolean isEmpty){
+        mTextViewNoItems.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{

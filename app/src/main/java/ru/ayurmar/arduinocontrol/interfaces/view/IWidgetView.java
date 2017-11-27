@@ -9,13 +9,9 @@ public interface IWidgetView extends IBasicView {
 
     void showDeviceOnlineStatus(boolean isOnline);
 
-    void showNoItemsUI(boolean isEmpty);
-
     void showLoadingUI(boolean isLoading);
 
     void showAddWidgetDialog();
-
-    void showConfirmDeleteDialog(int position);
 
     void showEditWidgetDialog(IWidget widget);
 
@@ -24,8 +20,6 @@ public interface IWidgetView extends IBasicView {
     void showWidgetList(List<IWidget> widgets);
 
     void updateWidgetValue(int position);
-
-    void updateWidgetList();
 
     List<IWidget> getWidgetList();
 }

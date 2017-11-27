@@ -1,16 +1,12 @@
 package ru.ayurmar.arduinocontrol.interfaces.presenter;
 
 
-import java.util.List;
-
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
 
     void loadWidgetListFromDb();
-
-    void saveWidgetListToDb(List<IWidget> widgets);
 
     void updateWidgetInDb(IWidget widget);
 

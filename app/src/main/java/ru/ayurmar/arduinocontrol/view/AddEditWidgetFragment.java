@@ -33,11 +33,7 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
 
     private EditText mEditTextName;
     private EditText mEditTextPin;
-    private TextView mTextViewPin;
-    private TextView mTextViewType;
     private Spinner mSpinnerType;
-    private Button mButtonCancel;
-    private Button mButtonOk;
 
     private WidgetType mSelectedType = null;
     private boolean mIsEditMode;
@@ -75,14 +71,14 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         View view = inflater.inflate(R.layout.fragment_add_widget, container, false);
         mEditTextName = view.findViewById(R.id.add_widget_name_edit_text);
         mEditTextPin = view.findViewById(R.id.add_widget_pin_edit_text);
-        mTextViewPin = view.findViewById(R.id.add_widget_pin_text_view);
+        TextView textViewPin = view.findViewById(R.id.add_widget_pin_text_view);
         mSpinnerType = view.findViewById(R.id.add_widget_type_spinner);
-        mTextViewType = view.findViewById(R.id.add_widget_type_text_view);
+        TextView textViewType = view.findViewById(R.id.add_widget_type_text_view);
 
         mEditTextPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
-        mTextViewPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        textViewPin.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
         mSpinnerType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
-        mTextViewType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+        textViewType.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
 
         fillTypeSpinner();
 
@@ -111,11 +107,11 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
             }
         });
 
-        mButtonCancel = view.findViewById(R.id.add_widget_cancel_button);
-        mButtonOk = view.findViewById(R.id.add_widget_ok_button);
+        Button buttonCancel = view.findViewById(R.id.add_widget_cancel_button);
+        Button buttonOk = view.findViewById(R.id.add_widget_ok_button);
 
-        mButtonCancel.setOnClickListener(view1 -> mPresenter.onCancelClick());
-        mButtonOk.setOnClickListener(view1 -> mPresenter.onOkClick(mIsEditMode));
+        buttonCancel.setOnClickListener(view1 -> mPresenter.onCancelClick());
+        buttonOk.setOnClickListener(view1 -> mPresenter.onOkClick(mIsEditMode));
         mPresenter.onAttach(this);
         return view;
     }

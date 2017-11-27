@@ -19,7 +19,6 @@ import ru.ayurmar.arduinocontrol.R;
 public class InfoFragment extends DialogFragment{
 
     private static final int sClicksToUnlockDevMode = 12;
-    private TextView mTextViewVersion;
     private int mUnlockDevModeClicks = 0;
     private InfoDialogListener mListener;
 
@@ -32,7 +31,7 @@ public class InfoFragment extends DialogFragment{
             mListener = (InfoDialogListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement InfoDialogListener");
         }
     }
 
@@ -43,7 +42,7 @@ public class InfoFragment extends DialogFragment{
             mListener = (InfoDialogListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement InfoDialogListener");
         }
     }
 
@@ -53,9 +52,9 @@ public class InfoFragment extends DialogFragment{
         super.onCreateDialog(savedInstanceState);
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_info, null);
-        mTextViewVersion = v.findViewById(R.id.info_version_text_view);
+        TextView textViewVersion = v.findViewById(R.id.info_version_text_view);
         //show hidden "Developer Settings" category
-        mTextViewVersion.setOnClickListener(view -> {
+        textViewVersion.setOnClickListener(view -> {
             mUnlockDevModeClicks++;
             if(mUnlockDevModeClicks == sClicksToUnlockDevMode){
                 Toast.makeText(getActivity(),

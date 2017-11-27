@@ -64,16 +64,6 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void saveWidgetListToDb(List<IWidget> widgets){
-        getDisposable().add(getRepository().addWidgetList(widgets)
-                .subscribeOn(getScheduler().computation())
-                .observeOn(getScheduler().main())
-                .doOnError(throwable -> getView()
-                        .showMessage(R.string.message_database_error_text))
-                .subscribe());
-    }
-
-    @Override
     public void updateWidgetInDb(IWidget widget){
         getDisposable().add(getRepository().updateWidget(widget)
                 .subscribeOn(getScheduler().computation())

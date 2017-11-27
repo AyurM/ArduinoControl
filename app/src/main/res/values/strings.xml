@@ -5,7 +5,6 @@
     <string name="ui_version_text">Arduino Control v0.2-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
-    <string name="ui_widget_button_details_description">Details</string>
     <string name="ui_widget_button_edit_description">Edit</string>
     <string name="ui_widget_button_delete_description">Delete</string>
     <string name="ui_widget_button_sms_description">Send SMS</string>

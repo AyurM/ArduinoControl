@@ -9,7 +9,7 @@ import ru.ayurmar.arduinocontrol.model.BlynkWidget;
 import ru.ayurmar.arduinocontrol.db.DbSchema.WidgetTable;
 import ru.ayurmar.arduinocontrol.model.WidgetType;
 
-public class WidgetCursorWrapper extends CursorWrapper {
+class WidgetCursorWrapper extends CursorWrapper {
 
     WidgetCursorWrapper(Cursor cursor) {
         super(cursor);
