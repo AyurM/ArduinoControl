@@ -1,5 +1,21 @@
 <resources>
-    <string name="app_name">Arduino Control</string>
+    <string name="app_name">FarHome</string>
+
+    <!--Firebase Authentication-->
+    <string name="login_logo_description" translatable="false">Firebase logo and name</string>
+    <string name="login_title_text">E-mail and Password</string>
+    <string name="login_signed_in">Signed In</string>
+    <string name="login_signed_out">Signed Out</string>
+    <string name="login_hint_email" translatable="false">E-mail</string>
+    <string name="login_hint_password">Password</string>
+    <string name="login_sign_in">Sign In</string>
+    <string name="login_sign_out">Sign Out</string>
+    <string name="login_create_account">Create Account</string>
+    <string name="login_verify_email">Verify E-mail</string>
+    <string name="login_loading">Loading…</string>
+    <string name="login_auth_failed">Authentication failed</string>
+    <string name="login_email_password_status_fmt" translatable="false">Email User: %1$s (verified: %2$b)</string>
+    <string name="login_firebase_status_fmt" translatable="false">Firebase User: %s</string>
 
     <!--UI text-->
     <string name="ui_version_text">Arduino Control v0.2-beta</string>
@@ -22,6 +38,7 @@
     <string name="ui_menu_device_status_text">Device status</string>
     <string name="ui_menu_settings_text">Settings</string>
     <string name="ui_menu_about_text">About</string>
+    <string name="ui_menu_logout_text">Log out</string>
 
     <string name="ui_pref_phone_number_title">GSM-device phone number</string>
     <string name="ui_pref_phone_number_default_value">Enter your phone number</string>

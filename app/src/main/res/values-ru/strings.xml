@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Arduino Control</string>
+    <string name="app_name">FarHome</string>
+
+    <!--Firebase Authentication-->
+    <string name="login_hint_password">Пароль</string>
+    <string name="login_create_account">Создать аккаунт</string>
+    <string name="login_loading">Загрузка</string>
+    <string name="login_verify_email">Подтвердить E-mail</string>
+    <string name="login_auth_failed" translatable="false">Ошибка аутентификации</string>
+    <string name="login_sign_in">Войти</string>
+    <string name="login_sign_out">Выйти</string>
+    <string name="login_signed_in">Вход выполнен</string>
+    <string name="login_title_text">E-mail и пароль</string>
+    <string name="login_signed_out">Выход выполнен</string>
 
     <!--UI надписи-->
     <string name="ui_version_text">Arduino Control v0.2-beta</string>
@@ -23,6 +35,7 @@
     <string name="ui_menu_device_status_text">Статус устройства</string>
     <string name="ui_menu_settings_text">Настройки</string>
     <string name="ui_menu_about_text">Инфо</string>
+    <string name="ui_menu_logout_text">Выйти</string>
 
     <string name="ui_pref_phone_number_title">Номер GSM-устройства</string>
     <string name="ui_pref_phone_number_default_value">Введите номер телефона</string>
