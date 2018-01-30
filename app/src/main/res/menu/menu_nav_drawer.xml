@@ -11,5 +11,10 @@
             android:icon="@drawable/ic_about"
             android:title="@string/ui_menu_about_text"
             />
+        <item
+            android:id="@+id/menu_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/ui_menu_logout_text"
+            />
     </group>
 </menu>
