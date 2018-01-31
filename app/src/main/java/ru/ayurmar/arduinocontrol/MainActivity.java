@@ -12,24 +12,34 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import ru.ayurmar.arduinocontrol.view.InfoFragment;
+import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements InfoFragment.InfoDialogListener {
+        implements InfoFragment.InfoDialogListener,
+        LogoutConfirmationFragment.LogoutDialogListener {
 
+    private static final int sConfirmLogoutCode = 1;
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
+    private static final String sConfirmLogoutTag = "CONFIRM_LOGOUT_DIALOG";
     public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean mIsDevMode;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mAuth = FirebaseAuth.getInstance();
 
         setupToolbarAndDrawer();
 
@@ -77,6 +87,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onLogoutPositiveClick(){
+        FirebaseAuth.getInstance().signOut();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void onLogoutNegativeClick(){
+    }
+
     public boolean isDevMode(){
         return mIsDevMode;
     }
@@ -89,6 +111,12 @@ public class MainActivity extends AppCompatActivity
 
         mDrawerLayout = findViewById(R.id.main_layout_drawer);
         mNavigationView = findViewById(R.id.navigation_drawer);
+
+        //отобразить аккаунт пользователя в навигационной панели
+        View navHeader = mNavigationView.getHeaderView(0);
+        TextView userNameTextView = navHeader.findViewById(R.id.drawer_header_user_email_text_view);
+        userNameTextView.setText(mAuth.getCurrentUser() == null ?
+                "" : mAuth.getCurrentUser().getEmail());
         setupDrawerContent(mNavigationView);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
@@ -126,6 +154,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_about:
                 InfoFragment fragment = new InfoFragment();
                 fragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                break;
+            case R.id.menu_logout:
+                LogoutConfirmationFragment logoutFragment = new LogoutConfirmationFragment();
+                logoutFragment.show(getSupportFragmentManager(), sConfirmLogoutTag);
                 break;
             default:
         }

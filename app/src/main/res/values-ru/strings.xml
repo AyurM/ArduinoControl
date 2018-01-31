@@ -4,15 +4,20 @@
 
     <!--Firebase Authentication-->
     <string name="login_hint_password">Пароль</string>
-    <string name="login_create_account">Создать аккаунт</string>
-    <string name="login_loading">Загрузка</string>
-    <string name="login_verify_email">Подтвердить E-mail</string>
-    <string name="login_auth_failed" translatable="false">Ошибка аутентификации</string>
+    <string name="login_hint_confirm_password">Подтвердите пароль</string>
+    <string name="login_create_account">Зарегистрироваться</string>
+    <string name="login_existing_account">У меня уже есть учетная запись</string>
+    <string name="login_verify_email">Пожалуйста, подтвердите адрес электронной почты!</string>
+    <string name="login_loading">Загрузка…</string>
+    <string name="login_empty_field_warning">Поле не может быть пустым!</string>
+    <string name="login_wrong_email_password">Неправильный E-mail/пароль!</string>
+    <string name="login_passwords_mismatch">Пароли не совпадают!</string>
+    <string name="login_verification_email_sent">Запрос подтверждения учетной записи
+        отправлен на</string>
+    <string name="login_verification_email_failed">Не удалось отправить запрос подтверждения
+        регистрации на указанный e-mail!</string>
+    <string name="login_auth_failed">Ошибка аутентификации</string>
     <string name="login_sign_in">Войти</string>
-    <string name="login_sign_out">Выйти</string>
-    <string name="login_signed_in">Вход выполнен</string>
-    <string name="login_title_text">E-mail и пароль</string>
-    <string name="login_signed_out">Выход выполнен</string>
 
     <!--UI надписи-->
     <string name="ui_version_text">Arduino Control v0.2-beta</string>
@@ -25,6 +30,7 @@
     <string name="ui_about_text">О приложении</string>
     <string name="ui_no_widgets_found_text">Виджеты не найдены</string>
     <string name="ui_delete_confirmation_title">Удалить этот виджет?</string>
+    <string name="ui_logout_confirmation_title">Выйти из учетной записи?</string>
     <string name="ui_delete_confirmation_text">Виджет будет удален безвозвратно</string>
 
     <string name="ui_add_widget_edit_name_hint">Введите название виджета</string>

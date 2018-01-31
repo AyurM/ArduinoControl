@@ -7,7 +7,7 @@
     android:paddingTop="56dp"
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
-    android:background="@color/colorBackground">
+    android:background="@color/colorPrimary">
 
     <ImageView
         android:src="@mipmap/ic_launcher"
@@ -16,11 +16,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="24dp"
         android:contentDescription="@string/login_logo_description"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="@string/login_hint_email"/>
+
     <EditText
         android:id="@+id/field_email"
         android:layout_width="match_parent"
@@ -29,11 +25,7 @@
         android:hint="@string/login_hint_email"
         android:inputType="textEmailAddress"
         />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:text="@string/login_hint_password"/>
+
     <EditText
         android:id="@+id/field_password"
         android:layout_width="match_parent"
@@ -41,19 +33,49 @@
         android:layout_marginBottom="24dp"
         android:hint="@string/login_hint_password"
         android:inputType="textPassword"/>
-    <Button
-        android:id="@+id/email_sign_in_button"
+
+    <EditText
+        android:id="@+id/field_confirm_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
+        android:hint="@string/login_hint_confirm_password"
+        android:inputType="textPassword"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/email_sign_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="48dp"
         android:text="@string/login_sign_in"
         android:theme="@style/ThemeOverlay.MyDarkButton"/>
+
+    <TextView
+        android:id="@+id/register_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="bottom|center"
+        android:text="@string/login_create_account"
+        android:textSize="18sp"/>
 
     <Button
         android:id="@+id/email_create_account_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginBottom="48dp"
         android:text="@string/login_create_account"
-        android:theme="@style/ThemeOverlay.MyDarkButton"/>
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/use_existing_account_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="bottom|center"
+        android:text="@string/login_existing_account"
+        android:textSize="18sp"
+        android:visibility="gone"/>
 
 </LinearLayout>
