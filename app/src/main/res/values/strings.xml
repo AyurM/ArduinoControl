@@ -57,6 +57,7 @@
 
     <!--Messages-->
     <string name="message_no_connection_text">No internet connection!</string>
+    <string name="message_no_connection_use_sms_text">No internet connection! Try to send SMS commands</string>
     <string name="message_no_phone_number_text">No phone number available!</string>
     <string name="message_cant_send_sms_text">No SMS application found!</string>
     <string name="message_error_phone_number_text">Error while getting phone number!</string>

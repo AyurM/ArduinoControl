@@ -163,7 +163,7 @@ public class WidgetPresenter<V extends IWidgetView>
                                 }
                             }));
         } else {
-            getView().showLongMessage(R.string.message_no_connection_text);
+            getView().showLongMessage(R.string.message_no_connection_use_sms_text);
         }
     }
 
@@ -190,7 +190,7 @@ public class WidgetPresenter<V extends IWidgetView>
                                 }
                             }));
         } else {
-            getView().showLongMessage(R.string.message_no_connection_text);
+            getView().showLongMessage(R.string.message_no_connection_use_sms_text);
         }
     }
 

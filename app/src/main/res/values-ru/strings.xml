@@ -57,7 +57,8 @@
     <string name="ui_yesterday_at_text">вчера в</string>
 
     <!--Сообщения-->
-    <string name="message_no_connection_text">Нет подключения к Интернету! Попробуйте
+    <string name="message_no_connection_text">Нет подключения к Интернету!</string>
+    <string name="message_no_connection_use_sms_text">Нет подключения к Интернету! Попробуйте
         связаться с устройством через SMS</string>
     <string name="message_no_phone_number_text">Не указан номер GSM-устройства!</string>
     <string name="message_cant_send_sms_text">Не найдено приложение для отправки SMS!</string>

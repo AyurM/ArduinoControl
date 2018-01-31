@@ -25,6 +25,7 @@ public class LoginActivity extends BaseActivity implements
 
     private TextView mRegisterTextView;
     private TextView mExistingAccountTextView;
+    private TextView mErrorTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
     private EditText mConfirmPasswordField;
@@ -42,9 +43,10 @@ public class LoginActivity extends BaseActivity implements
         mPasswordField = findViewById(R.id.field_password);
         mConfirmPasswordField = findViewById(R.id.field_confirm_password);
         mRegisterTextView = findViewById(R.id.register_text_view);
+        mExistingAccountTextView = findViewById(R.id.use_existing_account_text_view);
+        mErrorTextView = findViewById(R.id.login_error_text_view);
         mCreateAccountButton = findViewById(R.id.email_create_account_button);
         mSignInButton = findViewById(R.id.email_sign_in_button);
-        mExistingAccountTextView = findViewById(R.id.use_existing_account_text_view);
 
         //подчеркнутый текст
         mRegisterTextView.setPaintFlags(mRegisterTextView.getPaintFlags()
@@ -76,6 +78,12 @@ public class LoginActivity extends BaseActivity implements
             return;
         }
 
+        if(!Utils.isOnline(this)){
+            showNoConnectionError();
+            return;
+        }
+
+        mErrorTextView.setVisibility(View.GONE);
         showProgressDialog();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -88,8 +96,8 @@ public class LoginActivity extends BaseActivity implements
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail: failure", task.getException());
-                        Toast.makeText(LoginActivity.this, R.string.login_auth_failed,
-                                Toast.LENGTH_SHORT).show();
+                        mErrorTextView.setText(R.string.login_auth_failed);
+                        mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -100,6 +108,12 @@ public class LoginActivity extends BaseActivity implements
             return;
         }
 
+        if(!Utils.isOnline(this)){
+            showNoConnectionError();
+            return;
+        }
+
+        mErrorTextView.setVisibility(View.GONE);
         showProgressDialog();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
@@ -124,9 +138,8 @@ public class LoginActivity extends BaseActivity implements
                         showCreateAccountUI(false);
                     } else {
                         Log.e(TAG, "sendEmailVerification", task.getException());
-                        Toast.makeText(LoginActivity.this,
-                                R.string.login_verification_email_failed,
-                                Toast.LENGTH_LONG).show();
+                        mErrorTextView.setText(R.string.login_verification_email_failed);
+                        mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -164,6 +177,7 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void showCreateAccountUI(boolean isCreateAccountUIVisible){
+        mErrorTextView.setVisibility(View.GONE);
         mRegisterTextView.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
         mExistingAccountTextView.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mConfirmPasswordField.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
@@ -174,21 +188,26 @@ public class LoginActivity extends BaseActivity implements
     private void showWrongEmailPassUI(Task<AuthResult> task){
         //Действия при неудачной попытке входа
         Log.w(TAG, "signInWithEmail:failure", task.getException());
-        Toast.makeText(LoginActivity.this, R.string.login_wrong_email_password,
-                Toast.LENGTH_SHORT).show();
+        mErrorTextView.setText(R.string.login_wrong_email_password);
+        mErrorTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError(){
+        mErrorTextView.setText(R.string.message_no_connection_text);
+        mErrorTextView.setVisibility(View.VISIBLE);
     }
 
     private void onSignInSuccess(){
         //Действия при успешном входе с помощью e-mail и пароля
-//        Log.d(TAG, "signIn:success");
         if(mAuth.getCurrentUser().isEmailVerified()){
+            mErrorTextView.setVisibility(View.GONE);
             Intent i = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(i);
             finish();
         } else {
             mEmailField.setText(mAuth.getCurrentUser().getEmail());
-            Toast.makeText(LoginActivity.this, R.string.login_verify_email,
-                    Toast.LENGTH_LONG).show();
+            mErrorTextView.setText(R.string.login_verify_email);
+            mErrorTextView.setVisibility(View.VISIBLE);
         }
     }
 
