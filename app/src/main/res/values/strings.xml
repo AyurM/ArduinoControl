@@ -2,23 +2,24 @@
     <string name="app_name">FarHome</string>
 
     <!--Firebase Authentication-->
-    <string name="login_logo_description" translatable="false">Firebase logo and name</string>
-    <string name="login_title_text">E-mail and Password</string>
-    <string name="login_signed_in">Signed In</string>
-    <string name="login_signed_out">Signed Out</string>
+    <string name="login_logo_description" translatable="false">FarHome logo</string>
     <string name="login_hint_email" translatable="false">E-mail</string>
     <string name="login_hint_password">Password</string>
+    <string name="login_hint_confirm_password">Confirm password</string>
     <string name="login_sign_in">Sign In</string>
-    <string name="login_sign_out">Sign Out</string>
-    <string name="login_create_account">Create Account</string>
-    <string name="login_verify_email">Verify E-mail</string>
+    <string name="login_create_account">Create account</string>
+    <string name="login_existing_account">Use existing account</string>
+    <string name="login_verify_email">Please verify your e-mail!</string>
     <string name="login_loading">Loading…</string>
+    <string name="login_empty_field_warning">Empty field!</string>
+    <string name="login_passwords_mismatch">Passwords are not the same!</string>
+    <string name="login_wrong_email_password">Invalid e-mail/password!</string>
     <string name="login_auth_failed">Authentication failed</string>
-    <string name="login_email_password_status_fmt" translatable="false">Email User: %1$s (verified: %2$b)</string>
-    <string name="login_firebase_status_fmt" translatable="false">Firebase User: %s</string>
+    <string name="login_verification_email_sent">Verification email sent to</string>
+    <string name="login_verification_email_failed">Failed to send verification e-mail!</string>
 
     <!--UI text-->
-    <string name="ui_version_text">Arduino Control v0.2-beta</string>
+    <string name="ui_version_text">FarHome v0.2-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
     <string name="ui_widget_button_edit_description">Edit</string>
@@ -28,6 +29,7 @@
     <string name="ui_about_text">About</string>
     <string name="ui_no_widgets_found_text">No widgets found. Add your widgets to start</string>
     <string name="ui_delete_confirmation_title">Delete this widget?</string>
+    <string name="ui_logout_confirmation_title">Sign out?</string>
     <string name="ui_delete_confirmation_text">This widget will be deleted permanently</string>
 
     <string name="ui_add_widget_edit_name_hint">Enter widget name</string>
