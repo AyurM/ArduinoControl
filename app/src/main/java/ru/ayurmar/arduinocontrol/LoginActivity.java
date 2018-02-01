@@ -5,24 +5,19 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
-    private static final String TAG = "LoginActivity";
-
+    private static final String sLoginEmailIndex = "LOGIN_EMAIL_INDEX";
     private TextView mRegisterTextView;
     private TextView mExistingAccountTextView;
     private TextView mErrorTextView;
@@ -48,6 +43,10 @@ public class LoginActivity extends BaseActivity implements
         mCreateAccountButton = findViewById(R.id.email_create_account_button);
         mSignInButton = findViewById(R.id.email_sign_in_button);
 
+        if (savedInstanceState != null) {
+            mEmailField.setText(savedInstanceState.getString(sLoginEmailIndex));
+        }
+
         //подчеркнутый текст
         mRegisterTextView.setPaintFlags(mRegisterTextView.getPaintFlags()
                 | Paint.UNDERLINE_TEXT_FLAG);
@@ -72,8 +71,16 @@ public class LoginActivity extends BaseActivity implements
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        String email = mEmailField.getText().toString();
+        if(!TextUtils.isEmpty(email)) {
+            savedInstanceState.putString(sLoginEmailIndex, email);
+        }
+    }
+
     private void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount: " + email);
         if (!validateForm()) {
             return;
         }
@@ -91,11 +98,9 @@ public class LoginActivity extends BaseActivity implements
                     hideProgressDialog();
                     if (task.isSuccessful()) {
                         // Sign in success
-                        Log.d(TAG, "createUserWithEmail: success");
                         sendEmailVerification();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail: failure", task.getException());
                         mErrorTextView.setText(R.string.login_auth_failed);
                         mErrorTextView.setVisibility(View.VISIBLE);
                     }
@@ -103,7 +108,6 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void signIn(String email, String password) {
-        Log.d(TAG, "signIn: " + email);
         if (!validateForm()) {
             return;
         }
@@ -121,7 +125,7 @@ public class LoginActivity extends BaseActivity implements
                     if (task.isSuccessful()) {
                         onSignInSuccess();
                     } else {
-                        showWrongEmailPassUI(task);
+                        showWrongEmailPassUI();
                     }
                 });
     }
@@ -137,7 +141,6 @@ public class LoginActivity extends BaseActivity implements
                                 Toast.LENGTH_LONG).show();
                         showCreateAccountUI(false);
                     } else {
-                        Log.e(TAG, "sendEmailVerification", task.getException());
                         mErrorTextView.setText(R.string.login_verification_email_failed);
                         mErrorTextView.setVisibility(View.VISIBLE);
                     }
@@ -169,7 +172,7 @@ public class LoginActivity extends BaseActivity implements
                 mConfirmPasswordField.setError(getString(R.string.login_passwords_mismatch));
                 valid = false;
             } else {
-                mPasswordField.setError(null);
+                mConfirmPasswordField.setError(null);
             }
         }
 
@@ -185,9 +188,8 @@ public class LoginActivity extends BaseActivity implements
         mSignInButton.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
     }
 
-    private void showWrongEmailPassUI(Task<AuthResult> task){
+    private void showWrongEmailPassUI(){
         //Действия при неудачной попытке входа
-        Log.w(TAG, "signInWithEmail:failure", task.getException());
         mErrorTextView.setText(R.string.login_wrong_email_password);
         mErrorTextView.setVisibility(View.VISIBLE);
     }
