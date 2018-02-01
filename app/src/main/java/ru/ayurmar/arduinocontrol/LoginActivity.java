@@ -12,6 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends BaseActivity implements
@@ -97,11 +101,17 @@ public class LoginActivity extends BaseActivity implements
                 .addOnCompleteListener(this, task -> {
                     hideProgressDialog();
                     if (task.isSuccessful()) {
-                        // Sign in success
                         sendEmailVerification();
                     } else {
-                        // If sign in fails, display a message to the user.
-                        mErrorTextView.setText(R.string.login_auth_failed);
+                        //Ошибка при создании аккаунта
+                        Exception exception = task.getException();
+                        if(exception instanceof FirebaseAuthUserCollisionException){
+                            mErrorTextView.setText(R.string.login_account_exists);
+                        } else if(exception instanceof FirebaseAuthWeakPasswordException){
+                            mErrorTextView.setText(R.string.login_weak_password);
+                        } else {
+                            mErrorTextView.setText(R.string.login_auth_failed);
+                        }
                         mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
@@ -125,7 +135,16 @@ public class LoginActivity extends BaseActivity implements
                     if (task.isSuccessful()) {
                         onSignInSuccess();
                     } else {
-                        showWrongEmailPassUI();
+                        //Ошибка при входе в учетную запись
+                        Exception exception = task.getException();
+                        if(exception instanceof FirebaseAuthInvalidUserException){
+                            mErrorTextView.setText(R.string.login_invalid_email);
+                        } else if(exception instanceof FirebaseAuthInvalidCredentialsException){
+                            mErrorTextView.setText(R.string.login_wrong_email_password);
+                        } else {
+                            mErrorTextView.setText(R.string.login_auth_failed);
+                        }
+                        mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -186,12 +205,6 @@ public class LoginActivity extends BaseActivity implements
         mConfirmPasswordField.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mCreateAccountButton.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mSignInButton.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
-    }
-
-    private void showWrongEmailPassUI(){
-        //Действия при неудачной попытке входа
-        mErrorTextView.setText(R.string.login_wrong_email_password);
-        mErrorTextView.setVisibility(View.VISIBLE);
     }
 
     private void showNoConnectionError(){

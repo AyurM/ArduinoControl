@@ -18,6 +18,10 @@
         регистрации на указанный e-mail!</string>
     <string name="login_auth_failed">Ошибка аутентификации</string>
     <string name="login_sign_in">Войти</string>
+    <string name="login_account_exists">Аккаунт уже существует!</string>
+    <string name="login_weak_password">Небезопасный пароль!</string>
+    <string name="login_wrong_password">Неправильный пароль!</string>
+    <string name="login_invalid_email">Аккаунт не существует или заблокирован!</string>
 
     <!--UI надписи-->
     <string name="ui_version_text">Arduino Control v0.2-beta</string>
