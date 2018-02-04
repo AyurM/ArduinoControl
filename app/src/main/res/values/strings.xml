@@ -22,7 +22,7 @@
     <string name="login_invalid_email">Account is blocked or does not exist!</string>
 
     <!--UI text-->
-    <string name="ui_version_text">FarHome v0.2-beta</string>
+    <string name="ui_version_text" translatable="false">FarHome v0.3-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
     <string name="ui_widget_button_edit_description">Edit</string>
@@ -40,11 +40,13 @@
 
     <string name="ui_menu_add_widget_text">Add widget</string>
     <string name="ui_menu_add_device_text">Add device</string>
+    <string name="ui_menu_select_device_text">Select device</string>
     <string name="ui_menu_edit_widget_text">Edit widget</string>
     <string name="ui_menu_device_status_text">Device status</string>
     <string name="ui_menu_settings_text">Settings</string>
     <string name="ui_menu_about_text">About</string>
     <string name="ui_menu_logout_text">Log out</string>
+    <string name="ui_menu_change_device_text">Change device</string>
 
     <string name="ui_pref_phone_number_title">GSM-device phone number</string>
     <string name="ui_pref_phone_number_default_value">Enter your phone number</string>

@@ -1,6 +1,6 @@
 package ru.ayurmar.arduinocontrol;
 
-/*
+/**
  Activity создает Splash-screen на время старта приложения.
  См. https://habrahabr.ru/post/312516/
  */

@@ -10,23 +10,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.view.InfoFragment;
 import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
@@ -53,7 +43,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setupToolbarAndDrawer();
 
@@ -204,8 +193,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.menu_about:
-                InfoFragment fragment = new InfoFragment();
-                fragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                InfoFragment infoFragment = new InfoFragment();
+                infoFragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                break;
+            case R.id.menu_change_device:
+                FragmentManager fm = getSupportFragmentManager();
+                IWidgetView widgetView = (IWidgetView) fm.findFragmentById(R.id.main_fragment_container);
+                widgetView.onChangeDeviceClick();
                 break;
             case R.id.menu_logout:
                 LogoutConfirmationFragment logoutFragment = new LogoutConfirmationFragment();

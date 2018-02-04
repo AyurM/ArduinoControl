@@ -2,6 +2,8 @@ package ru.ayurmar.arduinocontrol;
 
 import android.app.Application;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 import ru.ayurmar.arduinocontrol.di.AppComponent;
 import ru.ayurmar.arduinocontrol.di.DaggerAppComponent;
 import ru.ayurmar.arduinocontrol.di.module.AppModule;
@@ -20,6 +22,9 @@ public class MainApp extends Application {
     public void onCreate(){
         super.onCreate();
         sInstance = this;
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .widgetModule(new WidgetModule())

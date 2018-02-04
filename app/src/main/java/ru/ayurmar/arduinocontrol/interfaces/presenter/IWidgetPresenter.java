@@ -6,6 +6,14 @@ import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
 
+    void loadDevice(String deviceSn);
+
+    void loadWidgets(String deviceSn);
+
+    void loadUserDevices();
+
+    void onChangeDeviceClick();
+
     void updateWidgetInDb(FarhomeWidget widget);
 
     void onAddWidgetClick();
@@ -21,10 +29,4 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
     void onDeviceStatusClick();
 
     boolean isDeviceOnline();
-
-    void loadDevice();
-
-    void loadWidgets();
-
-    void loadUserDevices();
 }

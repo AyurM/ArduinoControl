@@ -24,7 +24,6 @@
     <string name="login_invalid_email">Аккаунт не существует или заблокирован!</string>
 
     <!--UI надписи-->
-    <string name="ui_version_text">Arduino Control v0.2-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Отмена</string>
     <string name="ui_widget_button_edit_description">Правка</string>
@@ -42,10 +41,12 @@
 
     <string name="ui_menu_add_widget_text">Добавить виджет</string>
     <string name="ui_menu_add_device_text">Добавить устройство</string>
+    <string name="ui_menu_select_device_text">Выберите устройство</string>
     <string name="ui_menu_edit_widget_text">Правка виджета</string>
     <string name="ui_menu_device_status_text">Статус устройства</string>
     <string name="ui_menu_settings_text">Настройки</string>
     <string name="ui_menu_about_text">Инфо</string>
+    <string name="ui_menu_change_device_text">Сменить устройство</string>
     <string name="ui_menu_logout_text">Выйти</string>
 
     <string name="ui_pref_phone_number_title">Номер GSM-устройства</string>

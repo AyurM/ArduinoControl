@@ -3,7 +3,6 @@ package ru.ayurmar.arduinocontrol.presenter;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,7 +13,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -23,7 +21,6 @@ import javax.inject.Inject;
 
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
-import okhttp3.ResponseBody;
 import ru.ayurmar.arduinocontrol.PreferencesActivity;
 import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
@@ -35,11 +32,11 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 import ru.ayurmar.arduinocontrol.model.BlynkWidget;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
-import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 public class WidgetPresenter<V extends IWidgetView>
         extends BasicPresenter<V> implements IWidgetPresenter<V> {
 
+    public static final String USERS_ROOT = "users";
     public static final String WIDGETS_ROOT = "widgets";
     public static final String DEVICES_ROOT = "devices";
     private static final int TIMEOUT_DURATION_S = 10;
@@ -62,13 +59,13 @@ public class WidgetPresenter<V extends IWidgetView>
     public void loadUserDevices() {
         if (!Utils.isOnline(mContext)) {
             getView().showLongMessage(R.string.message_no_connection_text);
-//            return;
         }
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
             getView().showLoadingUI(true);
             DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference("users/" + firebaseUser.getUid() + "/devices");
+                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid() +
+                            "/" + DEVICES_ROOT);
             ref.keepSynced(true);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -85,42 +82,7 @@ public class WidgetPresenter<V extends IWidgetView>
                     }
                     mDeviceSn = mAvailableDevices.get(0);
                     getView().showLoadingUI(false);
-                    loadDevice();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    getView().showLoadingUI(false);
-                    Log.d("MAIN_ACTIVITY", "Database error!");
-                }
-            });
-        }
-    }
-
-    @Override
-    public void loadDevice(){
-        if(!Utils.isOnline(mContext)){
-            getView().showLongMessage(R.string.message_no_connection_text);
-//            return;
-        }
-        if(mFarhomeDevice == null && !mDeviceSn.isEmpty()){
-            getView().showLoadingUI(true);
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference(DEVICES_ROOT + "/" + mDeviceSn);
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.getChildrenCount() == 0){
-                        getView().showLoadingUI(false);
-                        getView().showLongMessage(R.string.message_device_not_found_text);
-                        return;
-                    }
-                    Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
-                    Log.d("MAIN_ACTIVITY", "Devices count = " + dataSnapshot.getChildrenCount());
-                    mFarhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
-                    getView().updateDeviceUI(mDeviceSn);
-                    getView().showLoadingUI(false);
-                    loadWidgets();
+                    loadDevice(mDeviceSn);
                 }
 
                 @Override
@@ -133,14 +95,48 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void loadWidgets(){
+    public void loadDevice(String deviceSn){
         if(!Utils.isOnline(mContext)){
             getView().showLongMessage(R.string.message_no_connection_text);
-//            return;
+        }
+        if(mFarhomeDevice == null && !deviceSn.isEmpty()){
+            getView().showLoadingUI(true);
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference(DEVICES_ROOT + "/" + deviceSn);
+            ref.keepSynced(true);
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getChildrenCount() == 0){
+                        getView().showLoadingUI(false);
+                        getView().showLongMessage(R.string.message_device_not_found_text);
+                        return;
+                    }
+                    Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
+                    Log.d("MAIN_ACTIVITY", "Devices count = " + dataSnapshot.getChildrenCount());
+                    mFarhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
+                    getView().updateDeviceUI(mFarhomeDevice);
+                    getView().showLoadingUI(false);
+                    loadWidgets(deviceSn);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    getView().showLoadingUI(false);
+                    getView().showMessage(R.string.message_database_error_text);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void loadWidgets(String deviceSn){
+        if(!Utils.isOnline(mContext)){
+            getView().showLongMessage(R.string.message_no_connection_text);
         }
 
         DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference(WIDGETS_ROOT + "/" + mDeviceSn);
+                .getReference(WIDGETS_ROOT + "/" + deviceSn);
         getView().showLoadingUI(true);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -188,6 +184,10 @@ public class WidgetPresenter<V extends IWidgetView>
         getView().showEditWidgetDialog(widget);
     }
 
+    @Override
+    public void onChangeDeviceClick(){
+        getView().showChangeDeviceDialog(mAvailableDevices);
+    }
 
     @Override
     public void deleteWidget(int position){
@@ -330,16 +330,4 @@ public class WidgetPresenter<V extends IWidgetView>
             widget.setValue(BlynkWidget.UNDEFINED);
         }
     }
-
-//    private void addTestWidgets(){
-//        BlynkWidget widget1 = new BlynkWidget("Температура", "D5", "32",
-//                WidgetType.DISPLAY);
-//        BlynkWidget widget2 = new BlynkWidget("Свет (Кухня)", "D2", "1",
-//                WidgetType.BUTTON);
-//        List<IWidget> widgets = new ArrayList<>();
-//        widgets.add(widget1);
-//        widgets.add(widget2);
-//        saveWidgetListToDb(widgets);
-//        getView().showMessage("Test widgets added");
-//    }
 }

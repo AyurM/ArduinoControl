@@ -15,6 +15,8 @@ public interface IWidgetView extends IBasicView {
 
     void showAddWidgetDialog();
 
+    void showChangeDeviceDialog(List<String> deviceList);
+
     void showEditWidgetDialog(FarhomeWidget widget);
 
     void showSendSmsDialog(String message, String phoneNumber);
@@ -23,7 +25,9 @@ public interface IWidgetView extends IBasicView {
 
     void updateWidgetValue(int position);
 
-    void updateDeviceUI(String deviceSn);
+    void updateDeviceUI(FarhomeDevice device);
+
+    void onChangeDeviceClick();
 
     void showWidgetList(List<FarhomeWidget> widgets);
 
