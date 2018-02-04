@@ -30,7 +30,7 @@
     <string name="ui_widget_button_sms_description">Send SMS</string>
     <string name="ui_drawer_header_description">Drawer header</string>
     <string name="ui_about_text">About</string>
-    <string name="ui_no_widgets_found_text">No widgets found. Add your widgets to start</string>
+    <string name="ui_no_devices_found_text">No devices found</string>
     <string name="ui_delete_confirmation_title">Delete this widget?</string>
     <string name="ui_logout_confirmation_title">Sign out?</string>
     <string name="ui_delete_confirmation_text">This widget will be deleted permanently</string>
@@ -39,6 +39,7 @@
     <string name="ui_add_widget_edit_pin_hint">Enter Arduino pin</string>
 
     <string name="ui_menu_add_widget_text">Add widget</string>
+    <string name="ui_menu_add_device_text">Add device</string>
     <string name="ui_menu_edit_widget_text">Edit widget</string>
     <string name="ui_menu_device_status_text">Device status</string>
     <string name="ui_menu_settings_text">Settings</string>
@@ -69,6 +70,8 @@
     <string name="message_timeout_error_text">Timeout error! Check your internet connection</string>
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
+    <string name="message_device_not_found_text">Device not found!</string>
+    <string name="message_no_widgets_found_text">No widgets found for this device!</string>
     <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
     <string name="message_device_online_text">Device is online</string>
     <string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>

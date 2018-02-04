@@ -32,7 +32,7 @@
     <string name="ui_widget_button_sms_description">Отправить SMS</string>
     <string name="ui_drawer_header_description">Заголовок панели</string>
     <string name="ui_about_text">О приложении</string>
-    <string name="ui_no_widgets_found_text">Виджеты не найдены</string>
+    <string name="ui_no_devices_found_text">Устройства не найдены</string>
     <string name="ui_delete_confirmation_title">Удалить этот виджет?</string>
     <string name="ui_logout_confirmation_title">Выйти из учетной записи?</string>
     <string name="ui_delete_confirmation_text">Виджет будет удален безвозвратно</string>
@@ -41,6 +41,7 @@
     <string name="ui_add_widget_edit_pin_hint">Введите номер пина Arduino</string>
 
     <string name="ui_menu_add_widget_text">Добавить виджет</string>
+    <string name="ui_menu_add_device_text">Добавить устройство</string>
     <string name="ui_menu_edit_widget_text">Правка виджета</string>
     <string name="ui_menu_device_status_text">Статус устройства</string>
     <string name="ui_menu_settings_text">Настройки</string>
@@ -72,6 +73,8 @@
     <string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>
     <string name="message_add_edit_error_text">Необходимо заполнить все поля!</string>
+    <string name="message_device_not_found_text">Устройство не найдено!</string>
+    <string name="message_no_widgets_found_text">Виджеты для этого устройства не найдены!</string>
     <string name="message_add_edit_empty_name_text">Укажите имя виджета!</string>
     <string name="message_device_online_text">Устройство онлайн</string>
     <string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>

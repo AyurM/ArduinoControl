@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <ProgressBar
         android:id="@+id/widget_progress_bar"
@@ -15,23 +16,39 @@
         android:progressDrawable="@color/colorPrimaryDark"
         android:visibility="gone"/>
 
-    <TextView
-        android:id="@+id/widget_text_view_no_items"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/widget_no_items_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/widget_progress_bar"
         android:layout_centerInParent="true"
-        android:text="@string/ui_no_widgets_found_text"
-        android:textSize="24sp"
-        android:padding="8dp"
-        android:gravity="center"
-        android:visibility="gone"
-        />
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/widget_text_view_no_items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
+            android:text="@string/ui_no_devices_found_text"
+            android:textSize="24sp"
+            android:padding="8dp"
+            android:gravity="center"/>
+        <Button
+            android:id="@+id/widget_add_device_button"
+            android:layout_gravity="center"
+            android:text="@string/ui_menu_add_device_text"
+            android:drawableStart="@drawable/ic_add"
+            android:drawableLeft="@drawable/ic_add"
+            android:drawablePadding="8dp"
+            style="@style/EditWidgetButton"/>
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/widget_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:background="@color/colorBackground"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/widget_no_items_layout"
+        android:scrollbars="vertical"/>
 </RelativeLayout>

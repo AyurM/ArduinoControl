@@ -8,8 +8,10 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,9 +19,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -28,10 +38,11 @@ import ru.ayurmar.arduinocontrol.AddWidgetActivity;
 import ru.ayurmar.arduinocontrol.MainActivity;
 import ru.ayurmar.arduinocontrol.MainApp;
 import ru.ayurmar.arduinocontrol.R;
-import ru.ayurmar.arduinocontrol.Utils;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.presenter.WidgetPresenter;
 
 
 public class WidgetFragment extends BasicFragment implements IWidgetView {
@@ -41,8 +52,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
 
     private RecyclerView mRecyclerView;
-    private TextView mTextViewNoItems;
     private ProgressBar mProgressBar;
+    private LinearLayout mNoItemsLayout;
     private Menu mMenu;
     private boolean mIsDevMode;
 
@@ -60,7 +71,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_widget, container, false);
 
-        mTextViewNoItems = view.findViewById(R.id.widget_text_view_no_items);
+        mNoItemsLayout = view.findViewById(R.id.widget_no_items_layout);
         mProgressBar = view.findViewById(R.id.widget_progress_bar);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -84,7 +95,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void onResume(){
         super.onResume();
-        mPresenter.loadWidgetListFromDb();
+        mPresenter.loadUserDevices();
+//        mPresenter.loadDevice();
+//        mPresenter.loadWidgets(mDeviceSn);
     }
 
     @Override
@@ -115,7 +128,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == sAddWidgetRequestCode){
-                mPresenter.loadWidgetListFromDb();
+//                mPresenter.loadWidgetListFromDb();
             } else if (requestCode == sConfirmDeleteCode){
                 mPresenter.deleteWidget(data
                         .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
@@ -132,19 +145,27 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     @Override
     public void showLoadingUI(boolean isLoading){
-        mTextViewNoItems.setAlpha(isLoading ? 0.1f : 1f);
+        mNoItemsLayout.setAlpha(isLoading ? 0.1f : 1f);
         mRecyclerView.setAlpha(isLoading ? 0.1f : 1f);
         mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 
     @Override
-    public void showWidgetList(List<IWidget> widgets){
+    public void updateDeviceUI(String deviceSn){
+        if(!deviceSn.isEmpty()){
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(deviceSn);
+        }
+    }
+
+    @Override
+    public void showWidgetList(List<FarhomeWidget> widgets){
         mRecyclerView.setAdapter(new WidgetAdapter(widgets));
         showNoItemsUI(widgets.isEmpty());
     }
 
+
     @Override
-    public List<IWidget> getWidgetList(){
+    public List<FarhomeWidget> getWidgetList(){
         return ((WidgetAdapter) mRecyclerView.getAdapter()).getItemsList();
     }
 
@@ -156,7 +177,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void updateWidgetList(){
         mIsDevMode = ((MainActivity) getActivity()).isDevMode();
         getActivity().invalidateOptionsMenu();
-        mPresenter.loadWidgetListFromDb();
+//        mPresenter.loadWidgetListFromDb();
     }
 
     @Override
@@ -169,12 +190,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showEditWidgetDialog(IWidget widget){
-        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
-        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
-        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
-        intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
-        startActivityForResult(intent, sAddWidgetRequestCode);
+    public void showEditWidgetDialog(FarhomeWidget widget){
+//        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
+//        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
+//        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
+//        intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
+//        startActivityForResult(intent, sAddWidgetRequestCode);
     }
 
     @Override
@@ -198,12 +219,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private void showNoItemsUI(boolean isEmpty){
-        mTextViewNoItems.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        mNoItemsLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
-        private IWidget mWidget;
+        private FarhomeWidget mWidget;
         private int mPosition = -1;
         private TextView mTextViewName;
         private TextView mTextViewValue;
@@ -229,7 +250,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewDate.setTypeface(font);
         }
 
-        void bindWidget(IWidget widget, int position) {
+        void bindWidget(FarhomeWidget widget, int position) {
             mWidget = widget;
             mPosition = position;
             mTextViewName.setText(mWidget.getName());
@@ -239,9 +260,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                 mTextViewValue.setTextSize(48);
             }
             mTextViewValue.setText(mWidget.getValue());
-            mTextViewDate.setText(Utils.formatDate(mWidget.getLastUpdateTime(), getContext()));
+            mTextViewDate.setText(String.valueOf(mWidget.getTimestamp()));
+//            mTextViewDate.setText(Utils.formatDate(mWidget.getLastUpdateTime(), getContext()));
 
-            toggleValueLoadingUI(mWidget.isValueLoading());
+//            toggleValueLoadingUI(mWidget.isValueLoading());
 
             mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
             mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
@@ -255,9 +277,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{
-        private List<IWidget> mWidgets;
+        private List<FarhomeWidget> mWidgets;
 
-        WidgetAdapter(List<IWidget> list){
+        WidgetAdapter(List<FarhomeWidget> list){
             this.mWidgets = list;
         }
 
@@ -279,7 +301,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             return mWidgets.size();
         }
 
-        private List<IWidget> getItemsList(){
+        private List<FarhomeWidget> getItemsList(){
             return mWidgets;
         }
     }

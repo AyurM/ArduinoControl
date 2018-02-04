@@ -10,11 +10,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ru.ayurmar.arduinocontrol.view.InfoFragment;
 import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
@@ -24,15 +35,17 @@ public class MainActivity extends AppCompatActivity
         implements InfoFragment.InfoDialogListener,
         LogoutConfirmationFragment.LogoutDialogListener {
 
-    private static final int sConfirmLogoutCode = 1;
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
     private static final String sConfirmLogoutTag = "CONFIRM_LOGOUT_DIALOG";
+//    private static final String sTag = "MAIN_ACTIVITY";
     public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
+//    private ProgressBar mProgressBar;
     private boolean mIsDevMode;
     private FirebaseAuth mAuth;
+//    private List<String> mAvailableDevices = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +53,36 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         setupToolbarAndDrawer();
+
+//        mProgressBar = findViewById(R.id.main_progress_bar);
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//        if(firebaseUser != null){
+//            DatabaseReference ref = FirebaseDatabase.getInstance()
+//                    .getReference("users/" + firebaseUser.getUid() + "/devices");
+//            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Log.d(sTag, dataSnapshot.toString());
+//                    Log.d(sTag, "Children count = " + dataSnapshot.getChildrenCount());
+//                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//                    for(DataSnapshot child : children){
+//                        mAvailableDevices.add(child.getKey());
+//                    }
+//                    mProgressBar.setVisibility(View.GONE);
+//                    startFragment();
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    mProgressBar.setVisibility(View.GONE);
+//                    Log.d(sTag, "Database error!");
+//                }
+//            });
+//        }
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
@@ -52,6 +93,17 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
     }
+
+//    private void startFragment(){
+//        FragmentManager fm = getSupportFragmentManager();
+//        Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
+//        if (fragment == null) {
+//            fragment = new WidgetFragment();
+//            fm.beginTransaction()
+//                    .add(R.id.main_fragment_container, fragment)
+//                    .commit();
+//        }
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
