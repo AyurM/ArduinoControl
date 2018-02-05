@@ -11,9 +11,12 @@ import java.util.Locale;
 
 public class Utils {
     public static boolean isOnline(Context context){
+        NetworkInfo networkInfo = null;
         ConnectivityManager connManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        if(connManager != null){
+            networkInfo = connManager.getActiveNetworkInfo();
+        }
         return (networkInfo != null && networkInfo.isConnected());
     }
 

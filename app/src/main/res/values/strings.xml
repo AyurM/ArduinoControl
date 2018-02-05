@@ -34,6 +34,9 @@
     <string name="ui_delete_confirmation_title">Delete this widget?</string>
     <string name="ui_logout_confirmation_title">Sign out?</string>
     <string name="ui_delete_confirmation_text">This widget will be deleted permanently</string>
+    <string name="ui_loading_user_devices_text">Loading devices list…</string>
+    <string name="ui_loading_device_text">Loading device…</string>
+    <string name="ui_loading_widgets_text">Loading widgets…</string>
 
     <string name="ui_add_widget_edit_name_hint">Enter widget name</string>
     <string name="ui_add_widget_edit_pin_hint">Enter Arduino pin</string>

@@ -13,6 +13,8 @@ public interface IWidgetView extends IBasicView {
 
     void showLoadingUI(boolean isLoading);
 
+    void showLoadingUI(int loadingInfo);
+
     void showAddWidgetDialog();
 
     void showChangeDeviceDialog(List<String> deviceList);

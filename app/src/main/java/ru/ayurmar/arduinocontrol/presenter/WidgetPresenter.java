@@ -19,7 +19,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import ru.ayurmar.arduinocontrol.PreferencesActivity;
 import ru.ayurmar.arduinocontrol.R;
@@ -47,6 +46,9 @@ public class WidgetPresenter<V extends IWidgetView>
     private FarhomeDevice mFarhomeDevice;
     private List<FarhomeWidget> mWidgetList = new ArrayList<>();
     private List<String> mAvailableDevices = new ArrayList<>();
+    private DatabaseReference mUserDevicesRef;
+    private DatabaseReference mCurrentDeviceRef;
+    private DatabaseReference mWidgetsRef;
 
     @Inject
     public WidgetPresenter(IRepository repository, CompositeDisposable disposable,
@@ -56,32 +58,44 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
+    public void onAttach(V view){
+        super.onAttach(view);
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null){
+            mUserDevicesRef = FirebaseDatabase.getInstance()
+                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid() +
+                            "/" + DEVICES_ROOT);
+        }
+        loadUserDevices();
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+    }
+
+    @Override
     public void loadUserDevices() {
+        Log.d("MAIN_ACTIVITY", "loadUserDevices()");
         if (!Utils.isOnline(mContext)) {
             getView().showLongMessage(R.string.message_no_connection_text);
         }
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null) {
-            getView().showLoadingUI(true);
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid() +
-                            "/" + DEVICES_ROOT);
-            ref.keepSynced(true);
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        if (mUserDevicesRef != null) {
+            getView().showLoadingUI(R.string.ui_loading_user_devices_text);
+            mAvailableDevices.clear();
+            mUserDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getChildrenCount() == 0) {
-                        getView().showLoadingUI(false);
                         return;
                     }
-                    Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
-                    Log.d("MAIN_ACTIVITY", "Children count = " + dataSnapshot.getChildrenCount());
+                    Log.d("MAIN_ACTIVITY", "loadUserDevices(): " + dataSnapshot.toString());
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     for (DataSnapshot child : children) {
                         mAvailableDevices.add(child.getKey());
                     }
                     mDeviceSn = mAvailableDevices.get(0);
-                    getView().showLoadingUI(false);
                     loadDevice(mDeviceSn);
                 }
 
@@ -96,27 +110,25 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void loadDevice(String deviceSn){
+        Log.d("MAIN_ACTIVITY", "loadDevice()");
         if(!Utils.isOnline(mContext)){
             getView().showLongMessage(R.string.message_no_connection_text);
         }
-        if(mFarhomeDevice == null && !deviceSn.isEmpty()){
-            getView().showLoadingUI(true);
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference(DEVICES_ROOT + "/" + deviceSn);
-            ref.keepSynced(true);
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        if(!deviceSn.isEmpty()){
+            mCurrentDeviceRef = FirebaseDatabase.getInstance()
+                    .getReference(DEVICES_ROOT + "/" + mDeviceSn);
+            getView().showLoadingUI(R.string.ui_loading_device_text);
+            mCurrentDeviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getChildrenCount() == 0){
-                        getView().showLoadingUI(false);
                         getView().showLongMessage(R.string.message_device_not_found_text);
                         return;
                     }
-                    Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
-                    Log.d("MAIN_ACTIVITY", "Devices count = " + dataSnapshot.getChildrenCount());
+                    Log.d("MAIN_ACTIVITY", "loadDevice()" + dataSnapshot.toString());
                     mFarhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
                     getView().updateDeviceUI(mFarhomeDevice);
-                    getView().showLoadingUI(false);
                     loadWidgets(deviceSn);
                 }
 
@@ -131,37 +143,39 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void loadWidgets(String deviceSn){
+        Log.d("MAIN_ACTIVITY", "loadWidgets()");
         if(!Utils.isOnline(mContext)){
             getView().showLongMessage(R.string.message_no_connection_text);
         }
-
-        DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference(WIDGETS_ROOT + "/" + deviceSn);
-        getView().showLoadingUI(true);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getChildrenCount() == 0){
+        if(!deviceSn.isEmpty()){
+            mWidgetsRef = FirebaseDatabase.getInstance()
+                    .getReference(WIDGETS_ROOT + "/" + deviceSn);
+            mWidgetList.clear();
+            getView().showLoadingUI(R.string.ui_loading_widgets_text);
+            mWidgetsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getChildrenCount() == 0){
+                        getView().showLongMessage(R.string.message_no_widgets_found_text);
+                        return;
+                    }
+                    Log.d("MAIN_ACTIVITY", "loadWidgets()" + dataSnapshot.toString());
+                    for(DataSnapshot widget : dataSnapshot.getChildren()){
+                        FarhomeWidget farhomeWidget = widget.getValue(FarhomeWidget.class);
+                        mWidgetList.add(farhomeWidget);
+                    }
+                    Log.d("MAIN_ACTIVITY", "Parsed " + mWidgetList.size() + " widgets!");
                     getView().showLoadingUI(false);
-                    getView().showLongMessage(R.string.message_no_widgets_found_text);
-                    return;
+                    getView().showWidgetList(mWidgetList);
                 }
-                Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
-                for(DataSnapshot widget : dataSnapshot.getChildren()){
-                    FarhomeWidget farhomeWidget = widget.getValue(FarhomeWidget.class);
-                    mWidgetList.add(farhomeWidget);
-                }
-                Log.d("MAIN_ACTIVITY", "Parsed " + mWidgetList.size() + " widgets!");
-                getView().showLoadingUI(false);
-                getView().showWidgetList(mWidgetList);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                getView().showLoadingUI(false);
-                getView().showMessage(R.string.message_database_error_text);
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    getView().showLoadingUI(false);
+                    getView().showMessage(R.string.message_database_error_text);
+                }
+            });
+        }
     }
 
     @Override

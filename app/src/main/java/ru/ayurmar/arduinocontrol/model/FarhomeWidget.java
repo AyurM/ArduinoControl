@@ -2,6 +2,9 @@ package ru.ayurmar.arduinocontrol.model;
 
 
 public class FarhomeWidget {
+    public static final String ON = "ВКЛ";
+    public static final String OFF = "ВЫКЛ";
+
     private String mName;
     private String mValue;
     private long mTimestamp;
@@ -28,7 +31,13 @@ public class FarhomeWidget {
     }
 
     public void setValue(String value) {
-        mValue = value;
+        if(value.equals("true")){
+            mValue = ON;
+        } else if(value.equals("false")){
+            mValue = OFF;
+        } else {
+            mValue = value;
+        }
     }
 
     public long getTimestamp() {

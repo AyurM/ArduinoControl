@@ -8,14 +8,14 @@
             android:title="@string/ui_menu_settings_text"
             />
         <item
-            android:id="@+id/menu_about"
-            android:icon="@drawable/ic_about"
-            android:title="@string/ui_menu_about_text"
-            />
-        <item
             android:id="@+id/menu_change_device"
             android:icon="@drawable/ic_change_device"
             android:title="@string/ui_menu_change_device_text"
+            />
+        <item
+            android:id="@+id/menu_about"
+            android:icon="@drawable/ic_about"
+            android:title="@string/ui_menu_about_text"
             />
     </group>
 

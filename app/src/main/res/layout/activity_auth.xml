@@ -60,7 +60,7 @@
         android:id="@+id/email_sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_below="@+id/field_confirm_password"
+        android:layout_below="@+id/login_error_text_view"
         android:layout_marginBottom="16dp"
         android:text="@string/login_sign_in"
         android:theme="@style/ThemeOverlay.MyDarkButton"/>
@@ -77,7 +77,7 @@
 
     <TextView
         android:id="@+id/login_error_text_view"
-        android:layout_below="@+id/email_create_account_button"
+        android:layout_below="@+id/field_confirm_password"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/login_create_account"

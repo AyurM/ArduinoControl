@@ -49,6 +49,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
+    private TextView mLoadingInfoTextView;
     private LinearLayout mNoItemsLayout;
     private Menu mMenu;
     private boolean mIsDevMode;
@@ -60,6 +61,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
         mNoItemsLayout = view.findViewById(R.id.widget_no_items_layout);
         mProgressBar = view.findViewById(R.id.widget_progress_bar);
+        mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -91,9 +94,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void onResume(){
         super.onResume();
-        mPresenter.loadUserDevices();
-//        mPresenter.loadDevice();
-//        mPresenter.loadWidgets(mDeviceSn);
     }
 
     @Override
@@ -148,6 +148,13 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mNoItemsLayout.setAlpha(isLoading ? 0.1f : 1f);
         mRecyclerView.setAlpha(isLoading ? 0.1f : 1f);
         mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        mLoadingInfoTextView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showLoadingUI(int loadingInfoId){
+        showLoadingUI(true);
+        mLoadingInfoTextView.setText(getString(loadingInfoId));
     }
 
     @Override
@@ -269,7 +276,14 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         void bindWidget(FarhomeWidget widget, int position) {
             mWidget = widget;
             mPosition = position;
+
+            if(mWidget.getName().length() > 12){
+                mTextViewName.setTextSize(20);
+            } else {
+                mTextViewName.setTextSize(24);
+            }
             mTextViewName.setText(mWidget.getName());
+
             if(mWidget.getValue().length() > 3){
                 mTextViewValue.setTextSize(42);
             } else {
