@@ -23,12 +23,15 @@ import ru.ayurmar.arduinocontrol.R;
 
 public class ChangeDeviceDialog extends DialogFragment {
 
-    private static final String sDeviceListIndex = "DEVICE_LIST_INDEX";
-    public static final String SELECTED_DEVICE_INDEX = "SELECTED_DEVICE_INDEX";
+    private static final String sDeviceListIndex = "DEVICE_SN_LIST_INDEX";
+    private static final String sDeviceNamesIndex = "DEVICE_NAMES_LIST_INDEX";
+    public static final String SELECTED_DEVICE_INDEX = "SELECTED_DEVICE_SN";
 
-    public static ChangeDeviceDialog newInstance(ArrayList<String> deviceList){
+    public static ChangeDeviceDialog newInstance(ArrayList<String> deviceSnList,
+                                                 ArrayList<String> deviceNamesList){
         Bundle args = new Bundle();
-        args.putStringArrayList(sDeviceListIndex, deviceList);
+        args.putStringArrayList(sDeviceListIndex, deviceSnList);
+        args.putStringArrayList(sDeviceNamesIndex, deviceNamesList);
         ChangeDeviceDialog fragment = new ChangeDeviceDialog();
         fragment.setArguments(args);
         return fragment;
@@ -43,13 +46,16 @@ public class ChangeDeviceDialog extends DialogFragment {
         ListView listView = v.findViewById(R.id.change_device_list_view);
 
         ArrayList<String> deviceList = getArguments().getStringArrayList(sDeviceListIndex);
+        ArrayList<String> deviceNamesList = getArguments().getStringArrayList(sDeviceNamesIndex);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getTargetFragment().getActivity(),
                 android.R.layout.simple_list_item_1,
-                deviceList == null ? new ArrayList<>() : deviceList);
+                deviceNamesList == null ? new ArrayList<>() : deviceNamesList);
 
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            sendResult(i);
+            if(deviceList != null){
+                sendResult(deviceList.get(i));
+            }
             dismiss();
         });
 
@@ -60,12 +66,12 @@ public class ChangeDeviceDialog extends DialogFragment {
                 .create();
     }
 
-    private void sendResult(int position) {
+    private void sendResult(String deviceSn) {
         if (getTargetFragment() == null) {
             return;
         }
         Intent intent = new Intent();
-        intent.putExtra(SELECTED_DEVICE_INDEX, position);
+        intent.putExtra(SELECTED_DEVICE_INDEX, deviceSn);
         getTargetFragment()
                 .onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }

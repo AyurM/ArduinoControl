@@ -156,6 +156,9 @@ public class LoginActivity extends BaseActivity implements
 
     private void sendEmailVerification() {
         FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            return;
+        }
         user.sendEmailVerification()
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -230,6 +233,10 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void onSignInSuccess(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            return;
+        }
         //Действия при успешном входе с помощью e-mail и пароля
         if(mAuth.getCurrentUser().isEmailVerified()){
             mErrorTextView.setVisibility(View.GONE);

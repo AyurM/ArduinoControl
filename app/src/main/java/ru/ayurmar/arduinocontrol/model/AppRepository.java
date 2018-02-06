@@ -78,6 +78,11 @@ public class AppRepository implements IRepository {
     }
 
     @Override
+    public void saveStringPreference(String key, String value){
+        mPrefHelper.saveStringPreference(key, value);
+    }
+
+    @Override
     public void setAuthToken(String authToken){
         this.mAuthToken = authToken;
     }

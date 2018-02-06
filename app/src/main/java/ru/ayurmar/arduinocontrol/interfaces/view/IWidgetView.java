@@ -17,13 +17,11 @@ public interface IWidgetView extends IBasicView {
 
     void showAddWidgetDialog();
 
-    void showChangeDeviceDialog(List<String> deviceList);
+    void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList);
 
     void showEditWidgetDialog(FarhomeWidget widget);
 
     void showSendSmsDialog(String message, String phoneNumber);
-
-//    void showWidgetList(List<IWidget> widgets);
 
     void updateWidgetValue(int position);
 

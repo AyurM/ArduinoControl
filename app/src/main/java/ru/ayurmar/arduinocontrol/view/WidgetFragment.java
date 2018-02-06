@@ -129,9 +129,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                 mPresenter.deleteWidget(data
                         .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
             } else if(requestCode == sChangeDeviceCode){
-                showMessage("Device " +
-                        data.getIntExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX, -1)
-                        + " is selected!");
+                String deviceSn = data.getStringExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX);
+                mPresenter.loadDevice(deviceSn);
             }
         }
     }
@@ -211,12 +210,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showChangeDeviceDialog(List<String> deviceList){
-        if(deviceList.isEmpty()){
+    public void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList){
+        if(deviceSnList.isEmpty()){
             showMessage(R.string.ui_no_devices_found_text);
         }
         ChangeDeviceDialog deviceDialog = ChangeDeviceDialog
-                .newInstance((ArrayList<String>) deviceList);
+                .newInstance((ArrayList<String>) deviceSnList, (ArrayList<String>) deviceNamesList);
         deviceDialog.setTargetFragment(WidgetFragment.this, sChangeDeviceCode);
         deviceDialog.show(getActivity().getSupportFragmentManager(), sChangeDeviceTag);
     }

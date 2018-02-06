@@ -46,6 +46,7 @@ public class WidgetPresenter<V extends IWidgetView>
     private FarhomeDevice mFarhomeDevice;
     private List<FarhomeWidget> mWidgetList = new ArrayList<>();
     private List<String> mAvailableDevices = new ArrayList<>();
+    private List<String> mAvailableDevicesNames = new ArrayList<>();
     private DatabaseReference mUserDevicesRef;
     private DatabaseReference mCurrentDeviceRef;
     private DatabaseReference mWidgetsRef;
@@ -65,8 +66,14 @@ public class WidgetPresenter<V extends IWidgetView>
             mUserDevicesRef = FirebaseDatabase.getInstance()
                     .getReference(USERS_ROOT + "/" + firebaseUser.getUid() +
                             "/" + DEVICES_ROOT);
+            getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
+                    .subscribeOn(getScheduler().computation())
+                    .observeOn(getScheduler().main())
+                    .subscribe(deviceSn -> {
+                        mDeviceSn = deviceSn;
+                        loadUserDevices();
+                    });
         }
-        loadUserDevices();
     }
 
     @Override
@@ -84,6 +91,8 @@ public class WidgetPresenter<V extends IWidgetView>
         if (mUserDevicesRef != null) {
             getView().showLoadingUI(R.string.ui_loading_user_devices_text);
             mAvailableDevices.clear();
+            mAvailableDevicesNames.clear();
+            mUserDevicesRef.keepSynced(true);
             mUserDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -94,8 +103,11 @@ public class WidgetPresenter<V extends IWidgetView>
                     Iterable<DataSnapshot> children = dataSnapshot.getChildren();
                     for (DataSnapshot child : children) {
                         mAvailableDevices.add(child.getKey());
+                        mAvailableDevicesNames.add(child.getValue().toString());
                     }
-                    mDeviceSn = mAvailableDevices.get(0);
+                    if(mDeviceSn.isEmpty()){
+                        mDeviceSn = mAvailableDevices.get(0);
+                    }
                     loadDevice(mDeviceSn);
                 }
 
@@ -116,8 +128,11 @@ public class WidgetPresenter<V extends IWidgetView>
         }
 
         if(!deviceSn.isEmpty()){
+            getRepository().saveStringPreference(FirebaseAuth.getInstance()
+                    .getCurrentUser().getUid() + "deviceSn", deviceSn);
             mCurrentDeviceRef = FirebaseDatabase.getInstance()
-                    .getReference(DEVICES_ROOT + "/" + mDeviceSn);
+                    .getReference(DEVICES_ROOT + "/" + deviceSn);
+            mCurrentDeviceRef.keepSynced(true);
             getView().showLoadingUI(R.string.ui_loading_device_text);
             mCurrentDeviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -148,8 +163,12 @@ public class WidgetPresenter<V extends IWidgetView>
             getView().showLongMessage(R.string.message_no_connection_text);
         }
         if(!deviceSn.isEmpty()){
+            if(!deviceSn.equals(mDeviceSn)){
+                mDeviceSn = deviceSn;
+            }
             mWidgetsRef = FirebaseDatabase.getInstance()
                     .getReference(WIDGETS_ROOT + "/" + deviceSn);
+            mWidgetsRef.keepSynced(true);
             mWidgetList.clear();
             getView().showLoadingUI(R.string.ui_loading_widgets_text);
             mWidgetsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -200,7 +219,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void onChangeDeviceClick(){
-        getView().showChangeDeviceDialog(mAvailableDevices);
+        getView().showChangeDeviceDialog(mAvailableDevices, mAvailableDevicesNames);
     }
 
     @Override

@@ -18,6 +18,11 @@ public class AppPrefHelper implements IPrefHelper {
 
     @Override
     public Single<String> getStringPreference(String key){
-        return Single.fromCallable(() -> mPreferences.getString(key, null));
+        return Single.fromCallable(() -> mPreferences.getString(key, ""));
+    }
+
+    @Override
+    public void saveStringPreference(String key, String value){
+        mPreferences.edit().putString(key, value).apply();
     }
 }
