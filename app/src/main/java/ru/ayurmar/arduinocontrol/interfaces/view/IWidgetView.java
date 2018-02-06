@@ -17,6 +17,8 @@ public interface IWidgetView extends IBasicView {
 
     void showAddWidgetDialog();
 
+    void showAddDeviceDialog();
+
     void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList);
 
     void showEditWidgetDialog(FarhomeWidget widget);

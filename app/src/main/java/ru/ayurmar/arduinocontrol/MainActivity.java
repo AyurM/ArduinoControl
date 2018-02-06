@@ -150,6 +150,14 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        Spinner spinner = findViewById(R.id.main_toolbar_spinner);
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//                getSupportActionBar().getThemedContext(),
+//                R.array.toolbar_spinner_array, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
+
         mDrawerLayout = findViewById(R.id.main_layout_drawer);
         mNavigationView = findViewById(R.id.navigation_drawer);
 

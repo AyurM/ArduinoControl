@@ -18,6 +18,10 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onAddWidgetClick();
 
+    void onAddDeviceClick();
+
+    void bindDeviceToUser(String deviceSn, String deviceName);
+
     void onEditWidgetClick(FarhomeWidget widget);
 
     void deleteWidget(int position);

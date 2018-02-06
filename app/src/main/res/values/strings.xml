@@ -43,6 +43,9 @@
 
     <string name="ui_menu_add_widget_text">Add widget</string>
     <string name="ui_menu_add_device_text">Add device</string>
+    <string name="ui_menu_serial_number_hint_text">Serial number</string>
+    <string name="ui_menu_device_name_hint_text">Device name</string>
+    <string name="ui_menu_empty_device_sn_error_text">Serial number is empty!</string>
     <string name="ui_menu_select_device_text">Select device</string>
     <string name="ui_menu_edit_widget_text">Edit widget</string>
     <string name="ui_menu_device_status_text">Device status</string>
@@ -79,6 +82,7 @@
     <string name="message_no_widgets_found_text">No widgets found for this device!</string>
     <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
     <string name="message_device_online_text">Device is online</string>
+    <string name="message_sn_not_exist">Device does not exist!</string>
     <string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>
 
     <!--Placeholders-->
@@ -87,6 +91,7 @@
     <string name="placeholder_widget_type_text">Widget type</string>
     <string name="placeholder_widget_date_text">19.11.17 16:42</string>
     <string name="placeholder_widget_value_text">36.6</string>
+    <string name="placeholder_device_no_name_text">Unnamed</string>
 
     <!--Navigation Drawer-->
     <string name="drawer_list_item">Navigation drawer item</string>
@@ -98,4 +103,10 @@
         <item>Display</item>
         <item>Alarm sensor</item>
     </string-array>
+
+    <!--<string-array name="toolbar_spinner_array">-->
+        <!--<item>Rename</item>-->
+        <!--<item>Add device</item>-->
+        <!--<item>Change device</item>-->
+    <!--</string-array>-->
 </resources>

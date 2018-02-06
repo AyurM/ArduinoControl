@@ -44,6 +44,9 @@
 
     <string name="ui_menu_add_widget_text">Добавить виджет</string>
     <string name="ui_menu_add_device_text">Добавить устройство</string>
+    <string name="ui_menu_serial_number_hint_text">Серийный номер</string>
+    <string name="ui_menu_empty_device_sn_error_text">Серийный номер не указан!</string>
+    <string name="ui_menu_device_name_hint_text">Имя устройства</string>
     <string name="ui_menu_select_device_text">Выберите устройство</string>
     <string name="ui_menu_edit_widget_text">Правка виджета</string>
     <string name="ui_menu_device_status_text">Статус устройства</string>
@@ -81,6 +84,7 @@
     <string name="message_no_widgets_found_text">Виджеты для этого устройства не найдены!</string>
     <string name="message_add_edit_empty_name_text">Укажите имя виджета!</string>
     <string name="message_device_online_text">Устройство онлайн</string>
+    <string name="message_sn_not_exist">Серийный номер не найден!</string>
     <string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>
 
     <!--Заготовки-->
@@ -89,6 +93,7 @@
     <string name="placeholder_widget_type_text">Тип виджета</string>
     <string name="placeholder_widget_date_text">19.11.17 16:42</string>
     <string name="placeholder_widget_value_text">36.6</string>
+    <string name="placeholder_device_no_name_text">Без имени</string>
 
     <!--Навигационная панель-->
     <string name="drawer_list_item">Элемент навигационной панели</string>

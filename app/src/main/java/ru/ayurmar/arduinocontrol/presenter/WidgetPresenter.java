@@ -1,5 +1,9 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
+/**
+ * TODO:
+ * - обновление UI при привязке нового устройства
+ */
 
 import android.content.Context;
 import android.util.Log;
@@ -13,7 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -97,6 +103,8 @@ public class WidgetPresenter<V extends IWidgetView>
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getChildrenCount() == 0) {
+                        getView().showLoadingUI(false);
+                        getView().showWidgetList(mWidgetList);
                         return;
                     }
                     Log.d("MAIN_ACTIVITY", "loadUserDevices(): " + dataSnapshot.toString());
@@ -138,7 +146,9 @@ public class WidgetPresenter<V extends IWidgetView>
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getChildrenCount() == 0){
+                        getView().showLoadingUI(false);
                         getView().showLongMessage(R.string.message_device_not_found_text);
+                        getView().showWidgetList(mWidgetList);
                         return;
                     }
                     Log.d("MAIN_ACTIVITY", "loadDevice()" + dataSnapshot.toString());
@@ -175,6 +185,7 @@ public class WidgetPresenter<V extends IWidgetView>
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getChildrenCount() == 0){
+                        getView().showLoadingUI(false);
                         getView().showLongMessage(R.string.message_no_widgets_found_text);
                         return;
                     }
@@ -213,6 +224,11 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
+    public void onAddDeviceClick(){
+        getView().showAddDeviceDialog();
+    }
+
+    @Override
     public void onEditWidgetClick(FarhomeWidget widget){
         getView().showEditWidgetDialog(widget);
     }
@@ -220,6 +236,44 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onChangeDeviceClick(){
         getView().showChangeDeviceDialog(mAvailableDevices, mAvailableDevicesNames);
+    }
+
+    @Override
+    public void bindDeviceToUser(String deviceSn, String deviceName){
+        DatabaseReference deviceRootRef = FirebaseDatabase.getInstance()
+                .getReference(DEVICES_ROOT);
+        deviceRootRef.child(deviceSn).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                FarhomeDevice farhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
+                if(farhomeDevice != null){
+                    if(farhomeDevice.getUser() != null){
+                        Log.d("MAIN_ACTIVITY", farhomeDevice.getUser());
+                        Log.d("MAIN_ACTIVITY", "This device is not yours, beech!");
+                        return;
+                    }
+                    Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null){
+                        DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                                .getReference();
+                        Map<String, Object> deviceUpdates = new HashMap<>();
+                        deviceUpdates.put(USERS_ROOT + "/" + user.getUid() + "/" +
+                        DEVICES_ROOT + "/" + deviceSn, deviceName);
+                        deviceUpdates.put(DEVICES_ROOT + "/" + deviceSn + "/user",
+                                user.getUid());
+                        deviceUpdates.put(DEVICES_ROOT + "/" + deviceSn + "/name",
+                                deviceName);
+                        dbRef.updateChildren(deviceUpdates);
+                    }
+                } else{
+                    getView().showLongMessage(R.string.message_sn_not_exist);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     @Override

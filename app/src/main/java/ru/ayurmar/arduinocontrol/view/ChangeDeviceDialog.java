@@ -61,7 +61,7 @@ public class ChangeDeviceDialog extends DialogFragment {
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setTitle(R.string.ui_menu_select_device_text)
+//                .setTitle(R.string.ui_menu_select_device_text)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }

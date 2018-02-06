@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,8 +45,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private static final int sAddWidgetRequestCode = 0;
     private static final int sConfirmDeleteCode = 1;
     private static final int sChangeDeviceCode = 2;
+    private static final int sAddDeviceCode = 3;
     private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
     private static final String sChangeDeviceTag = "CHANGE_DEVICE_DIALOG";
+    private static final String sAddDeviceTag = "ADD_DEVICE_DIALOG";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -74,6 +77,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
+        addDeviceButton.setOnClickListener(view1 -> mPresenter.onAddDeviceClick());
 
         mPresenter.onAttach(this);
         return view;
@@ -131,6 +136,13 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             } else if(requestCode == sChangeDeviceCode){
                 String deviceSn = data.getStringExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX);
                 mPresenter.loadDevice(deviceSn);
+            } else if(requestCode == sAddDeviceCode){
+                String deviseSn = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_SN_INDEX);
+                String deviceName = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_NAME_INDEX);
+                if(deviceName.isEmpty()){
+                    deviceName = getString(R.string.placeholder_device_no_name_text);
+                }
+                mPresenter.bindDeviceToUser(deviseSn, deviceName);
             }
         }
     }
@@ -198,6 +210,13 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
         intent.putExtra(AddWidgetActivity.WIDGET_ID, "");
         startActivityForResult(intent, sAddWidgetRequestCode);
+    }
+
+    @Override
+    public void showAddDeviceDialog(){
+        AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+        addDeviceDialog.setTargetFragment(WidgetFragment.this, sAddDeviceCode);
+        addDeviceDialog.show(getActivity().getSupportFragmentManager(), sAddDeviceTag);
     }
 
     @Override
