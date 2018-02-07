@@ -1,15 +1,11 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
-/**
- * TODO:
- * - обновление UI при привязке нового устройства
- */
-
 import android.content.Context;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -56,6 +52,8 @@ public class WidgetPresenter<V extends IWidgetView>
     private DatabaseReference mUserDevicesRef;
     private DatabaseReference mCurrentDeviceRef;
     private DatabaseReference mWidgetsRef;
+    private ChildEventListener mUserDevicesListener;
+    private ChildEventListener mWidgetsListener;
 
     @Inject
     public WidgetPresenter(IRepository repository, CompositeDisposable disposable,
@@ -70,13 +68,14 @@ public class WidgetPresenter<V extends IWidgetView>
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null){
             mUserDevicesRef = FirebaseDatabase.getInstance()
-                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid() +
-                            "/" + DEVICES_ROOT);
+                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid()
+                            + "/" + DEVICES_ROOT);
             getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
                     .subscribeOn(getScheduler().computation())
                     .observeOn(getScheduler().main())
                     .subscribe(deviceSn -> {
                         mDeviceSn = deviceSn;
+                        Log.d("MAIN_ACTIVITY", "mDeviceSn = " + mDeviceSn);
                         loadUserDevices();
                     });
         }
@@ -85,43 +84,59 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onDetach(){
         super.onDetach();
+        removeFirebaseListeners();
+        Log.d("MAIN_ACTIVITY", "WidgetPresenter is detached!");
     }
 
     @Override
     public void loadUserDevices() {
         Log.d("MAIN_ACTIVITY", "loadUserDevices()");
         if (!Utils.isOnline(mContext)) {
-            getView().showLongMessage(R.string.message_no_connection_text);
+            getView().showNoConnectionUI(false);
+            return;
         }
-
+        getView().showNoConnectionUI(true);
         if (mUserDevicesRef != null) {
-            getView().showLoadingUI(R.string.ui_loading_user_devices_text);
             mAvailableDevices.clear();
             mAvailableDevicesNames.clear();
             mUserDevicesRef.keepSynced(true);
-            mUserDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            mUserDevicesListener = mUserDevicesRef.addChildEventListener(new ChildEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.getChildrenCount() == 0) {
-                        getView().showLoadingUI(false);
-                        getView().showWidgetList(mWidgetList);
-                        return;
-                    }
-                    Log.d("MAIN_ACTIVITY", "loadUserDevices(): " + dataSnapshot.toString());
-                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-                    for (DataSnapshot child : children) {
-                        mAvailableDevices.add(child.getKey());
-                        mAvailableDevicesNames.add(child.getValue().toString());
-                    }
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Log.d("MAIN_ACTIVITY", "key = " + dataSnapshot.getKey() +
+                    "; value = " + dataSnapshot.getValue());
+                    String deviceSn = dataSnapshot.getKey();
+                    mAvailableDevices.add(deviceSn);
+                    mAvailableDevicesNames.add((String) dataSnapshot.getValue());
                     if(mDeviceSn.isEmpty()){
-                        mDeviceSn = mAvailableDevices.get(0);
+                        mDeviceSn = deviceSn;
+                        loadDevice(deviceSn);
+                    } else if(deviceSn.equals(mDeviceSn)){
+                        loadDevice(deviceSn);
                     }
-                    loadDevice(mDeviceSn);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    Log.d("MAIN_ACTIVITY", "onChildChanged: " + s +
+                            "; " + dataSnapshot.toString());
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Log.d("MAIN_ACTIVITY", "onChildRemoved: " + dataSnapshot.toString());
+                    mAvailableDevices.remove(dataSnapshot.getKey());
+                    mAvailableDevicesNames.remove(dataSnapshot.getValue());
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    Log.d("MAIN_ACTIVITY", "onChildMoved: " + s +
+                            "; " + dataSnapshot.toString());
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    getView().showLoadingUI(false);
                     getView().showMessage(R.string.message_database_error_text);
                 }
             });
@@ -140,7 +155,7 @@ public class WidgetPresenter<V extends IWidgetView>
                     .getCurrentUser().getUid() + "deviceSn", deviceSn);
             mCurrentDeviceRef = FirebaseDatabase.getInstance()
                     .getReference(DEVICES_ROOT + "/" + deviceSn);
-            mCurrentDeviceRef.keepSynced(true);
+//            mCurrentDeviceRef.keepSynced(true);
             getView().showLoadingUI(R.string.ui_loading_device_text);
             mCurrentDeviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -197,6 +212,7 @@ public class WidgetPresenter<V extends IWidgetView>
                     Log.d("MAIN_ACTIVITY", "Parsed " + mWidgetList.size() + " widgets!");
                     getView().showLoadingUI(false);
                     getView().showWidgetList(mWidgetList);
+                    addWidgetsListener();
                 }
 
                 @Override
@@ -206,6 +222,39 @@ public class WidgetPresenter<V extends IWidgetView>
                 }
             });
         }
+    }
+
+    private void addWidgetsListener(){
+        Log.d("MAIN_ACTIVITY", "addWidgetsListener()");
+        mWidgetsListener = mWidgetsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("MAIN_ACTIVITY", "Widgets onChildChanged: " + s +
+                        "; " + dataSnapshot.toString());
+                FarhomeWidget changedWidget = dataSnapshot.getValue(FarhomeWidget.class);
+                getView().updateWidget(changedWidget);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                getView().showMessage(R.string.message_database_error_text);
+            }
+        });
+
     }
 
     @Override
@@ -247,6 +296,7 @@ public class WidgetPresenter<V extends IWidgetView>
             public void onDataChange(DataSnapshot dataSnapshot) {
                 FarhomeDevice farhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
                 if(farhomeDevice != null){
+                    //устройство найдено, но принадлежит другому пользователю
                     if(farhomeDevice.getUser() != null){
                         Log.d("MAIN_ACTIVITY", farhomeDevice.getUser());
                         Log.d("MAIN_ACTIVITY", "This device is not yours, beech!");
@@ -255,6 +305,10 @@ public class WidgetPresenter<V extends IWidgetView>
                     Log.d("MAIN_ACTIVITY", dataSnapshot.toString());
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     if(user != null){
+                        //закрепить устройство за данным юзером
+                        mDeviceSn = deviceSn;
+                        getRepository().saveStringPreference(user.getUid() +
+                                "deviceSn", mDeviceSn);
                         DatabaseReference dbRef = FirebaseDatabase.getInstance()
                                 .getReference();
                         Map<String, Object> deviceUpdates = new HashMap<>();
@@ -395,6 +449,16 @@ public class WidgetPresenter<V extends IWidgetView>
     private boolean isCorrectPhoneNumber(String phoneNumber){
         return ((phoneNumber.startsWith("+7") && phoneNumber.length() == 12) ||
                 (phoneNumber.startsWith("8") && phoneNumber.length() == 11));
+    }
+
+    private void removeFirebaseListeners(){
+        if(mUserDevicesRef != null){
+            mUserDevicesRef.removeEventListener(mUserDevicesListener);
+        }
+        if(mWidgetsRef != null){
+            mWidgetsRef.removeEventListener(mWidgetsListener);
+        }
+
     }
 
     private void handleDisplayRequestResponse(String responseString,

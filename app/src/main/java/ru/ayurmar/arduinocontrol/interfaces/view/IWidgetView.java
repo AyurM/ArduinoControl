@@ -3,7 +3,6 @@ package ru.ayurmar.arduinocontrol.interfaces.view;
 
 import java.util.List;
 
-import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
@@ -15,6 +14,8 @@ public interface IWidgetView extends IBasicView {
 
     void showLoadingUI(int loadingInfo);
 
+    void showNoConnectionUI(boolean isConnected);
+
     void showAddWidgetDialog();
 
     void showAddDeviceDialog();
@@ -25,7 +26,7 @@ public interface IWidgetView extends IBasicView {
 
     void showSendSmsDialog(String message, String phoneNumber);
 
-    void updateWidgetValue(int position);
+    void updateWidget(FarhomeWidget widget);
 
     void updateDeviceUI(FarhomeDevice device);
 

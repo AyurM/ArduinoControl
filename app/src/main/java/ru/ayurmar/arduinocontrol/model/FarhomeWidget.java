@@ -5,6 +5,7 @@ public class FarhomeWidget {
     public static final String ON = "ВКЛ";
     public static final String OFF = "ВЫКЛ";
 
+    private String mDbkey;
     private String mName;
     private String mValue;
     private long mTimestamp;
@@ -12,7 +13,8 @@ public class FarhomeWidget {
     public FarhomeWidget(){
     }
 
-    public FarhomeWidget(String name, String value, long timestamp) {
+    public FarhomeWidget(String dbkey, String name, String value, long timestamp) {
+        mDbkey = dbkey;
         mName = name;
         mValue = value;
         mTimestamp = timestamp;
@@ -46,5 +48,13 @@ public class FarhomeWidget {
 
     public void setTimestamp(long timestamp) {
         mTimestamp = timestamp;
+    }
+
+    public String getDbkey() {
+        return mDbkey;
+    }
+
+    public void setDbkey(String dbkey) {
+        mDbkey = dbkey;
     }
 }

@@ -53,6 +53,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mLoadingInfoTextView;
+    private TextView mNoConnectionTextView;
     private LinearLayout mNoItemsLayout;
     private Menu mMenu;
     private boolean mIsDevMode;
@@ -75,6 +76,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mNoItemsLayout = view.findViewById(R.id.widget_no_items_layout);
         mProgressBar = view.findViewById(R.id.widget_progress_bar);
         mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
+        mNoConnectionTextView = view.findViewById(R.id.widget_no_connection_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
@@ -155,9 +157,14 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
+    public void showNoConnectionUI(boolean isConnected){
+        mNoConnectionTextView.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
     public void showLoadingUI(boolean isLoading){
-        mNoItemsLayout.setAlpha(isLoading ? 0.1f : 1f);
-        mRecyclerView.setAlpha(isLoading ? 0.1f : 1f);
+        mNoItemsLayout.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        mRecyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         mLoadingInfoTextView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
@@ -193,8 +200,18 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void updateWidgetValue(int position){
-        mRecyclerView.getAdapter().notifyItemChanged(position);
+    public void updateWidget(FarhomeWidget widget){
+        List<FarhomeWidget> adapterList = getWidgetList();
+        for(int i = 0; i < adapterList.size(); i++){
+            FarhomeWidget oldWidget = adapterList.get(i);
+            if(oldWidget.getDbkey().equals(widget.getDbkey())){
+                oldWidget.setName(widget.getName());
+                oldWidget.setTimestamp(widget.getTimestamp());
+                oldWidget.setValue(widget.getValue());
+                mRecyclerView.getAdapter().notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     public void updateWidgetList(){
