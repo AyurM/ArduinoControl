@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,10 +15,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,18 +34,27 @@ import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 
 public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private static final int sAddWidgetRequestCode = 0;
     private static final int sConfirmDeleteCode = 1;
+    private static final int sChangeDeviceCode = 2;
+    private static final int sAddDeviceCode = 3;
+    private static final int sRenameDeviceCode = 4;
     private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
+    private static final String sChangeDeviceTag = "CHANGE_DEVICE_DIALOG";
+    private static final String sAddDeviceTag = "ADD_DEVICE_DIALOG";
+    private static final String sRenameDeviceTag = "RENAME_DEVICE_DIALOG";
 
     private RecyclerView mRecyclerView;
-    private TextView mTextViewNoItems;
     private ProgressBar mProgressBar;
+    private TextView mLoadingInfoTextView;
+    private TextView mNoConnectionTextView;
+    private LinearLayout mNoItemsLayout;
     private Menu mMenu;
     private boolean mIsDevMode;
 
@@ -53,6 +65,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
 
     @Override
@@ -60,10 +73,14 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_widget, container, false);
 
-        mTextViewNoItems = view.findViewById(R.id.widget_text_view_no_items);
+        mNoItemsLayout = view.findViewById(R.id.widget_no_items_layout);
         mProgressBar = view.findViewById(R.id.widget_progress_bar);
+        mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
+        mNoConnectionTextView = view.findViewById(R.id.widget_no_connection_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
+        addDeviceButton.setOnClickListener(view1 -> mPresenter.onAddDeviceClick());
 
         mPresenter.onAttach(this);
         return view;
@@ -84,7 +101,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void onResume(){
         super.onResume();
-        mPresenter.loadWidgetListFromDb();
     }
 
     @Override
@@ -115,10 +131,23 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if(requestCode == sAddWidgetRequestCode){
-                mPresenter.loadWidgetListFromDb();
-            } else if (requestCode == sConfirmDeleteCode){
+//                mPresenter.loadWidgetListFromDb();
+            } else if(requestCode == sConfirmDeleteCode){
                 mPresenter.deleteWidget(data
                         .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
+            } else if(requestCode == sChangeDeviceCode){
+                String deviceSn = data.getStringExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX);
+                mPresenter.loadDevice(deviceSn);
+            } else if(requestCode == sAddDeviceCode){
+                String deviseSn = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_SN_INDEX);
+                String deviceName = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_NAME_INDEX);
+                if(deviceName.isEmpty()){
+                    deviceName = getString(R.string.placeholder_device_no_name_text);
+                }
+                mPresenter.bindDeviceToUser(deviseSn, deviceName);
+            } else if(requestCode == sRenameDeviceCode){
+                String newName = data.getStringExtra(RenameDeviceDialog.NEW_DEVICE_NAME_INDEX);
+                mPresenter.renameCurrentDevice(newName);
             }
         }
     }
@@ -131,32 +160,72 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showLoadingUI(boolean isLoading){
-        mTextViewNoItems.setAlpha(isLoading ? 0.1f : 1f);
-        mRecyclerView.setAlpha(isLoading ? 0.1f : 1f);
-        mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    public void showNoConnectionUI(boolean isConnected){
+        mNoConnectionTextView.setVisibility(isConnected ? View.GONE : View.VISIBLE);
     }
 
     @Override
-    public void showWidgetList(List<IWidget> widgets){
+    public void showLoadingUI(boolean isLoading){
+        mNoItemsLayout.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        mRecyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        mProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        mLoadingInfoTextView.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showLoadingUI(int loadingInfoId){
+        showLoadingUI(true);
+        mLoadingInfoTextView.setText(getString(loadingInfoId));
+    }
+
+    @Override
+    public void updateDeviceUI(FarhomeDevice device){
+        if(device != null && device.getName() != null){
+            MainActivity activity = (MainActivity) getActivity();
+            if(activity != null){
+                activity.changeToolbarTitle(device.getName());
+            }
+        }
+    }
+
+    @Override
+    public void showWidgetList(List<FarhomeWidget> widgets){
         mRecyclerView.setAdapter(new WidgetAdapter(widgets));
         showNoItemsUI(widgets.isEmpty());
     }
 
     @Override
-    public List<IWidget> getWidgetList(){
+    public void onChangeDeviceClick(){
+        mPresenter.onChangeDeviceClick();
+    }
+
+    @Override
+    public List<FarhomeWidget> getWidgetList(){
         return ((WidgetAdapter) mRecyclerView.getAdapter()).getItemsList();
     }
 
     @Override
-    public void updateWidgetValue(int position){
-        mRecyclerView.getAdapter().notifyItemChanged(position);
+    public void updateWidget(FarhomeWidget widget){
+        List<FarhomeWidget> adapterList = getWidgetList();
+        for(int i = 0; i < adapterList.size(); i++){
+            FarhomeWidget oldWidget = adapterList.get(i);
+            if(oldWidget.getDbkey().equals(widget.getDbkey())){
+                oldWidget.setName(widget.getName());
+                oldWidget.setTimestamp(widget.getTimestamp());
+                oldWidget.setValue(widget.getValue());
+                mRecyclerView.getAdapter().notifyItemChanged(i);
+                break;
+            }
+        }
     }
 
     public void updateWidgetList(){
-        mIsDevMode = ((MainActivity) getActivity()).isDevMode();
+        MainActivity activity = (MainActivity) getActivity();
+        if(activity != null){
+            mIsDevMode = activity.isDevMode();
+        }
         getActivity().invalidateOptionsMenu();
-        mPresenter.loadWidgetListFromDb();
+//        mPresenter.loadWidgetListFromDb();
     }
 
     @Override
@@ -169,12 +238,37 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showEditWidgetDialog(IWidget widget){
-        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
-        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
-        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
-        intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
-        startActivityForResult(intent, sAddWidgetRequestCode);
+    public void showAddDeviceDialog(){
+        AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+        addDeviceDialog.setTargetFragment(WidgetFragment.this, sAddDeviceCode);
+        addDeviceDialog.show(getActivity().getSupportFragmentManager(), sAddDeviceTag);
+    }
+
+    @Override
+    public void showRenameDeviceDialog(String currentName){
+        RenameDeviceDialog renameDeviceDialog = RenameDeviceDialog.newInstance(currentName);
+        renameDeviceDialog.setTargetFragment(WidgetFragment.this, sRenameDeviceCode);
+        renameDeviceDialog.show(getActivity().getSupportFragmentManager(), sRenameDeviceTag);
+    }
+
+    @Override
+    public void showEditWidgetDialog(FarhomeWidget widget){
+//        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
+//        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
+//        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
+//        intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
+//        startActivityForResult(intent, sAddWidgetRequestCode);
+    }
+
+    @Override
+    public void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList){
+        if(deviceSnList.isEmpty()){
+            showMessage(R.string.ui_no_devices_found_text);
+        }
+        ChangeDeviceDialog deviceDialog = ChangeDeviceDialog
+                .newInstance((ArrayList<String>) deviceSnList, (ArrayList<String>) deviceNamesList);
+        deviceDialog.setTargetFragment(WidgetFragment.this, sChangeDeviceCode);
+        deviceDialog.show(getActivity().getSupportFragmentManager(), sChangeDeviceTag);
     }
 
     @Override
@@ -198,12 +292,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private void showNoItemsUI(boolean isEmpty){
-        mTextViewNoItems.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        mNoItemsLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
-        private IWidget mWidget;
+        private FarhomeWidget mWidget;
         private int mPosition = -1;
         private TextView mTextViewName;
         private TextView mTextViewValue;
@@ -221,27 +315,27 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
             mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
             mButtonDelete.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
-
-            Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
-                    "fonts/OpenSans-Regular.ttf");
-            mTextViewName.setTypeface(font);
-            mTextViewValue.setTypeface(font);
-            mTextViewDate.setTypeface(font);
         }
 
-        void bindWidget(IWidget widget, int position) {
+        void bindWidget(FarhomeWidget widget, int position) {
             mWidget = widget;
             mPosition = position;
+
+            if(mWidget.getName().length() > 12){
+                mTextViewName.setTextSize(20);
+            } else {
+                mTextViewName.setTextSize(24);
+            }
             mTextViewName.setText(mWidget.getName());
+
             if(mWidget.getValue().length() > 3){
                 mTextViewValue.setTextSize(42);
             } else {
                 mTextViewValue.setTextSize(48);
             }
             mTextViewValue.setText(mWidget.getValue());
-            mTextViewDate.setText(Utils.formatDate(mWidget.getLastUpdateTime(), getContext()));
-
-            toggleValueLoadingUI(mWidget.isValueLoading());
+            mTextViewDate.setText(Utils.formatDate(new Date(mWidget.getTimestamp()),
+                    getContext()));
 
             mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
             mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
@@ -249,15 +343,15 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));
         }
 
-        private void toggleValueLoadingUI(boolean isLoading){
-            mTextViewValue.setAlpha(isLoading ? 0.1f : 1f);
-        }
+//        private void toggleValueLoadingUI(boolean isLoading){
+//            mTextViewValue.setAlpha(isLoading ? 0.1f : 1f);
+//        }
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{
-        private List<IWidget> mWidgets;
+        private List<FarhomeWidget> mWidgets;
 
-        WidgetAdapter(List<IWidget> list){
+        WidgetAdapter(List<FarhomeWidget> list){
             this.mWidgets = list;
         }
 
@@ -279,7 +373,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             return mWidgets.size();
         }
 
-        private List<IWidget> getItemsList(){
+        private List<FarhomeWidget> getItemsList(){
             return mWidgets;
         }
     }

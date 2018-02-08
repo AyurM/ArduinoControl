@@ -17,11 +17,16 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import ru.ayurmar.arduinocontrol.model.FarhomeUser;
 
 public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
     private static final String sLoginEmailIndex = "LOGIN_EMAIL_INDEX";
+    private static final String sUsersRootPath = "users";
     private TextView mRegisterTextView;
     private TextView mExistingAccountTextView;
     private TextView mErrorTextView;
@@ -151,6 +156,9 @@ public class LoginActivity extends BaseActivity implements
 
     private void sendEmailVerification() {
         FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            return;
+        }
         user.sendEmailVerification()
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -159,11 +167,23 @@ public class LoginActivity extends BaseActivity implements
                                         + " " + user.getEmail(),
                                 Toast.LENGTH_LONG).show();
                         showCreateAccountUI(false);
+                        addNewUserToDatabase();
                     } else {
                         mErrorTextView.setText(R.string.login_verification_email_failed);
                         mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
+    }
+
+    private void addNewUserToDatabase(){
+        //должно выполняться только один раз при регистрации
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if(firebaseUser != null){
+            FarhomeUser newUser = new FarhomeUser(firebaseUser.getEmail());
+            DatabaseReference usersRef = FirebaseDatabase.getInstance()
+                    .getReference(sUsersRootPath);
+            usersRef.child(firebaseUser.getUid()).setValue(newUser);
+        }
     }
 
     private boolean validateForm() {
@@ -213,6 +233,10 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void onSignInSuccess(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null){
+            return;
+        }
         //Действия при успешном входе с помощью e-mail и пароля
         if(mAuth.getCurrentUser().isEmailVerified()){
             mErrorTextView.setVisibility(View.GONE);

@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="none">
+    <group android:checkableBehavior="none"
+        android:id="@+id/nav_drawer_menu_group_top">
         <item
             android:id="@+id/menu_settings"
             android:icon="@drawable/ic_settings"
             android:title="@string/ui_menu_settings_text"
             />
         <item
+            android:id="@+id/menu_change_device"
+            android:icon="@drawable/ic_change_device"
+            android:title="@string/ui_menu_change_device_text"
+            />
+        <item
             android:id="@+id/menu_about"
             android:icon="@drawable/ic_about"
             android:title="@string/ui_menu_about_text"
             />
+    </group>
+
+    <group android:checkableBehavior="none"
+           android:id="@+id/nav_drawer_menu_group_bottom">
         <item
             android:id="@+id/menu_logout"
             android:icon="@drawable/ic_logout"

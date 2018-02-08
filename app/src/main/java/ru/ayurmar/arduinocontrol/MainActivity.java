@@ -12,25 +12,29 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.view.InfoFragment;
 import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity
         implements InfoFragment.InfoDialogListener,
-        LogoutConfirmationFragment.LogoutDialogListener {
+        LogoutConfirmationFragment.LogoutDialogListener,
+        PopupMenu.OnMenuItemClickListener{
 
-    private static final int sConfirmLogoutCode = 1;
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
     private static final String sConfirmLogoutTag = "CONFIRM_LOGOUT_DIALOG";
+//    private static final String sTag = "MAIN_ACTIVITY";
     public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
+    private TextView mToolbarTitle;
     private boolean mIsDevMode;
     private FirebaseAuth mAuth;
 
@@ -43,6 +47,33 @@ public class MainActivity extends AppCompatActivity
 
         setupToolbarAndDrawer();
 
+//        mProgressBar = findViewById(R.id.main_progress_bar);
+//        mProgressBar.setVisibility(View.VISIBLE);
+//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//        if(firebaseUser != null){
+//            DatabaseReference ref = FirebaseDatabase.getInstance()
+//                    .getReference("users/" + firebaseUser.getUid() + "/devices");
+//            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    Log.d(sTag, dataSnapshot.toString());
+//                    Log.d(sTag, "Children count = " + dataSnapshot.getChildrenCount());
+//                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+//                    for(DataSnapshot child : children){
+//                        mAvailableDevices.add(child.getKey());
+//                    }
+//                    mProgressBar.setVisibility(View.GONE);
+//                    startFragment();
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    mProgressBar.setVisibility(View.GONE);
+//                    Log.d(sTag, "Database error!");
+//                }
+//            });
+//        }
+
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
         if (fragment == null) {
@@ -52,6 +83,17 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
     }
+
+//    private void startFragment(){
+//        FragmentManager fm = getSupportFragmentManager();
+//        Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
+//        if (fragment == null) {
+//            fragment = new WidgetFragment();
+//            fm.beginTransaction()
+//                    .add(R.id.main_fragment_container, fragment)
+//                    .commit();
+//        }
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -99,8 +141,38 @@ public class MainActivity extends AppCompatActivity
     public void onLogoutNegativeClick(){
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item){
+        FragmentManager fm = getSupportFragmentManager();
+        IWidgetView widgetView = (IWidgetView) fm.findFragmentById(R.id.main_fragment_container);
+        //всплывающее меню при нажатии на название в тулбаре
+        switch (item.getItemId()){
+            case R.id.menu_rename_device:
+                if(widgetView != null){
+                    widgetView.showRenameDeviceDialog(mToolbarTitle.getText().toString());
+                }
+                return true;
+            case R.id.menu_popup_add_device:
+                if(widgetView != null){
+                    widgetView.showAddDeviceDialog();
+                }
+                return true;
+            case R.id.menu_popup_change_device:
+                if(widgetView != null){
+                    widgetView.onChangeDeviceClick();
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
     public boolean isDevMode(){
         return mIsDevMode;
+    }
+
+    public void changeToolbarTitle(String title){
+        mToolbarTitle.setText(title);
     }
 
     private void setupToolbarAndDrawer(){
@@ -108,6 +180,18 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mToolbarTitle = toolbar.findViewById(R.id.toolbar_title);
+
+        //всплывающее меню при нажатии на название в тулбаре
+        mToolbarTitle.setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(this, view);
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.inflate(R.menu.device_popup_menu);
+            popupMenu.show();
+        });
+
 
         mDrawerLayout = findViewById(R.id.main_layout_drawer);
         mNavigationView = findViewById(R.id.navigation_drawer);
@@ -152,8 +236,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.menu_about:
-                InfoFragment fragment = new InfoFragment();
-                fragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                InfoFragment infoFragment = new InfoFragment();
+                infoFragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                break;
+            case R.id.menu_change_device:
+                FragmentManager fm = getSupportFragmentManager();
+                IWidgetView widgetView = (IWidgetView) fm.findFragmentById(R.id.main_fragment_container);
+                widgetView.onChangeDeviceClick();
                 break;
             case R.id.menu_logout:
                 LogoutConfirmationFragment logoutFragment = new LogoutConfirmationFragment();

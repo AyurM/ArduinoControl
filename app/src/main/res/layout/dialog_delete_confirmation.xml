@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          android:id="@+id/dialog_confirm_delete_text"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:gravity="center"
           android:padding="20dp"
           android:text="@string/ui_delete_confirmation_text"
-          android:textSize="24sp"/>
+          android:textSize="24sp"
+          android:fontFamily="@font/open_sans"/>

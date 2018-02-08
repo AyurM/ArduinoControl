@@ -20,6 +20,9 @@ public class MainApp extends Application {
     public void onCreate(){
         super.onCreate();
         sInstance = this;
+
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         mAppComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(this))
                 .widgetModule(new WidgetModule())

@@ -4,13 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-
+    <TextView
+        android:id="@+id/info_title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/ui_about_text"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20sp"
+        android:fontFamily="@font/open_sans"
+        android:padding="8dp"/>
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="24dp"
-        android:src="@mipmap/ic_launcher_round"/>
+        android:src="@mipmap/ic_launcher_round"
+        android:contentDescription="@string/login_logo_description"/>
     <TextView
         android:id="@+id/info_version_text_view"
         android:layout_width="wrap_content"
@@ -18,5 +28,7 @@
         android:layout_gravity="center"
         android:padding="8dp"
         android:textSize="18sp"
-        android:text="@string/ui_version_text"/>
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/ui_version_text"
+        android:fontFamily="@font/open_sans"/>
 </LinearLayout>
