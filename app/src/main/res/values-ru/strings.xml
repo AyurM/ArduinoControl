@@ -6,8 +6,10 @@
     <string name="login_hint_password">Пароль</string>
     <string name="login_hint_confirm_password">Подтвердите пароль</string>
     <string name="login_create_account">Зарегистрироваться</string>
+    <string name="login_forgot_password">Забыли пароль?</string>
+    <string name="login_reset_password">Сбросить пароль</string>
     <string name="login_sign_in">Войти</string>
-    <string name="login_existing_account">У меня уже есть учетная запись</string>
+    <string name="login_existing_account">У меня есть учетная запись</string>
     <string name="login_verify_email">Пожалуйста, подтвердите адрес электронной почты!</string>
     <string name="login_loading">Загрузка…</string>
     <string name="login_empty_field_warning">Поле не может быть пустым!</string>
@@ -17,6 +19,8 @@
         отправлен на</string>
     <string name="login_verification_email_failed">Не удалось отправить запрос подтверждения
         регистрации на указанный e-mail!</string>
+    <string name="login_reset_password_email_sent">Письмо для сброса пароля отправлено на</string>
+    <string name="login_reset_password_email_failed">Не удалось отправить письмо для сброса пароля!</string>
     <string name="login_auth_failed">Ошибка аутентификации</string>
     <string name="login_account_exists">Аккаунт уже существует!</string>
     <string name="login_weak_password">Небезопасный пароль!</string>

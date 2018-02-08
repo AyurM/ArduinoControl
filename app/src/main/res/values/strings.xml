@@ -8,6 +8,8 @@
     <string name="login_hint_confirm_password">Confirm password</string>
     <string name="login_sign_in">Sign In</string>
     <string name="login_create_account">Create account</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="login_reset_password">Reset password</string>
     <string name="login_existing_account">Use existing account</string>
     <string name="login_verify_email">Please verify your e-mail!</string>
     <string name="login_loading">Loading…</string>
@@ -15,14 +17,16 @@
     <string name="login_passwords_mismatch">Passwords are not the same!</string>
     <string name="login_wrong_email_password">Invalid e-mail/password!</string>
     <string name="login_auth_failed">Authentication failed</string>
-    <string name="login_verification_email_sent">Verification email sent to</string>
+    <string name="login_verification_email_sent">Verification e-mail sent to</string>
+    <string name="login_reset_password_email_sent">Password reset e-mail sent to</string>
+    <string name="login_reset_password_email_failed">Failed to send password reset e-mail!</string>
     <string name="login_verification_email_failed">Failed to send verification e-mail!</string>
     <string name="login_account_exists">Account already exists!</string>
     <string name="login_weak_password">Weak password!</string>
     <string name="login_invalid_email">Account is blocked or does not exist!</string>
 
     <!--UI text-->
-    <string name="ui_version_text" translatable="false">FarHome v0.3-beta</string>
+    <string name="ui_version_text" translatable="false">FarHome v0.3.1-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
     <string name="ui_widget_button_edit_description">Edit</string>

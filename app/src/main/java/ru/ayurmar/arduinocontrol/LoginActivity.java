@@ -22,6 +22,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import ru.ayurmar.arduinocontrol.model.FarhomeUser;
 
+/*
+    TODO:
+    - Добавить SmartLock
+ */
 public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
@@ -30,11 +34,13 @@ public class LoginActivity extends BaseActivity implements
     private TextView mRegisterTextView;
     private TextView mExistingAccountTextView;
     private TextView mErrorTextView;
+    private TextView mForgotPasswordTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
     private EditText mConfirmPasswordField;
     private Button mCreateAccountButton;
     private Button mSignInButton;
+    private boolean mIsResetPasswordUIVisible;
 
     private FirebaseAuth mAuth;
 
@@ -49,6 +55,7 @@ public class LoginActivity extends BaseActivity implements
         mRegisterTextView = findViewById(R.id.register_text_view);
         mExistingAccountTextView = findViewById(R.id.use_existing_account_text_view);
         mErrorTextView = findViewById(R.id.login_error_text_view);
+        mForgotPasswordTextView = findViewById(R.id.forgot_password_text_view);
         mCreateAccountButton = findViewById(R.id.email_create_account_button);
         mSignInButton = findViewById(R.id.email_sign_in_button);
 
@@ -61,11 +68,14 @@ public class LoginActivity extends BaseActivity implements
                 | Paint.UNDERLINE_TEXT_FLAG);
         mExistingAccountTextView.setPaintFlags(mExistingAccountTextView.getPaintFlags()
                 | Paint.UNDERLINE_TEXT_FLAG);
+        mForgotPasswordTextView.setPaintFlags(mForgotPasswordTextView.getPaintFlags()
+                | Paint.UNDERLINE_TEXT_FLAG);
 
         mSignInButton.setOnClickListener(this);
         mCreateAccountButton.setOnClickListener(this);
         mRegisterTextView.setOnClickListener(this);
         mExistingAccountTextView.setOnClickListener(this);
+        mForgotPasswordTextView.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
     }
@@ -90,12 +100,7 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void createAccount(String email, String password) {
-        if (!validateForm()) {
-            return;
-        }
-
-        if(!Utils.isOnline(this)){
-            showNoConnectionError();
+        if(!checkFormAndConnection()){
             return;
         }
 
@@ -123,35 +128,34 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void signIn(String email, String password) {
-        if (!validateForm()) {
-            return;
-        }
-
-        if(!Utils.isOnline(this)){
-            showNoConnectionError();
+        if(!checkFormAndConnection()){
             return;
         }
 
         mErrorTextView.setVisibility(View.GONE);
-        showProgressDialog();
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    hideProgressDialog();
-                    if (task.isSuccessful()) {
-                        onSignInSuccess();
-                    } else {
-                        //Ошибка при входе в учетную запись
-                        Exception exception = task.getException();
-                        if(exception instanceof FirebaseAuthInvalidUserException){
-                            mErrorTextView.setText(R.string.login_invalid_email);
-                        } else if(exception instanceof FirebaseAuthInvalidCredentialsException){
-                            mErrorTextView.setText(R.string.login_wrong_email_password);
+        if(mIsResetPasswordUIVisible){
+            sendResetEmail(email);
+        } else {
+            showProgressDialog();
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        hideProgressDialog();
+                        if (task.isSuccessful()) {
+                            onSignInSuccess();
                         } else {
-                            mErrorTextView.setText(R.string.login_auth_failed);
+                            //Ошибка при входе в учетную запись
+                            Exception exception = task.getException();
+                            if(exception instanceof FirebaseAuthInvalidUserException){
+                                mErrorTextView.setText(R.string.login_invalid_email);
+                            } else if(exception instanceof FirebaseAuthInvalidCredentialsException){
+                                mErrorTextView.setText(R.string.login_wrong_email_password);
+                            } else {
+                                mErrorTextView.setText(R.string.login_auth_failed);
+                            }
+                            mErrorTextView.setVisibility(View.VISIBLE);
                         }
-                        mErrorTextView.setVisibility(View.VISIBLE);
-                    }
-                });
+                    });
+        }
     }
 
     private void sendEmailVerification() {
@@ -170,6 +174,27 @@ public class LoginActivity extends BaseActivity implements
                         addNewUserToDatabase();
                     } else {
                         mErrorTextView.setText(R.string.login_verification_email_failed);
+                        mErrorTextView.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
+
+    private void sendResetEmail(String email){
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(this, task -> {
+                    if(task.isSuccessful()){
+                        Toast.makeText(LoginActivity.this,
+                                getString(R.string.login_reset_password_email_sent)
+                                        + " " + email,
+                                Toast.LENGTH_LONG).show();
+                        showResetPasswordUI();
+                    } else {
+                        Exception exception = task.getException();
+                        if(exception instanceof FirebaseAuthInvalidUserException) {
+                            mErrorTextView.setText(R.string.login_invalid_email);
+                        } else {
+                            mErrorTextView.setText(R.string.login_reset_password_email_failed);
+                        }
                         mErrorTextView.setVisibility(View.VISIBLE);
                     }
                 });
@@ -197,6 +222,10 @@ public class LoginActivity extends BaseActivity implements
             mEmailField.setError(null);
         }
 
+        if(mIsResetPasswordUIVisible){
+            return valid;
+        }
+
         String password = mPasswordField.getText().toString();
         if (TextUtils.isEmpty(password)) {
             mPasswordField.setError(getString(R.string.login_empty_field_warning));
@@ -218,13 +247,32 @@ public class LoginActivity extends BaseActivity implements
         return valid;
     }
 
+    private boolean checkFormAndConnection(){
+        boolean isConnected = Utils.isOnline(this);
+        if(!isConnected){
+            showNoConnectionError();
+        }
+        return validateForm() && isConnected;
+    }
+
     private void showCreateAccountUI(boolean isCreateAccountUIVisible){
         mErrorTextView.setVisibility(View.GONE);
+        mForgotPasswordTextView.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
         mRegisterTextView.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
         mExistingAccountTextView.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mConfirmPasswordField.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mCreateAccountButton.setVisibility(isCreateAccountUIVisible ? View.VISIBLE : View.GONE);
         mSignInButton.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
+    }
+
+    private void showResetPasswordUI(){
+        mIsResetPasswordUIVisible = !mIsResetPasswordUIVisible;
+        mErrorTextView.setVisibility(View.GONE);
+        mPasswordField.setVisibility(mIsResetPasswordUIVisible ? View.GONE : View.VISIBLE);
+        mSignInButton.setText(mIsResetPasswordUIVisible ? R.string.login_reset_password :
+                                R.string.login_sign_in);
+        mForgotPasswordTextView.setText(mIsResetPasswordUIVisible ? R.string.ui_cancel_text :
+                                R.string.login_forgot_password);
     }
 
     private void showNoConnectionError(){
@@ -261,6 +309,8 @@ public class LoginActivity extends BaseActivity implements
             showCreateAccountUI(true);
         } else if (i == R.id.use_existing_account_text_view){
             showCreateAccountUI(false);
+        } else if (i == R.id.forgot_password_text_view){
+            showResetPasswordUI();
         }
     }
 }
