@@ -17,10 +17,16 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             style="@style/AppToolbar">
 
-            <!--<Spinner-->
-                <!--android:id="@+id/main_toolbar_spinner"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"/>-->
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:fontFamily="@font/open_sans"
+                android:drawableEnd="@drawable/ic_dropdown"
+                android:drawableRight="@drawable/ic_dropdown"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -50,7 +56,7 @@
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorBackground"
+        android:background="@android:color/white"
         app:itemTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:menu="@menu/menu_nav_drawer"
         app:headerLayout="@layout/drawer_header"

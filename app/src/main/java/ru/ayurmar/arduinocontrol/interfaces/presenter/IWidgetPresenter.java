@@ -14,6 +14,8 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onChangeDeviceClick();
 
+    void renameCurrentDevice(String newName);
+
     void updateWidgetInDb(FarhomeWidget widget);
 
     void onAddWidgetClick();

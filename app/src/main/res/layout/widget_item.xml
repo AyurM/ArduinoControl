@@ -29,6 +29,7 @@
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:padding="8dp"
+                android:fontFamily="@font/open_sans"
                 android:text="@string/placeholder_widget_name_text"
                 android:textSize="24sp"/>
 
@@ -72,6 +73,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:padding="8dp"
+                android:fontFamily="@font/open_sans_regular"
                 android:text="@string/placeholder_widget_value_text"
                 android:textSize="48sp"
                 android:textStyle="bold"/>
@@ -85,6 +87,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
+                android:fontFamily="@font/open_sans"
                 android:text="@string/placeholder_widget_date_text"
                 android:textSize="14sp"/>
 

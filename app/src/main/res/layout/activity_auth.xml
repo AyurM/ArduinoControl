@@ -20,41 +20,34 @@
 
     <EditText
         android:id="@+id/field_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/login_logo_image_view"
         android:layout_marginBottom="16dp"
         android:hint="@string/login_hint_email"
         android:inputType="textEmailAddress"
         android:drawableStart="@drawable/ic_email"
         android:drawableLeft="@drawable/ic_email"
-        android:drawablePadding="16dp"
-        />
+        style="@style/LoginScreenEditText"/>
 
     <EditText
         android:id="@+id/field_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:layout_below="@+id/field_email"
         android:hint="@string/login_hint_password"
         android:inputType="textPassword"
         android:drawableStart="@drawable/ic_password"
         android:drawableLeft="@drawable/ic_password"
-        android:drawablePadding="16dp"/>
+        style="@style/LoginScreenEditText"/>
 
     <EditText
         android:id="@+id/field_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/field_password"
         android:layout_marginBottom="24dp"
         android:hint="@string/login_hint_confirm_password"
         android:inputType="textPassword"
         android:drawableStart="@drawable/ic_pass_confirm"
         android:drawableLeft="@drawable/ic_pass_confirm"
-        android:drawablePadding="16dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        style="@style/LoginScreenEditText"/>
 
     <Button
         android:id="@+id/email_sign_in_button"

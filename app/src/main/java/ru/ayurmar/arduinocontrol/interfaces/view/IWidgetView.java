@@ -20,6 +20,8 @@ public interface IWidgetView extends IBasicView {
 
     void showAddDeviceDialog();
 
+    void showRenameDeviceDialog(String currentName);
+
     void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList);
 
     void showEditWidgetDialog(FarhomeWidget widget);

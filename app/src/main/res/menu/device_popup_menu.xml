@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_rename_device"
+        android:title="@string/ui_menu_rename_device_text"/>
+    <item
+        android:id="@+id/menu_popup_add_device"
+        android:title="@string/ui_menu_add_device_text"/>
+    <item
+        android:id="@+id/menu_popup_change_device"
+        android:title="@string/ui_menu_change_device_text"/>
+</menu>

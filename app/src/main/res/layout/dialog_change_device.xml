@@ -9,8 +9,9 @@
         android:layout_gravity="center"
         android:text="@string/ui_menu_select_device_text"
         android:textColor="@color/colorPrimaryDark"
-        android:padding="8dp"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        android:fontFamily="@font/open_sans"
+        android:padding="8dp"/>
 
     <ListView
         android:id="@+id/change_device_list_view"

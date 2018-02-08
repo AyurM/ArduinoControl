@@ -43,6 +43,7 @@ public class WidgetPresenter<V extends IWidgetView>
     private static final int TIMEOUT_DURATION_S = 10;
     
     private Context mContext;
+    private IWidgetView mView;
     private boolean mIsDeviceOnline;
     private String mDeviceSn = "";
     private FarhomeDevice mFarhomeDevice;
@@ -50,7 +51,6 @@ public class WidgetPresenter<V extends IWidgetView>
     private List<String> mAvailableDevices = new ArrayList<>();
     private List<String> mAvailableDevicesNames = new ArrayList<>();
     private DatabaseReference mUserDevicesRef;
-    private DatabaseReference mCurrentDeviceRef;
     private DatabaseReference mWidgetsRef;
     private ChildEventListener mUserDevicesListener;
     private ChildEventListener mWidgetsListener;
@@ -65,6 +65,7 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onAttach(V view){
         super.onAttach(view);
+        mView = view;
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null){
             mUserDevicesRef = FirebaseDatabase.getInstance()
@@ -92,52 +93,45 @@ public class WidgetPresenter<V extends IWidgetView>
     public void loadUserDevices() {
         Log.d("MAIN_ACTIVITY", "loadUserDevices()");
         if (!Utils.isOnline(mContext)) {
-            getView().showNoConnectionUI(false);
+            mView.showNoConnectionUI(false);
             return;
         }
-        getView().showNoConnectionUI(true);
+        mView.showNoConnectionUI(true);
         if (mUserDevicesRef != null) {
+            mView.showLoadingUI(R.string.ui_loading_user_devices_text);
             mAvailableDevices.clear();
             mAvailableDevicesNames.clear();
             mUserDevicesRef.keepSynced(true);
-            mUserDevicesListener = mUserDevicesRef.addChildEventListener(new ChildEventListener() {
+            mUserDevicesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Log.d("MAIN_ACTIVITY", "key = " + dataSnapshot.getKey() +
-                    "; value = " + dataSnapshot.getValue());
-                    String deviceSn = dataSnapshot.getKey();
-                    mAvailableDevices.add(deviceSn);
-                    mAvailableDevicesNames.add((String) dataSnapshot.getValue());
-                    if(mDeviceSn.isEmpty()){
-                        mDeviceSn = deviceSn;
-                        loadDevice(deviceSn);
-                    } else if(deviceSn.equals(mDeviceSn)){
-                        loadDevice(deviceSn);
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getChildrenCount() == 0) {
+                        if(mView != null){
+                            mView.showLoadingUI(false);
+                            mView.showWidgetList(mWidgetList);
+                        }
+                        addDevicesListener();
+                        return;
                     }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Log.d("MAIN_ACTIVITY", "onChildChanged: " + s +
-                            "; " + dataSnapshot.toString());
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d("MAIN_ACTIVITY", "onChildRemoved: " + dataSnapshot.toString());
-                    mAvailableDevices.remove(dataSnapshot.getKey());
-                    mAvailableDevicesNames.remove(dataSnapshot.getValue());
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                    Log.d("MAIN_ACTIVITY", "onChildMoved: " + s +
-                            "; " + dataSnapshot.toString());
+                    Log.d("MAIN_ACTIVITY", "loadUserDevices(): " + dataSnapshot.toString());
+                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
+                    for (DataSnapshot child : children) {
+                        mAvailableDevices.add(child.getKey());
+                        mAvailableDevicesNames.add(child.getValue().toString());
+                    }
+                    if(mDeviceSn.isEmpty()){
+                        mDeviceSn = mAvailableDevices.get(0);
+                    }
+                    loadDevice(mDeviceSn);
+                    addDevicesListener();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    getView().showMessage(R.string.message_database_error_text);
+                    if(mView != null){
+                        mView.showLoadingUI(false);
+                        mView.showMessage(R.string.message_database_error_text);
+                    }
                 }
             });
         }
@@ -147,35 +141,41 @@ public class WidgetPresenter<V extends IWidgetView>
     public void loadDevice(String deviceSn){
         Log.d("MAIN_ACTIVITY", "loadDevice()");
         if(!Utils.isOnline(mContext)){
-            getView().showLongMessage(R.string.message_no_connection_text);
+            mView.showLongMessage(R.string.message_no_connection_text);
         }
 
         if(!deviceSn.isEmpty()){
             getRepository().saveStringPreference(FirebaseAuth.getInstance()
                     .getCurrentUser().getUid() + "deviceSn", deviceSn);
-            mCurrentDeviceRef = FirebaseDatabase.getInstance()
+            DatabaseReference currentDeviceRef = FirebaseDatabase.getInstance()
                     .getReference(DEVICES_ROOT + "/" + deviceSn);
 //            mCurrentDeviceRef.keepSynced(true);
-            getView().showLoadingUI(R.string.ui_loading_device_text);
-            mCurrentDeviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            mView.showLoadingUI(R.string.ui_loading_device_text);
+            currentDeviceRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getChildrenCount() == 0){
-                        getView().showLoadingUI(false);
-                        getView().showLongMessage(R.string.message_device_not_found_text);
-                        getView().showWidgetList(mWidgetList);
+                        if(mView != null){
+                            mView.showLoadingUI(false);
+                            mView.showLongMessage(R.string.message_device_not_found_text);
+                            mView.showWidgetList(mWidgetList);
+                        }
                         return;
                     }
                     Log.d("MAIN_ACTIVITY", "loadDevice()" + dataSnapshot.toString());
                     mFarhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
-                    getView().updateDeviceUI(mFarhomeDevice);
+                    if(mView != null){
+                        mView.updateDeviceUI(mFarhomeDevice);
+                    }
                     loadWidgets(deviceSn);
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    getView().showLoadingUI(false);
-                    getView().showMessage(R.string.message_database_error_text);
+                    if(mView != null){
+                        mView.showLoadingUI(false);
+                        mView.showMessage(R.string.message_database_error_text);
+                    }
                 }
             });
         }
@@ -185,7 +185,7 @@ public class WidgetPresenter<V extends IWidgetView>
     public void loadWidgets(String deviceSn){
         Log.d("MAIN_ACTIVITY", "loadWidgets()");
         if(!Utils.isOnline(mContext)){
-            getView().showLongMessage(R.string.message_no_connection_text);
+            mView.showLongMessage(R.string.message_no_connection_text);
         }
         if(!deviceSn.isEmpty()){
             if(!deviceSn.equals(mDeviceSn)){
@@ -195,13 +195,15 @@ public class WidgetPresenter<V extends IWidgetView>
                     .getReference(WIDGETS_ROOT + "/" + deviceSn);
             mWidgetsRef.keepSynced(true);
             mWidgetList.clear();
-            getView().showLoadingUI(R.string.ui_loading_widgets_text);
+            mView.showLoadingUI(R.string.ui_loading_widgets_text);
             mWidgetsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getChildrenCount() == 0){
-                        getView().showLoadingUI(false);
-                        getView().showLongMessage(R.string.message_no_widgets_found_text);
+                        if(mView != null){
+                            mView.showLoadingUI(false);
+                            mView.showLongMessage(R.string.message_no_widgets_found_text);
+                        }
                         return;
                     }
                     Log.d("MAIN_ACTIVITY", "loadWidgets()" + dataSnapshot.toString());
@@ -210,18 +212,69 @@ public class WidgetPresenter<V extends IWidgetView>
                         mWidgetList.add(farhomeWidget);
                     }
                     Log.d("MAIN_ACTIVITY", "Parsed " + mWidgetList.size() + " widgets!");
-                    getView().showLoadingUI(false);
-                    getView().showWidgetList(mWidgetList);
+                    if(mView != null){
+                        mView.showLoadingUI(false);
+                        mView.showWidgetList(mWidgetList);
+                    }
                     addWidgetsListener();
                 }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    getView().showLoadingUI(false);
-                    getView().showMessage(R.string.message_database_error_text);
+                    if(mView != null){
+                        mView.showLoadingUI(false);
+                        mView.showMessage(R.string.message_database_error_text);
+                    }
                 }
             });
         }
+    }
+
+    private void addDevicesListener(){
+        Log.d("MAIN_ACTIVITY", "addDevicesListener()");
+        mUserDevicesListener = mUserDevicesRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.d("MAIN_ACTIVITY", "key = " + dataSnapshot.getKey() +
+                        "; value = " + dataSnapshot.getValue());
+                String deviceSn = dataSnapshot.getKey();
+                if(!mAvailableDevices.contains(deviceSn)){
+                    mAvailableDevices.add(deviceSn);
+                    mAvailableDevicesNames.add((String) dataSnapshot.getValue());
+                    if(mDeviceSn.isEmpty()){
+                        mDeviceSn = deviceSn;
+                        loadDevice(deviceSn);
+                    } else if(deviceSn.equals(mDeviceSn)){
+                        loadDevice(deviceSn);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("MAIN_ACTIVITY", "onChildChanged: " + s +
+                        "; " + dataSnapshot.toString());
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("MAIN_ACTIVITY", "onChildRemoved: " + dataSnapshot.toString());
+                mAvailableDevices.remove(dataSnapshot.getKey());
+                mAvailableDevicesNames.remove(dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Log.d("MAIN_ACTIVITY", "onChildMoved: " + s +
+                        "; " + dataSnapshot.toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mView.showMessage(R.string.message_database_error_text);
+            }
+        });
+
     }
 
     private void addWidgetsListener(){
@@ -236,7 +289,7 @@ public class WidgetPresenter<V extends IWidgetView>
                 Log.d("MAIN_ACTIVITY", "Widgets onChildChanged: " + s +
                         "; " + dataSnapshot.toString());
                 FarhomeWidget changedWidget = dataSnapshot.getValue(FarhomeWidget.class);
-                getView().updateWidget(changedWidget);
+                mView.updateWidget(changedWidget);
             }
 
             @Override
@@ -251,7 +304,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                getView().showMessage(R.string.message_database_error_text);
+                mView.showMessage(R.string.message_database_error_text);
             }
         });
 
@@ -262,29 +315,29 @@ public class WidgetPresenter<V extends IWidgetView>
 //        getDisposable().add(getRepository().updateWidget(widget)
 //                .subscribeOn(getScheduler().computation())
 //                .observeOn(getScheduler().main())
-//                .doOnError(throwable -> getView()
+//                .doOnError(throwable -> mView
 //                        .showMessage(R.string.message_database_error_text))
 //                .subscribe());
     }
 
     @Override
     public void onAddWidgetClick(){
-        getView().showAddWidgetDialog();
+        mView.showAddWidgetDialog();
     }
 
     @Override
     public void onAddDeviceClick(){
-        getView().showAddDeviceDialog();
+        mView.showAddDeviceDialog();
     }
 
     @Override
     public void onEditWidgetClick(FarhomeWidget widget){
-        getView().showEditWidgetDialog(widget);
+        mView.showEditWidgetDialog(widget);
     }
 
     @Override
     public void onChangeDeviceClick(){
-        getView().showChangeDeviceDialog(mAvailableDevices, mAvailableDevicesNames);
+        mView.showChangeDeviceDialog(mAvailableDevices, mAvailableDevicesNames);
     }
 
     @Override
@@ -321,7 +374,7 @@ public class WidgetPresenter<V extends IWidgetView>
                         dbRef.updateChildren(deviceUpdates);
                     }
                 } else{
-                    getView().showLongMessage(R.string.message_sn_not_exist);
+                    mView.showLongMessage(R.string.message_sn_not_exist);
                 }
             }
             @Override
@@ -331,15 +384,36 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
+    public void renameCurrentDevice(String newName){
+        DatabaseReference dbRef = FirebaseDatabase.getInstance()
+                .getReference();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            Map<String, Object> deviceUpdates = new HashMap<>();
+            deviceUpdates.put(USERS_ROOT + "/" + user.getUid() + "/" +
+                    DEVICES_ROOT + "/" + mDeviceSn, newName);
+            deviceUpdates.put(DEVICES_ROOT + "/" + mDeviceSn + "/name",
+                    newName);
+            dbRef.updateChildren(deviceUpdates);
+        }
+        mFarhomeDevice.setName(newName);
+        int deviceIndex = mAvailableDevices.indexOf(mDeviceSn);
+        if(deviceIndex != -1){
+            mAvailableDevicesNames.set(deviceIndex, newName);
+        }
+        mView.updateDeviceUI(mFarhomeDevice);
+    }
+
+    @Override
     public void deleteWidget(int position){
 //        if (position == -1) {
 //            return;
 //        }
 //        getDisposable().add(getRepository()
-//                .deleteWidget(getView().getWidgetList().get(position))
+//                .deleteWidget(mView.getWidgetList().get(position))
 //                .subscribeOn(getScheduler().computation())
 //                .observeOn(getScheduler().main())
-//                .doOnError(throwable -> getView()
+//                .doOnError(throwable -> mView
 //                        .showMessage(R.string.message_database_error_text))
 //                .subscribe(() -> loadWidgetListFromDb()));
     }
@@ -353,31 +427,31 @@ public class WidgetPresenter<V extends IWidgetView>
                 .observeOn(getScheduler().main())
                 .subscribe(phoneNumber -> {
                     if(phoneNumber == null){
-                        getView().showMessage(R.string.message_no_phone_number_text);
+                        mView.showMessage(R.string.message_no_phone_number_text);
                     } else {
                         if(isCorrectPhoneNumber(phoneNumber)){
-                            getView().showSendSmsDialog(message, phoneNumber);
+                            mView.showSendSmsDialog(message, phoneNumber);
                         } else {
-                            getView()
+                            mView
                                     .showMessage(R.string.message_wrong_number_format_error_text);
                         }
                     }
                 },
-                        throwable -> getView()
+                        throwable -> mView
                                 .showMessage(R.string.message_error_phone_number_text))
         );
     }
 
     @Override
     public void onWidgetValueClick(int position){
-//        FarhomeWidget widget = getView().getWidgetList().get(position);
+//        FarhomeWidget widget = mView.getWidgetList().get(position);
 //        WidgetType widgetType = widget.getWidgetType();
 //        if(widgetType == WidgetType.ALARM_SENSOR){
 //            return;
 //        }
 //        if(Utils.isOnline(mContext)){
 //            widget.setValueLoading(true);
-//            getView().updateWidgetValue(position);  //включить анимацию загрузки значения
+//            mView.updateWidgetValue(position);  //включить анимацию загрузки значения
 //            Single<ResponseBody> blynkRequest;
 //            if(widgetType == WidgetType.DISPLAY){
 //                blynkRequest = getRepository().requestValueForWidget(widget);
@@ -398,19 +472,19 @@ public class WidgetPresenter<V extends IWidgetView>
 //                                }
 //                                widget.setLastUpdateTime(new Date());
 //                                widget.setValueLoading(false);
-//                                getView().updateWidgetValue(position);},
+//                                mView.updateWidgetValue(position);},
 //                            throwable -> {
 //                                widget.setValueLoading(false);
-//                                getView().updateWidgetValue(position);
+//                                mView.updateWidgetValue(position);
 //                                if(throwable instanceof TimeoutException){
-//                                    getView()
+//                                    mView
 //                                            .showLongMessage(R.string.message_timeout_error_text);
 //                                } else {
-//                                    getView().showMessage(throwable.getMessage());
+//                                    mView.showMessage(throwable.getMessage());
 //                                }
 //                            }));
 //        } else {
-//            getView().showLongMessage(R.string.message_no_connection_use_sms_text);
+//            mView.showLongMessage(R.string.message_no_connection_use_sms_text);
 //        }
     }
 
@@ -424,20 +498,20 @@ public class WidgetPresenter<V extends IWidgetView>
                     .subscribe(response -> {
                                 String responseString = response.string();
                                 mIsDeviceOnline = Boolean.parseBoolean(responseString);
-                                getView().showDeviceOnlineStatus(mIsDeviceOnline);
-                                getView().showLongMessage(mIsDeviceOnline ?
+                                mView.showDeviceOnlineStatus(mIsDeviceOnline);
+                                mView.showLongMessage(mIsDeviceOnline ?
                                         R.string.message_device_online_text : R.string.message_device_offline_text);
                             },
                             throwable -> {
                                 if(throwable instanceof TimeoutException){
-                                    getView()
+                                    mView
                                             .showLongMessage(R.string.message_timeout_error_text);
                                 } else {
-                                    getView().showMessage(throwable.getMessage());
+                                    mView.showMessage(throwable.getMessage());
                                 }
                             }));
         } else {
-            getView().showLongMessage(R.string.message_no_connection_use_sms_text);
+            mView.showLongMessage(R.string.message_no_connection_use_sms_text);
         }
     }
 
@@ -452,13 +526,12 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     private void removeFirebaseListeners(){
-        if(mUserDevicesRef != null){
+        if(mUserDevicesRef != null && mUserDevicesListener != null){
             mUserDevicesRef.removeEventListener(mUserDevicesListener);
         }
-        if(mWidgetsRef != null){
+        if(mWidgetsRef != null && mWidgetsListener != null){
             mWidgetsRef.removeEventListener(mWidgetsListener);
         }
-
     }
 
     private void handleDisplayRequestResponse(String responseString,

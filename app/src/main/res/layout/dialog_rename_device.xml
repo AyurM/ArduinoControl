@@ -10,24 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/ui_menu_add_device_text"
+        android:text="@string/ui_menu_rename_device_text"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
         android:fontFamily="@font/open_sans"
         android:padding="8dp"/>
 
     <EditText
-        android:id="@+id/dialog_add_device_sn_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
-        android:hint="@string/ui_menu_serial_number_hint_text"
-        android:inputType="text"
-        />
-
-    <EditText
-        android:id="@+id/dialog_add_device_name_edit_text"
+        android:id="@+id/dialog_rename_device_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -37,11 +27,11 @@
         />
 
     <TextView
-        android:id="@+id/add_device_empty_sn_error_text"
+        android:id="@+id/rename_device_empty_name_error_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/ui_menu_empty_device_sn_error_text"
+        android:text="@string/ui_menu_empty_device_name_error_text"
         android:textColor="@color/colorDrawerText"
         android:fontFamily="@font/open_sans"
         android:layout_marginBottom="16dp"
@@ -57,14 +47,14 @@
         >
 
         <Button
-            android:id="@+id/add_device_cancel_button"
+            android:id="@+id/rename_device_cancel_button"
             android:layout_marginRight="56dp"
             android:layout_marginEnd="56dp"
             android:text="@string/ui_cancel_text"
             style="@style/EditWidgetButton"/>
 
         <Button
-            android:id="@+id/add_device_ok_button"
+            android:id="@+id/rename_device_ok_button"
             android:text="@string/ui_ok_text"
             style="@style/EditWidgetButton"/>
 

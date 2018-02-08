@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,9 +44,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private static final int sConfirmDeleteCode = 1;
     private static final int sChangeDeviceCode = 2;
     private static final int sAddDeviceCode = 3;
+    private static final int sRenameDeviceCode = 4;
     private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
     private static final String sChangeDeviceTag = "CHANGE_DEVICE_DIALOG";
     private static final String sAddDeviceTag = "ADD_DEVICE_DIALOG";
+    private static final String sRenameDeviceTag = "RENAME_DEVICE_DIALOG";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -145,6 +145,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                     deviceName = getString(R.string.placeholder_device_no_name_text);
                 }
                 mPresenter.bindDeviceToUser(deviseSn, deviceName);
+            } else if(requestCode == sRenameDeviceCode){
+                String newName = data.getStringExtra(RenameDeviceDialog.NEW_DEVICE_NAME_INDEX);
+                mPresenter.renameCurrentDevice(newName);
             }
         }
     }
@@ -178,8 +181,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void updateDeviceUI(FarhomeDevice device){
         if(device != null && device.getName() != null){
-            ((AppCompatActivity) getActivity()).getSupportActionBar()
-                    .setTitle(device.getName());
+            MainActivity activity = (MainActivity) getActivity();
+            if(activity != null){
+                activity.changeToolbarTitle(device.getName());
+            }
         }
     }
 
@@ -215,7 +220,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     public void updateWidgetList(){
-        mIsDevMode = ((MainActivity) getActivity()).isDevMode();
+        MainActivity activity = (MainActivity) getActivity();
+        if(activity != null){
+            mIsDevMode = activity.isDevMode();
+        }
         getActivity().invalidateOptionsMenu();
 //        mPresenter.loadWidgetListFromDb();
     }
@@ -234,6 +242,13 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
         addDeviceDialog.setTargetFragment(WidgetFragment.this, sAddDeviceCode);
         addDeviceDialog.show(getActivity().getSupportFragmentManager(), sAddDeviceTag);
+    }
+
+    @Override
+    public void showRenameDeviceDialog(String currentName){
+        RenameDeviceDialog renameDeviceDialog = RenameDeviceDialog.newInstance(currentName);
+        renameDeviceDialog.setTargetFragment(WidgetFragment.this, sRenameDeviceCode);
+        renameDeviceDialog.show(getActivity().getSupportFragmentManager(), sRenameDeviceTag);
     }
 
     @Override
@@ -300,12 +315,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
             mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
             mButtonDelete.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
-
-            Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
-                    "fonts/OpenSans-Regular.ttf");
-            mTextViewName.setTypeface(font);
-            mTextViewValue.setTypeface(font);
-            mTextViewDate.setTypeface(font);
         }
 
         void bindWidget(FarhomeWidget widget, int position) {

@@ -2,8 +2,6 @@ package ru.ayurmar.arduinocontrol;
 
 import android.app.Application;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import ru.ayurmar.arduinocontrol.di.AppComponent;
 import ru.ayurmar.arduinocontrol.di.DaggerAppComponent;
 import ru.ayurmar.arduinocontrol.di.module.AppModule;

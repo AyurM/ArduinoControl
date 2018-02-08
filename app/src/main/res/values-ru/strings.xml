@@ -6,6 +6,7 @@
     <string name="login_hint_password">Пароль</string>
     <string name="login_hint_confirm_password">Подтвердите пароль</string>
     <string name="login_create_account">Зарегистрироваться</string>
+    <string name="login_sign_in">Войти</string>
     <string name="login_existing_account">У меня уже есть учетная запись</string>
     <string name="login_verify_email">Пожалуйста, подтвердите адрес электронной почты!</string>
     <string name="login_loading">Загрузка…</string>
@@ -17,10 +18,8 @@
     <string name="login_verification_email_failed">Не удалось отправить запрос подтверждения
         регистрации на указанный e-mail!</string>
     <string name="login_auth_failed">Ошибка аутентификации</string>
-    <string name="login_sign_in">Войти</string>
     <string name="login_account_exists">Аккаунт уже существует!</string>
     <string name="login_weak_password">Небезопасный пароль!</string>
-    <string name="login_wrong_password">Неправильный пароль!</string>
     <string name="login_invalid_email">Аккаунт не существует или заблокирован!</string>
 
     <!--UI надписи-->
@@ -44,8 +43,10 @@
 
     <string name="ui_menu_add_widget_text">Добавить виджет</string>
     <string name="ui_menu_add_device_text">Добавить устройство</string>
+    <string name="ui_menu_rename_device_text">Переименовать</string>
     <string name="ui_menu_serial_number_hint_text">Серийный номер</string>
     <string name="ui_menu_empty_device_sn_error_text">Серийный номер не указан!</string>
+    <string name="ui_menu_empty_device_name_error_text">Имя устройства не указано!</string>
     <string name="ui_menu_device_name_hint_text">Имя устройства</string>
     <string name="ui_menu_select_device_text">Выберите устройство</string>
     <string name="ui_menu_edit_widget_text">Правка виджета</string>
@@ -75,7 +76,6 @@
     <string name="message_no_phone_number_text">Не указан номер GSM-устройства!</string>
     <string name="message_cant_send_sms_text">Не найдено приложение для отправки SMS!</string>
     <string name="message_error_phone_number_text">Ошибка при поиске номера GSM-устройства!</string>
-    <string name="message_error_auth_token_text">Не удалось прочитать токен аутентификации!</string>
     <string name="message_wrong_number_format_error_text">Неправильный формат номера!</string>
     <string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>

@@ -53,6 +53,7 @@ public class InfoFragment extends DialogFragment{
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_info, null);
         TextView textViewVersion = v.findViewById(R.id.info_version_text_view);
+
         //show hidden "Developer Settings" category
         textViewVersion.setOnClickListener(view -> {
             mUnlockDevModeClicks++;
@@ -64,7 +65,6 @@ public class InfoFragment extends DialogFragment{
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setTitle(R.string.ui_about_text)
                 .setNeutralButton(android.R.string.ok,
                         ((dialogInterface, i) -> {
                             mListener.onFinishDialog(mUnlockDevModeClicks >= sClicksToUnlockDevMode);

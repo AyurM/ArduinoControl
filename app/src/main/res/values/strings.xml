@@ -43,9 +43,11 @@
 
     <string name="ui_menu_add_widget_text">Add widget</string>
     <string name="ui_menu_add_device_text">Add device</string>
+    <string name="ui_menu_rename_device_text">Rename</string>
     <string name="ui_menu_serial_number_hint_text">Serial number</string>
     <string name="ui_menu_device_name_hint_text">Device name</string>
     <string name="ui_menu_empty_device_sn_error_text">Serial number is empty!</string>
+    <string name="ui_menu_empty_device_name_error_text">Device name is empty!</string>
     <string name="ui_menu_select_device_text">Select device</string>
     <string name="ui_menu_edit_widget_text">Edit widget</string>
     <string name="ui_menu_device_status_text">Device status</string>
@@ -73,7 +75,6 @@
     <string name="message_no_phone_number_text">No phone number available!</string>
     <string name="message_cant_send_sms_text">No SMS application found!</string>
     <string name="message_error_phone_number_text">Error while getting phone number!</string>
-    <string name="message_error_auth_token_text">Failed to load auth token!</string>
     <string name="message_wrong_number_format_error_text">Wrong number format!</string>
     <string name="message_timeout_error_text">Timeout error! Check your internet connection</string>
     <string name="message_database_error_text">Database error!</string>
