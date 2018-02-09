@@ -14,7 +14,6 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 public class PreferencesActivity extends AppCompatActivity {
 
     public static final String KEY_PREF_PHONE_NUMBER = "pref_phone_number";
-    public static final String KEY_PREF_AUTH_TOKEN = "pref_auth_token";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +60,6 @@ public class PreferencesActivity extends AppCompatActivity {
             pref.setSummary(sharedPref.getString(KEY_PREF_PHONE_NUMBER,
                     getString(R.string.ui_pref_phone_number_default_value)));
             pref.setOnPreferenceChangeListener(this);
-
-            Preference pref2 = findPreference(KEY_PREF_AUTH_TOKEN);
-            pref2.setSummary(sharedPref.getString(KEY_PREF_AUTH_TOKEN,
-                    getString(R.string.ui_pref_auth_token_default_value)));
-            pref2.setOnPreferenceChangeListener(this);
 
             if(!isDevMode){
                 //hide "Developer settings" category

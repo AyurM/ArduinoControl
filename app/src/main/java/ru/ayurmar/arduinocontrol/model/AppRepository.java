@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
-import okhttp3.ResponseBody;
-import ru.ayurmar.arduinocontrol.interfaces.model.BlynkApi;
 import ru.ayurmar.arduinocontrol.interfaces.model.IDbHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
@@ -15,13 +13,10 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 
 public class AppRepository implements IRepository {
 
-    private final BlynkApi mBlynkApi;
     private final IDbHelper mDbHelper;
     private final IPrefHelper mPrefHelper;
-    private String mAuthToken = "";
 
-    public AppRepository(BlynkApi blynkApi, IDbHelper dbHelper, IPrefHelper prefHelper){
-        this.mBlynkApi = blynkApi;
+    public AppRepository(IDbHelper dbHelper, IPrefHelper prefHelper){
         this.mDbHelper = dbHelper;
         this.mPrefHelper = prefHelper;
     }
@@ -57,22 +52,6 @@ public class AppRepository implements IRepository {
     }
 
     @Override
-    public Single<ResponseBody> sendValueFromWidget(IWidget widget){
-        return mBlynkApi.setValue(mAuthToken, widget.getPin(),
-                widget.getValue().equals(BlynkWidget.ON) ? "0" : "1");
-    }
-
-    @Override
-    public Single<ResponseBody> requestValueForWidget(IWidget widget){
-        return mBlynkApi.getValue(mAuthToken, widget.getPin());
-    }
-
-    @Override
-    public Single<ResponseBody> isDeviceOnline(){
-        return mBlynkApi.isDeviceOnline(mAuthToken);
-    }
-
-    @Override
     public Single<String> getStringPreference(String key){
         return mPrefHelper.getStringPreference(key);
     }
@@ -80,10 +59,5 @@ public class AppRepository implements IRepository {
     @Override
     public void saveStringPreference(String key, String value){
         mPrefHelper.saveStringPreference(key, value);
-    }
-
-    @Override
-    public void setAuthToken(String authToken){
-        this.mAuthToken = authToken;
     }
 }

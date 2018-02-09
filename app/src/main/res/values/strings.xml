@@ -62,8 +62,6 @@
 
     <string name="ui_pref_phone_number_title">GSM-device phone number</string>
     <string name="ui_pref_phone_number_default_value">Enter your phone number</string>
-    <string name="ui_pref_auth_token_title">Authentication token</string>
-    <string name="ui_pref_auth_token_default_value">Enter your device token</string>
     <string name="ui_pref_general_settings_category">General settings</string>
     <string name="ui_pref_developer_settings_category">Developer settings</string>
     <string name="ui_pref_developer_settings_available">Developer settings available</string>
@@ -88,6 +86,7 @@
     <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
     <string name="message_device_online_text">Device is online</string>
     <string name="message_sn_not_exist">Device does not exist!</string>
+    <string name="message_device_already_has_owner">This device belongs to another user!</string>
     <string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>
 
     <!--Placeholders-->

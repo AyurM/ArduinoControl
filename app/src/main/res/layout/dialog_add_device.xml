@@ -3,37 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="24dp"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="@string/ui_menu_add_device_text"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:fontFamily="@font/open_sans"
-        android:padding="8dp"/>
+        style="@style/DialogTitleTextView"/>
 
     <EditText
         android:id="@+id/dialog_add_device_sn_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
         android:hint="@string/ui_menu_serial_number_hint_text"
         android:inputType="text"
+        style="@style/DialogEditText"
         />
 
     <EditText
         android:id="@+id/dialog_add_device_name_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
         android:hint="@string/ui_menu_device_name_hint_text"
         android:inputType="text"
+        style="@style/DialogEditText"
         />
 
     <TextView
@@ -54,6 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
         >
 
         <Button

@@ -14,12 +14,12 @@
 
     <PreferenceCategory android:title="@string/ui_pref_developer_settings_category"
         android:key="@string/devPreferencesCategory">
-        <EditTextPreference
-            android:icon="@drawable/ic_key"
-            android:dialogMessage="@string/ui_pref_auth_token_default_value"
-            android:key="pref_auth_token"
-            android:persistent="true"
-            android:summary="@string/ui_pref_auth_token_default_value"
-            android:title="@string/ui_pref_auth_token_title" />
+        <!--<EditTextPreference-->
+            <!--android:icon="@drawable/ic_key"-->
+            <!--android:dialogMessage="@string/ui_pref_auth_token_default_value"-->
+            <!--android:key="pref_auth_token"-->
+            <!--android:persistent="true"-->
+            <!--android:summary="@string/ui_pref_auth_token_default_value"-->
+            <!--android:title="@string/ui_pref_auth_token_title" />-->
     </PreferenceCategory>
 </PreferenceScreen>

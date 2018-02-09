@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import ru.ayurmar.arduinocontrol.model.FarhomeUser;
+import ru.ayurmar.arduinocontrol.presenter.WidgetPresenter;
 
 /*
     TODO:
@@ -30,7 +31,6 @@ public class LoginActivity extends BaseActivity implements
         View.OnClickListener {
 
     private static final String sLoginEmailIndex = "LOGIN_EMAIL_INDEX";
-    private static final String sUsersRootPath = "users";
     private TextView mRegisterTextView;
     private TextView mExistingAccountTextView;
     private TextView mErrorTextView;
@@ -187,6 +187,7 @@ public class LoginActivity extends BaseActivity implements
                                 getString(R.string.login_reset_password_email_sent)
                                         + " " + email,
                                 Toast.LENGTH_LONG).show();
+                        mIsResetPasswordUIVisible = false;
                         showResetPasswordUI();
                     } else {
                         Exception exception = task.getException();
@@ -206,7 +207,7 @@ public class LoginActivity extends BaseActivity implements
         if(firebaseUser != null){
             FarhomeUser newUser = new FarhomeUser(firebaseUser.getEmail());
             DatabaseReference usersRef = FirebaseDatabase.getInstance()
-                    .getReference(sUsersRootPath);
+                    .getReference(WidgetPresenter.USERS_ROOT);
             usersRef.child(firebaseUser.getUid()).setValue(newUser);
         }
     }
@@ -256,6 +257,8 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void showCreateAccountUI(boolean isCreateAccountUIVisible){
+        mIsResetPasswordUIVisible = false;
+        showResetPasswordUI();
         mErrorTextView.setVisibility(View.GONE);
         mForgotPasswordTextView.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
         mRegisterTextView.setVisibility(isCreateAccountUIVisible ? View.GONE : View.VISIBLE);
@@ -266,7 +269,6 @@ public class LoginActivity extends BaseActivity implements
     }
 
     private void showResetPasswordUI(){
-        mIsResetPasswordUIVisible = !mIsResetPasswordUIVisible;
         mErrorTextView.setVisibility(View.GONE);
         mPasswordField.setVisibility(mIsResetPasswordUIVisible ? View.GONE : View.VISIBLE);
         mSignInButton.setText(mIsResetPasswordUIVisible ? R.string.login_reset_password :
@@ -310,6 +312,7 @@ public class LoginActivity extends BaseActivity implements
         } else if (i == R.id.use_existing_account_text_view){
             showCreateAccountUI(false);
         } else if (i == R.id.forgot_password_text_view){
+            mIsResetPasswordUIVisible = !mIsResetPasswordUIVisible;
             showResetPasswordUI();
         }
     }

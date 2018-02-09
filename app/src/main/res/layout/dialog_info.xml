@@ -5,15 +5,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/info_title_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="@string/ui_about_text"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
-        android:fontFamily="@font/open_sans"
-        android:padding="8dp"/>
+        style="@style/DialogTitleTextView"/>
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

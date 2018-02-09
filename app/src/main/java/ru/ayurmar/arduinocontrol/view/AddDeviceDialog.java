@@ -37,8 +37,13 @@ public class AddDeviceDialog extends DialogFragment {
         mEmptySnTextView = v.findViewById(R.id.add_device_empty_sn_error_text);
 
         okButton.setOnClickListener(view -> {
-            sendResult(mSerialNumberText.getText().toString(),
-                    mDeviceNameText.getText().toString());
+            String deviceSn = mSerialNumberText.getText().toString();
+            String deviceName =  mDeviceNameText.getText().toString();
+            if(deviceSn.isEmpty()){
+                mEmptySnTextView.setVisibility(View.VISIBLE);
+                return;
+            }
+            sendResult(deviceSn, deviceName);
             dismiss();
         });
         cancelButton.setOnClickListener(view -> dismiss());
@@ -50,10 +55,6 @@ public class AddDeviceDialog extends DialogFragment {
 
     private void sendResult(String deviceSn, String deviceName) {
         if(getTargetFragment() == null){
-            return;
-        }
-        if(deviceSn.isEmpty()){
-            mEmptySnTextView.setVisibility(View.VISIBLE);
             return;
         }
 

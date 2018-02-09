@@ -10,10 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import ru.ayurmar.arduinocontrol.db.SQLiteDbHelper;
-import ru.ayurmar.arduinocontrol.interfaces.model.BlynkApi;
 import ru.ayurmar.arduinocontrol.interfaces.model.IDbHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
@@ -33,16 +30,6 @@ public class WidgetModule {
 
     @Provides
     @Singleton
-    BlynkApi provideBlynkApi(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://blynk-cloud.com/")
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-        return retrofit.create(BlynkApi.class);
-    }
-
-    @Provides
-    @Singleton
     SharedPreferences provideSharedPref(Context context){
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
@@ -55,9 +42,9 @@ public class WidgetModule {
 
     @Provides
     @Singleton
-    IRepository provideAppRepository(BlynkApi tmdbApi, IDbHelper dbHelper,
+    IRepository provideAppRepository(IDbHelper dbHelper,
                                      IPrefHelper prefHelper){
-        return new AppRepository(tmdbApi, dbHelper, prefHelper);
+        return new AppRepository(dbHelper, prefHelper);
     }
 
     @Provides

@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
 import ru.ayurmar.arduinocontrol.R;
 
@@ -15,8 +18,6 @@ public class LogoutConfirmationFragment extends DialogFragment {
     public interface LogoutDialogListener{
 
         void onLogoutPositiveClick();
-
-        void onLogoutNegativeClick();
     }
 
     LogoutDialogListener mListener;
@@ -38,13 +39,17 @@ public class LogoutConfirmationFragment extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
+        View v = LayoutInflater.from(getActivity())
+                .inflate(R.layout.dialog_logout_confirm, null);
+
+        Button cancelButton = v.findViewById(R.id.logout_confirm_cancel_button);
+        Button okButton = v.findViewById(R.id.logout_confirm_ok_button);
+
+        cancelButton.setOnClickListener(view -> dismiss());
+        okButton.setOnClickListener(view -> mListener.onLogoutPositiveClick());
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.ui_logout_confirmation_title)
-                .setNegativeButton(android.R.string.cancel,
-                        (dialogInterface, id) -> mListener.onLogoutNegativeClick())
-                .setPositiveButton(android.R.string.ok,
-                        (dialogInterface, id) -> mListener.onLogoutPositiveClick())
+                .setView(v)
                 .create();
     }
 }

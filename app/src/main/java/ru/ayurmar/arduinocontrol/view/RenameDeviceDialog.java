@@ -44,6 +44,7 @@ public class RenameDeviceDialog extends DialogFragment {
 
         String currentName = getArguments().getString(sCurrentDeviceName, "");
         mDeviceNameText.setText(currentName);
+        mDeviceNameText.setSelection(currentName.length());
 
         okButton.setOnClickListener(view -> {
             String deviceName = mDeviceNameText.getText().toString();

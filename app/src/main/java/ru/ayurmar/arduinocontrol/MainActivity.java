@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity
 
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
     private static final String sConfirmLogoutTag = "CONFIRM_LOGOUT_DIALOG";
-//    private static final String sTag = "MAIN_ACTIVITY";
     public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -47,33 +46,6 @@ public class MainActivity extends AppCompatActivity
 
         setupToolbarAndDrawer();
 
-//        mProgressBar = findViewById(R.id.main_progress_bar);
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-//        if(firebaseUser != null){
-//            DatabaseReference ref = FirebaseDatabase.getInstance()
-//                    .getReference("users/" + firebaseUser.getUid() + "/devices");
-//            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    Log.d(sTag, dataSnapshot.toString());
-//                    Log.d(sTag, "Children count = " + dataSnapshot.getChildrenCount());
-//                    Iterable<DataSnapshot> children = dataSnapshot.getChildren();
-//                    for(DataSnapshot child : children){
-//                        mAvailableDevices.add(child.getKey());
-//                    }
-//                    mProgressBar.setVisibility(View.GONE);
-//                    startFragment();
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//                    mProgressBar.setVisibility(View.GONE);
-//                    Log.d(sTag, "Database error!");
-//                }
-//            });
-//        }
-
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
         if (fragment == null) {
@@ -83,17 +55,6 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
     }
-
-//    private void startFragment(){
-//        FragmentManager fm = getSupportFragmentManager();
-//        Fragment fragment = fm.findFragmentById(R.id.main_fragment_container);
-//        if (fragment == null) {
-//            fragment = new WidgetFragment();
-//            fm.beginTransaction()
-//                    .add(R.id.main_fragment_container, fragment)
-//                    .commit();
-//        }
-//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -135,10 +96,6 @@ public class MainActivity extends AppCompatActivity
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();
-    }
-
-    @Override
-    public void onLogoutNegativeClick(){
     }
 
     @Override

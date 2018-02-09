@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -110,7 +111,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         inflater.inflate(R.menu.menu_main_widget, menu);
         MenuItem addWidgetItem = mMenu.findItem(R.id.menu_item_add_widget);
         addWidgetItem.setVisible(mIsDevMode);   //hide "Add Widget" menu item
-        showDeviceOnlineStatus(mPresenter.isDeviceOnline());
+        showDeviceOnlineStatus(false);
     }
 
     @Override
@@ -130,9 +131,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if(requestCode == sAddWidgetRequestCode){
+//            if(requestCode == sAddWidgetRequestCode){
 //                mPresenter.loadWidgetListFromDb();
-            } else if(requestCode == sConfirmDeleteCode){
+//            } else
+            if(requestCode == sConfirmDeleteCode){
                 mPresenter.deleteWidget(data
                         .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
             } else if(requestCode == sChangeDeviceCode){
@@ -241,14 +243,20 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void showAddDeviceDialog(){
         AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
         addDeviceDialog.setTargetFragment(WidgetFragment.this, sAddDeviceCode);
-        addDeviceDialog.show(getActivity().getSupportFragmentManager(), sAddDeviceTag);
+        FragmentActivity activity = getActivity();
+        if(activity != null){
+            addDeviceDialog.show(getActivity().getSupportFragmentManager(), sAddDeviceTag);
+        }
     }
 
     @Override
     public void showRenameDeviceDialog(String currentName){
         RenameDeviceDialog renameDeviceDialog = RenameDeviceDialog.newInstance(currentName);
         renameDeviceDialog.setTargetFragment(WidgetFragment.this, sRenameDeviceCode);
-        renameDeviceDialog.show(getActivity().getSupportFragmentManager(), sRenameDeviceTag);
+        FragmentActivity activity = getActivity();
+        if(activity != null){
+            renameDeviceDialog.show(getActivity().getSupportFragmentManager(), sRenameDeviceTag);
+        }
     }
 
     @Override
@@ -268,7 +276,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         ChangeDeviceDialog deviceDialog = ChangeDeviceDialog
                 .newInstance((ArrayList<String>) deviceSnList, (ArrayList<String>) deviceNamesList);
         deviceDialog.setTargetFragment(WidgetFragment.this, sChangeDeviceCode);
-        deviceDialog.show(getActivity().getSupportFragmentManager(), sChangeDeviceTag);
+        FragmentActivity activity = getActivity();
+        if(activity != null){
+            deviceDialog.show(getActivity().getSupportFragmentManager(), sChangeDeviceTag);
+        }
     }
 
     @Override
@@ -288,7 +299,10 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private void showConfirmDeleteDialog(int position){
         DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
         fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
-        fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
+        FragmentActivity activity = getActivity();
+        if(activity != null){
+            fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
+        }
     }
 
     private void showNoItemsUI(boolean isEmpty){

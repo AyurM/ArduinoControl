@@ -6,28 +6,8 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="@string/ui_menu_rename_device_text"
+        android:text="@string/ui_logout_confirmation_title"
         style="@style/DialogTitleTextView"/>
-
-    <EditText
-        android:id="@+id/dialog_rename_device_name_edit_text"
-        android:hint="@string/ui_menu_device_name_hint_text"
-        android:inputType="text"
-        style="@style/DialogEditText"
-        />
-
-    <TextView
-        android:id="@+id/rename_device_empty_name_error_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/ui_menu_empty_device_name_error_text"
-        android:textColor="@color/colorDrawerText"
-        android:fontFamily="@font/open_sans"
-        android:layout_marginBottom="16dp"
-        android:padding="8dp"
-        android:textSize="18sp"
-        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,14 +18,14 @@
         >
 
         <Button
-            android:id="@+id/rename_device_cancel_button"
+            android:id="@+id/logout_confirm_cancel_button"
             android:layout_marginRight="56dp"
             android:layout_marginEnd="56dp"
             android:text="@string/ui_cancel_text"
             style="@style/EditWidgetButton"/>
 
         <Button
-            android:id="@+id/rename_device_ok_button"
+            android:id="@+id/logout_confirm_ok_button"
             android:text="@string/ui_ok_text"
             style="@style/EditWidgetButton"/>
 
