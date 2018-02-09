@@ -37,6 +37,8 @@
     <string name="ui_no_devices_found_text">Устройства не найдены</string>
     <string name="ui_delete_confirmation_title">Удалить этот виджет?</string>
     <string name="ui_logout_confirmation_title">Выйти из учетной записи?</string>
+    <string name="ui_logout_warning">Вы не сможете получать уведомления от ваших устройств
+    после выхода из учетной записи</string>
     <string name="ui_delete_confirmation_text">Виджет будет удален безвозвратно</string>
     <string name="ui_loading_user_devices_text">Загрузка списка устройств…</string>
     <string name="ui_loading_device_text">Загрузка устройства…</string>
@@ -47,6 +49,10 @@
 
     <string name="ui_menu_add_widget_text">Добавить виджет</string>
     <string name="ui_menu_add_device_text">Добавить устройство</string>
+    <string name="ui_menu_about_device_text">Об устройстве</string>
+    <string name="ui_menu_name_text">Имя:</string>
+    <string name="ui_menu_model_text">Модель:</string>
+    <string name="ui_menu_serial_number_text">Серийный\nномер:</string>
     <string name="ui_menu_rename_device_text">Переименовать</string>
     <string name="ui_menu_serial_number_hint_text">Серийный номер</string>
     <string name="ui_menu_empty_device_sn_error_text">Серийный номер не указан!</string>
@@ -73,22 +79,22 @@
 
     <!--Сообщения-->
     <string name="message_no_connection_text">Нет подключения к Интернету!</string>
-    <string name="message_no_connection_use_sms_text">Нет подключения к Интернету! Попробуйте
-        связаться с устройством через SMS</string>
+    <!--<string name="message_no_connection_use_sms_text">Нет подключения к Интернету! Попробуйте-->
+        <!--связаться с устройством через SMS</string>-->
     <string name="message_no_phone_number_text">Не указан номер GSM-устройства!</string>
     <string name="message_cant_send_sms_text">Не найдено приложение для отправки SMS!</string>
     <string name="message_error_phone_number_text">Ошибка при поиске номера GSM-устройства!</string>
     <string name="message_wrong_number_format_error_text">Неправильный формат номера!</string>
-    <string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>
+    <!--<string name="message_timeout_error_text">Превышено время ожидания ответа! Проверьте ваше Интернет-соединение</string>-->
     <string name="message_database_error_text">Ошибка при обращении к базе данных!</string>
     <string name="message_add_edit_error_text">Необходимо заполнить все поля!</string>
     <string name="message_device_not_found_text">Устройство не найдено!</string>
     <string name="message_no_widgets_found_text">Виджеты для этого устройства не найдены!</string>
     <string name="message_add_edit_empty_name_text">Укажите имя виджета!</string>
-    <string name="message_device_online_text">Устройство онлайн</string>
+    <!--<string name="message_device_online_text">Устройство онлайн</string>-->
     <string name="message_sn_not_exist">Серийный номер не найден!</string>
     <string name="message_device_already_has_owner">Устройство принадлежит другому пользователю!</string>
-    <string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>
+    <!--<string name="message_device_offline_text">Устройство не подключено к Интернету. Воспользуйтесь SMS-командами</string>-->
 
     <!--Заготовки-->
     <string name="placeholder_widget_name_text">Имя виджета</string>

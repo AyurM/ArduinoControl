@@ -50,6 +50,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private static final String sChangeDeviceTag = "CHANGE_DEVICE_DIALOG";
     private static final String sAddDeviceTag = "ADD_DEVICE_DIALOG";
     private static final String sRenameDeviceTag = "RENAME_DEVICE_DIALOG";
+    private static final String sAboutDeviceTag = "ABOUT_DEVICE_DIALOG";
 
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
@@ -202,6 +203,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
+    public void onAboutDeviceClick(){
+        mPresenter.onAboutDeviceClick();
+    }
+
+    @Override
     public List<FarhomeWidget> getWidgetList(){
         return ((WidgetAdapter) mRecyclerView.getAdapter()).getItemsList();
     }
@@ -279,6 +285,14 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         FragmentActivity activity = getActivity();
         if(activity != null){
             deviceDialog.show(getActivity().getSupportFragmentManager(), sChangeDeviceTag);
+        }
+    }
+
+    @Override
+    public void showAboutDeviceDialog(AboutDeviceDialog dialog){
+        FragmentActivity activity = getActivity();
+        if(activity != null){
+            dialog.show(getActivity().getSupportFragmentManager(), sAboutDeviceTag);
         }
     }
 

@@ -9,4 +9,7 @@
     <item
         android:id="@+id/menu_popup_change_device"
         android:title="@string/ui_menu_change_device_text"/>
+    <item
+        android:id="@+id/menu_popup_about_device"
+        android:title="@string/ui_menu_about_device_text"/>
 </menu>

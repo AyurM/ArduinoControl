@@ -26,7 +26,7 @@
     <string name="login_invalid_email">Account is blocked or does not exist!</string>
 
     <!--UI text-->
-    <string name="ui_version_text" translatable="false">FarHome v0.3.1-beta</string>
+    <string name="ui_version_text" translatable="false">FarHome v0.3.3-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
     <string name="ui_widget_button_edit_description">Edit</string>
@@ -37,6 +37,8 @@
     <string name="ui_no_devices_found_text">No devices found</string>
     <string name="ui_delete_confirmation_title">Delete this widget?</string>
     <string name="ui_logout_confirmation_title">Sign out?</string>
+    <string name="ui_logout_warning">You can\'t receive notifications from your devices
+    when you\'re signed out</string>
     <string name="ui_delete_confirmation_text">This widget will be deleted permanently</string>
     <string name="ui_loading_user_devices_text">Loading devices list…</string>
     <string name="ui_loading_device_text">Loading device…</string>
@@ -47,6 +49,10 @@
 
     <string name="ui_menu_add_widget_text">Add widget</string>
     <string name="ui_menu_add_device_text">Add device</string>
+    <string name="ui_menu_about_device_text">About device</string>
+    <string name="ui_menu_name_text">Name:</string>
+    <string name="ui_menu_model_text">Model:</string>
+    <string name="ui_menu_serial_number_text">Serial\nnumber:</string>
     <string name="ui_menu_rename_device_text">Rename</string>
     <string name="ui_menu_serial_number_hint_text">Serial number</string>
     <string name="ui_menu_device_name_hint_text">Device name</string>
@@ -73,21 +79,21 @@
 
     <!--Messages-->
     <string name="message_no_connection_text">No internet connection!</string>
-    <string name="message_no_connection_use_sms_text">No internet connection! Try to send SMS commands</string>
+    <!--<string name="message_no_connection_use_sms_text">No internet connection! Try to send SMS commands</string>-->
     <string name="message_no_phone_number_text">No phone number available!</string>
     <string name="message_cant_send_sms_text">No SMS application found!</string>
     <string name="message_error_phone_number_text">Error while getting phone number!</string>
     <string name="message_wrong_number_format_error_text">Wrong number format!</string>
-    <string name="message_timeout_error_text">Timeout error! Check your internet connection</string>
+    <!--<string name="message_timeout_error_text">Timeout error! Check your internet connection</string>-->
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
     <string name="message_device_not_found_text">Device not found!</string>
     <string name="message_no_widgets_found_text">No widgets found for this device!</string>
     <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
-    <string name="message_device_online_text">Device is online</string>
+    <!--<string name="message_device_online_text">Device is online</string>-->
     <string name="message_sn_not_exist">Device does not exist!</string>
     <string name="message_device_already_has_owner">This device belongs to another user!</string>
-    <string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>
+    <!--<string name="message_device_offline_text">Device is not connected to the Internet. Try to send SMS-commands</string>-->
 
     <!--Placeholders-->
     <string name="placeholder_widget_name_text">Widget name</string>

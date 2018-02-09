@@ -29,6 +29,7 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.view.AboutDeviceDialog;
 
 public class WidgetPresenter<V extends IWidgetView>
         extends BasicPresenter<V> implements IWidgetPresenter<V> {
@@ -232,6 +233,20 @@ public class WidgetPresenter<V extends IWidgetView>
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void onAboutDeviceClick(){
+        if(mFarhomeDevice != null){
+            AboutDeviceDialog deviceDialog = AboutDeviceDialog.newInstance(
+                    mFarhomeDevice.getName(),
+                    mFarhomeDevice.getModel(),
+                    mDeviceSn
+            );
+            if(mView != null){
+                mView.showAboutDeviceDialog(deviceDialog);
+            }
         }
     }
 

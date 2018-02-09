@@ -14,4 +14,11 @@
         android:padding="16dp">
     </ListView>
 
+    <Button
+        android:id="@+id/change_device_cancel_button"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/ui_cancel_text"
+        style="@style/EditWidgetButton"/>
 </LinearLayout>

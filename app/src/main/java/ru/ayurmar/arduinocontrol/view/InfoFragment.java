@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class InfoFragment extends DialogFragment{
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_info, null);
         TextView textViewVersion = v.findViewById(R.id.info_version_text_view);
+        Button okButton = v.findViewById(R.id.info_ok_button);
 
         //show hidden "Developer Settings" category
         textViewVersion.setOnClickListener(view -> {
@@ -62,14 +64,10 @@ public class InfoFragment extends DialogFragment{
                         R.string.ui_pref_developer_settings_available, Toast.LENGTH_SHORT).show();
             }
         });
+        okButton.setOnClickListener(view -> dismiss());
 
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setNeutralButton(android.R.string.ok,
-                        ((dialogInterface, i) -> {
-                            mListener.onFinishDialog(mUnlockDevModeClicks >= sClicksToUnlockDevMode);
-                            dismiss();
-                        }))
                 .create();
     }
 

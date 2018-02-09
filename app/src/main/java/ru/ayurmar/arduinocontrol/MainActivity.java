@@ -119,6 +119,11 @@ public class MainActivity extends AppCompatActivity
                     widgetView.onChangeDeviceClick();
                 }
                 return true;
+            case R.id.menu_popup_about_device:
+                if(widgetView != null){
+                    widgetView.onAboutDeviceClick();
+                }
+                return true;
             default:
                 return true;
         }

@@ -1,5 +1,5 @@
 package ru.ayurmar.arduinocontrol.interfaces.model;
 
-public interface IRepository extends IDbHelper, IPrefHelper {
+public interface IRepository extends IPrefHelper {
 
 }

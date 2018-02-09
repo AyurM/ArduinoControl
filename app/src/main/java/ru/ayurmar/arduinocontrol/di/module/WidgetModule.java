@@ -10,8 +10,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
-import ru.ayurmar.arduinocontrol.db.SQLiteDbHelper;
-import ru.ayurmar.arduinocontrol.interfaces.model.IDbHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
@@ -22,11 +20,6 @@ import ru.ayurmar.arduinocontrol.model.AppScheduler;
 @Module
 public class WidgetModule {
 
-    @Provides
-    @Singleton
-    IDbHelper provideDbHelper(Context context){
-        return new SQLiteDbHelper(context);
-    }
 
     @Provides
     @Singleton
@@ -42,9 +35,8 @@ public class WidgetModule {
 
     @Provides
     @Singleton
-    IRepository provideAppRepository(IDbHelper dbHelper,
-                                     IPrefHelper prefHelper){
-        return new AppRepository(dbHelper, prefHelper);
+    IRepository provideAppRepository(IPrefHelper prefHelper){
+        return new AppRepository(prefHelper);
     }
 
     @Provides

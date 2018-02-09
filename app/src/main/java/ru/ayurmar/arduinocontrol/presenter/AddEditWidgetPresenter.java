@@ -1,7 +1,5 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
-import java.util.UUID;
-
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
@@ -12,7 +10,6 @@ import ru.ayurmar.arduinocontrol.interfaces.view.IAddEditWidgetView;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
-import ru.ayurmar.arduinocontrol.model.BlynkWidget;
 import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 
@@ -57,32 +54,32 @@ public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
                 mWidget.setPin(pin);
                 mWidget.setWidgetType(type);
             }
-            addEditResult = getRepository().updateWidget(mWidget);
+//            addEditResult = getRepository().updateWidget(mWidget);
         } else {
-            mWidget = new BlynkWidget(name, pin, BlynkWidget.UNDEFINED, type);
-            addEditResult = getRepository().addWidget(mWidget);
+//            mWidget = new BlynkWidget(name, pin, BlynkWidget.UNDEFINED, type);
+//            addEditResult = getRepository().addWidget(mWidget);
         }
 
-        getDisposable().add(addEditResult
-                .subscribeOn(getScheduler().computation())
-                .observeOn(getScheduler().main())
-                .doOnError(throwable -> getView()
-                        .showMessage(R.string.message_database_error_text))
-                .subscribe(() -> getView().closeDialog(true))
-        );
+//        getDisposable().add(addEditResult
+//                .subscribeOn(getScheduler().computation())
+//                .observeOn(getScheduler().main())
+//                .doOnError(throwable -> getView()
+//                        .showMessage(R.string.message_database_error_text))
+//                .subscribe(() -> getView().closeDialog(true))
+//        );
     }
 
     @Override
     public void loadWidgetToEdit(String widgetId){
-        getDisposable().add(getRepository().loadWidget(UUID.fromString(widgetId))
-                .subscribeOn(getScheduler().computation())
-                .observeOn(getScheduler().main())
-                .subscribe(widget -> {
-                    mWidget = widget;
-                    getView().fillEditForm(mWidget);
-                },
-                        throwable -> getView()
-                                .showMessage(R.string.message_database_error_text))
-        );
+//        getDisposable().add(getRepository().loadWidget(UUID.fromString(widgetId))
+//                .subscribeOn(getScheduler().computation())
+//                .observeOn(getScheduler().main())
+//                .subscribe(widget -> {
+//                    mWidget = widget;
+//                    getView().fillEditForm(mWidget);
+//                },
+//                        throwable -> getView()
+//                                .showMessage(R.string.message_database_error_text))
+//        );
     }
 }

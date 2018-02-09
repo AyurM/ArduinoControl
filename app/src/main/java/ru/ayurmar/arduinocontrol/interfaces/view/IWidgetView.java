@@ -5,6 +5,7 @@ import java.util.List;
 
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.view.AboutDeviceDialog;
 
 public interface IWidgetView extends IBasicView {
 
@@ -21,6 +22,10 @@ public interface IWidgetView extends IBasicView {
     void showAddDeviceDialog();
 
     void showRenameDeviceDialog(String currentName);
+
+    void showAboutDeviceDialog(AboutDeviceDialog dialog);
+
+    void onAboutDeviceClick();
 
     void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList);
 

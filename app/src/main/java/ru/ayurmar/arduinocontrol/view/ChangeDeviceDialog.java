@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class ChangeDeviceDialog extends DialogFragment {
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_change_device, null);
         ListView listView = v.findViewById(R.id.change_device_list_view);
+        Button cancelButton = v.findViewById(R.id.change_device_cancel_button);
 
         ArrayList<String> deviceList = getArguments().getStringArrayList(sDeviceListIndex);
         ArrayList<String> deviceNamesList = getArguments().getStringArrayList(sDeviceNamesIndex);
@@ -59,9 +61,10 @@ public class ChangeDeviceDialog extends DialogFragment {
             dismiss();
         });
 
+        cancelButton.setOnClickListener(view -> dismiss());
+
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
-                .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }
 
