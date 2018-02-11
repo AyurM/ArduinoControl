@@ -434,6 +434,11 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
+    public int getDeviceCount(){
+        return mAvailableDevices.size();
+    }
+
+    @Override
     public void deleteWidget(int position){
 //        if (position == -1) {
 //            return;

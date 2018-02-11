@@ -58,7 +58,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private TextView mNoConnectionTextView;
     private LinearLayout mNoItemsLayout;
     private Menu mMenu;
-    private boolean mIsDevMode;
 
     @Inject
     IWidgetPresenter<IWidgetView> mPresenter;
@@ -111,7 +110,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mMenu = menu;
         inflater.inflate(R.menu.menu_main_widget, menu);
         MenuItem addWidgetItem = mMenu.findItem(R.id.menu_item_add_widget);
-        addWidgetItem.setVisible(mIsDevMode);   //hide "Add Widget" menu item
+        addWidgetItem.setVisible(false);   //hide "Add Widget" menu item
         showDeviceOnlineStatus(false);
     }
 
@@ -165,6 +164,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void showNoConnectionUI(boolean isConnected){
         mNoConnectionTextView.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+        mNoItemsLayout.setVisibility(isConnected ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -179,6 +179,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     public void showLoadingUI(int loadingInfoId){
         showLoadingUI(true);
         mLoadingInfoTextView.setText(getString(loadingInfoId));
+    }
+
+    private void showNoItemsUI(boolean isEmpty){
+        mNoItemsLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -227,20 +232,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         }
     }
 
-    public void updateWidgetList(){
-        MainActivity activity = (MainActivity) getActivity();
-        if(activity != null){
-            mIsDevMode = activity.isDevMode();
-        }
-        getActivity().invalidateOptionsMenu();
-//        mPresenter.loadWidgetListFromDb();
-    }
-
     @Override
     public void showAddWidgetDialog(){
         Intent intent = new Intent(getContext(), AddWidgetActivity.class);
         intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, false);
-        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
+        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, false);
         intent.putExtra(AddWidgetActivity.WIDGET_ID, "");
         startActivityForResult(intent, sAddWidgetRequestCode);
     }
@@ -310,6 +306,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         }
     }
 
+    @Override
+    public int getDeviceCount(){
+        return mPresenter.getDeviceCount();
+    }
+
     private void showConfirmDeleteDialog(int position){
         DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
         fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
@@ -317,11 +318,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         if(activity != null){
             fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
         }
-    }
-
-    private void showNoItemsUI(boolean isEmpty){
-        mNoItemsLayout.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-        mRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
@@ -342,7 +338,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
             mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
             mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
-            mButtonDelete.setVisibility(mIsDevMode ? View.VISIBLE : View.GONE);
+            mButtonDelete.setVisibility(View.GONE);
         }
 
         void bindWidget(FarhomeWidget widget, int position) {

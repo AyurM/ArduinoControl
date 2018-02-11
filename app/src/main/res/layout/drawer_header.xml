@@ -18,6 +18,8 @@
         android:textSize="24sp"
         android:padding="8dp"
         android:textColor="@color/colorBackground"
+        android:fontFamily="@font/open_sans"
+        android:textStyle="bold"
         android:layout_gravity="top"/>
 
     <TextView
@@ -27,5 +29,6 @@
         android:textSize="18sp"
         android:padding="8dp"
         android:textColor="@color/colorBackground"
+        android:fontFamily="@font/open_sans"
         android:layout_gravity="bottom"/>
 </FrameLayout>

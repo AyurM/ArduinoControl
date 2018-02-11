@@ -41,5 +41,7 @@ public interface IWidgetView extends IBasicView {
 
     void showWidgetList(List<FarhomeWidget> widgets);
 
+    int getDeviceCount();
+
     List<FarhomeWidget> getWidgetList();
 }

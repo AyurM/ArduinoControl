@@ -23,18 +23,15 @@ import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements InfoFragment.InfoDialogListener,
-        LogoutConfirmationFragment.LogoutDialogListener,
+        implements LogoutConfirmationFragment.LogoutDialogListener,
         PopupMenu.OnMenuItemClickListener{
 
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
     private static final String sConfirmLogoutTag = "CONFIRM_LOGOUT_DIALOG";
-    public static final String DEV_MODE = "IS_DEV_MODE";
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private TextView mToolbarTitle;
-    private boolean mIsDevMode;
     private FirebaseAuth mAuth;
 
     @Override
@@ -81,16 +78,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFinishDialog(boolean isDevMode){
-        mIsDevMode = isDevMode;
-        FragmentManager fm = getSupportFragmentManager();
-        WidgetFragment fragment = (WidgetFragment) fm.findFragmentById(R.id.main_fragment_container);
-        if(fragment != null){
-            fragment.updateWidgetList();
-        }
-    }
-
-    @Override
     public void onLogoutPositiveClick(){
         FirebaseAuth.getInstance().signOut();
         Intent i = new Intent(this, LoginActivity.class);
@@ -129,10 +116,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public boolean isDevMode(){
-        return mIsDevMode;
-    }
-
     public void changeToolbarTitle(String title){
         mToolbarTitle.setText(title);
     }
@@ -151,9 +134,24 @@ public class MainActivity extends AppCompatActivity
             PopupMenu popupMenu = new PopupMenu(this, view);
             popupMenu.setOnMenuItemClickListener(this);
             popupMenu.inflate(R.menu.device_popup_menu);
+
+            FragmentManager fm = getSupportFragmentManager();
+            IWidgetView widgetView = (IWidgetView) fm.findFragmentById(R.id.main_fragment_container);
+            int deviceCount = 0;
+            //настройка видимости пунктов всплывающего меню
+            if(widgetView != null){
+                deviceCount = widgetView.getDeviceCount();
+            }
+            if(deviceCount == 0){
+                popupMenu.getMenu().findItem(R.id.menu_rename_device).setVisible(false);
+                popupMenu.getMenu().findItem(R.id.menu_popup_about_device).setVisible(false);
+            }
+            if(deviceCount <= 1){
+                popupMenu.getMenu().findItem(R.id.menu_popup_change_device).setVisible(false);
+            }
+
             popupMenu.show();
         });
-
 
         mDrawerLayout = findViewById(R.id.main_layout_drawer);
         mNavigationView = findViewById(R.id.navigation_drawer);
@@ -194,7 +192,6 @@ public class MainActivity extends AppCompatActivity
         switch(menuItem.getItemId()){
             case R.id.menu_settings:
                 Intent intent = new Intent(this, PreferencesActivity.class);
-                intent.putExtra(DEV_MODE, mIsDevMode);
                 startActivity(intent);
                 break;
             case R.id.menu_about:
