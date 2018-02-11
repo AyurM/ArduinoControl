@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import ru.ayurmar.arduinocontrol.R;
 
-public class InfoFragment extends DialogFragment{
+public class InfoDialog extends DialogFragment{
 
     @Override
     @NonNull
@@ -23,8 +23,10 @@ public class InfoFragment extends DialogFragment{
         Button okButton = v.findViewById(R.id.info_ok_button);
         okButton.setOnClickListener(view -> dismiss());
 
-        return new AlertDialog.Builder(getActivity())
+        Dialog dialog = new AlertDialog.Builder( getActivity())
                 .setView(v)
                 .create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.FarHomeDialogAnimation;
+        return dialog;
     }
 }

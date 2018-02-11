@@ -48,8 +48,10 @@ public class AboutDeviceDialog extends DialogFragment {
             modelTextView.setText(args.getString(sDeviceModel, ""));
             snTextView.setText(args.getString(sDeviceSn, ""));
         }
-        return new AlertDialog.Builder(getActivity())
+        Dialog dialog = new AlertDialog.Builder( getActivity())
                 .setView(v)
                 .create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.FarHomeDialogAnimation;
+        return dialog;
     }
 }

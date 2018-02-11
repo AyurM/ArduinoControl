@@ -18,12 +18,12 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.view.InfoFragment;
-import ru.ayurmar.arduinocontrol.view.LogoutConfirmationFragment;
+import ru.ayurmar.arduinocontrol.view.InfoDialog;
+import ru.ayurmar.arduinocontrol.view.LogoutConfirmationDialog;
 import ru.ayurmar.arduinocontrol.view.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity
-        implements LogoutConfirmationFragment.LogoutDialogListener,
+        implements LogoutConfirmationDialog.LogoutDialogListener,
         PopupMenu.OnMenuItemClickListener{
 
     private static final String sInfoDialogTag = "INFO_DIALOG_TAG";
@@ -195,8 +195,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.menu_about:
-                InfoFragment infoFragment = new InfoFragment();
-                infoFragment.show(getSupportFragmentManager(), sInfoDialogTag);
+                InfoDialog infoDialog = new InfoDialog();
+                infoDialog.show(getSupportFragmentManager(), sInfoDialogTag);
                 break;
             case R.id.menu_change_device:
                 FragmentManager fm = getSupportFragmentManager();
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity
                 widgetView.onChangeDeviceClick();
                 break;
             case R.id.menu_logout:
-                LogoutConfirmationFragment logoutFragment = new LogoutConfirmationFragment();
+                LogoutConfirmationDialog logoutFragment = new LogoutConfirmationDialog();
                 logoutFragment.show(getSupportFragmentManager(), sConfirmLogoutTag);
                 break;
             default:

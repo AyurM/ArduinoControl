@@ -383,7 +383,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         public WidgetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater
-                    .inflate(R.layout.widget_item, parent, false);
+                    .inflate(R.layout.item_widget, parent, false);
             return new WidgetHolder(view);
         }
 

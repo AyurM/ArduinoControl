@@ -6,6 +6,7 @@ package ru.ayurmar.arduinocontrol.view;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,9 +14,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -49,11 +52,9 @@ public class ChangeDeviceDialog extends DialogFragment {
 
         ArrayList<String> deviceList = getArguments().getStringArrayList(sDeviceListIndex);
         ArrayList<String> deviceNamesList = getArguments().getStringArrayList(sDeviceNamesIndex);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getTargetFragment().getActivity(),
-                android.R.layout.simple_list_item_1,
-                deviceNamesList == null ? new ArrayList<>() : deviceNamesList);
 
-        listView.setAdapter(adapter);
+        listView.setAdapter(new ChangeDeviceAdapter(getTargetFragment().getActivity(),
+                deviceNamesList));
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
             if(deviceList != null){
                 sendResult(deviceList.get(i));
@@ -63,9 +64,11 @@ public class ChangeDeviceDialog extends DialogFragment {
 
         cancelButton.setOnClickListener(view -> dismiss());
 
-        return new AlertDialog.Builder(getActivity())
+        Dialog dialog = new AlertDialog.Builder( getActivity())
                 .setView(v)
                 .create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.FarHomeDialogAnimation;
+        return dialog;
     }
 
     private void sendResult(String deviceSn) {
@@ -76,5 +79,43 @@ public class ChangeDeviceDialog extends DialogFragment {
         intent.putExtra(SELECTED_DEVICE_INDEX, deviceSn);
         getTargetFragment()
                 .onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+    }
+
+    private class ChangeDeviceAdapter extends BaseAdapter{
+        Context mContext;
+        ArrayList<String> mDeviceList;
+        private LayoutInflater mInflater = null;
+
+        ChangeDeviceAdapter(Context context, ArrayList<String> deviceList){
+            this.mContext = context;
+            this.mDeviceList = deviceList;
+            mInflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount(){
+            return mDeviceList.size();
+        }
+
+        @Override
+        public Object getItem(int position){
+            return mDeviceList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null)
+                v = mInflater.inflate(R.layout.item_change_device, null);
+            TextView text = v.findViewById(R.id.item_change_device_name);
+            text.setText(mDeviceList.get(position));
+            return v;
+        }
     }
 }

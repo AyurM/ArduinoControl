@@ -60,9 +60,11 @@ public class RenameDeviceDialog extends DialogFragment {
         });
         cancelButton.setOnClickListener(view -> dismiss());
 
-        return new AlertDialog.Builder(getActivity())
+        Dialog dialog = new AlertDialog.Builder( getActivity())
                 .setView(v)
                 .create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.FarHomeDialogAnimation;
+        return dialog;
     }
 
     private void sendResult(String deviceName) {

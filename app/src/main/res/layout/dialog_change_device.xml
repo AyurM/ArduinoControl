@@ -11,6 +11,7 @@
         android:id="@+id/change_device_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
         android:padding="16dp">
     </ListView>
 

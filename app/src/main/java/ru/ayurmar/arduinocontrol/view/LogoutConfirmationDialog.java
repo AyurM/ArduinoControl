@@ -13,7 +13,7 @@ import android.widget.Button;
 
 import ru.ayurmar.arduinocontrol.R;
 
-public class LogoutConfirmationFragment extends DialogFragment {
+public class LogoutConfirmationDialog extends DialogFragment {
 
     public interface LogoutDialogListener{
 
@@ -27,8 +27,8 @@ public class LogoutConfirmationFragment extends DialogFragment {
     public void onAttach(Activity activity){
         super.onAttach(activity);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) return;
-        if (activity instanceof LogoutConfirmationFragment.LogoutDialogListener) {
-            mListener = (LogoutConfirmationFragment.LogoutDialogListener) activity;
+        if (activity instanceof LogoutConfirmationDialog.LogoutDialogListener) {
+            mListener = (LogoutConfirmationDialog.LogoutDialogListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
                     + " must implement LogoutDialogListener");
@@ -48,8 +48,10 @@ public class LogoutConfirmationFragment extends DialogFragment {
         cancelButton.setOnClickListener(view -> dismiss());
         okButton.setOnClickListener(view -> mListener.onLogoutPositiveClick());
 
-        return new AlertDialog.Builder(getActivity())
+        Dialog dialog = new AlertDialog.Builder( getActivity())
                 .setView(v)
                 .create();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.FarHomeDialogAnimation;
+        return dialog;
     }
 }
