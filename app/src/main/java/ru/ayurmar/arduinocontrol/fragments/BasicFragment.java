@@ -1,4 +1,4 @@
-package ru.ayurmar.arduinocontrol.view;
+package ru.ayurmar.arduinocontrol.fragments;
 
 import android.support.v4.app.Fragment;
 import android.view.Gravity;

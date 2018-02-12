@@ -1,4 +1,4 @@
-package ru.ayurmar.arduinocontrol.view;
+package ru.ayurmar.arduinocontrol.fragments;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

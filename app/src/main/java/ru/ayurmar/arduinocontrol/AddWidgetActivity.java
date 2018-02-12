@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
-import ru.ayurmar.arduinocontrol.view.AddEditWidgetFragment;
+import ru.ayurmar.arduinocontrol.fragments.AddEditWidgetFragment;
 
 public class AddWidgetActivity extends AppCompatActivity {
 

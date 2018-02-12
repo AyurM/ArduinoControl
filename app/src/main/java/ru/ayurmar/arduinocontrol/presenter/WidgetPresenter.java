@@ -1,5 +1,10 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
+/*
+TODO:
+- Отсылка команд в Firebase DB
+ */
+
 import android.content.Context;
 import android.util.Log;
 
@@ -29,7 +34,7 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
-import ru.ayurmar.arduinocontrol.view.AboutDeviceDialog;
+import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
 
 public class WidgetPresenter<V extends IWidgetView>
         extends BasicPresenter<V> implements IWidgetPresenter<V> {
@@ -460,14 +465,13 @@ public class WidgetPresenter<V extends IWidgetView>
                 .subscribeOn(getScheduler().io())
                 .observeOn(getScheduler().main())
                 .subscribe(phoneNumber -> {
-                    if(phoneNumber == null){
+                    if(phoneNumber == null || phoneNumber.isEmpty()){
                         mView.showMessage(R.string.message_no_phone_number_text);
                     } else {
                         if(isCorrectPhoneNumber(phoneNumber)){
                             mView.showSendSmsDialog(message, phoneNumber);
                         } else {
-                            mView
-                                    .showMessage(R.string.message_wrong_number_format_error_text);
+                            mView.showMessage(R.string.message_wrong_number_format_error_text);
                         }
                     }
                 },

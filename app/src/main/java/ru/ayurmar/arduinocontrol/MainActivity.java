@@ -18,9 +18,9 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.view.InfoDialog;
-import ru.ayurmar.arduinocontrol.view.LogoutConfirmationDialog;
-import ru.ayurmar.arduinocontrol.view.WidgetFragment;
+import ru.ayurmar.arduinocontrol.fragments.InfoDialog;
+import ru.ayurmar.arduinocontrol.fragments.LogoutConfirmationDialog;
+import ru.ayurmar.arduinocontrol.fragments.WidgetFragment;
 
 public class MainActivity extends AppCompatActivity
         implements LogoutConfirmationDialog.LogoutDialogListener,

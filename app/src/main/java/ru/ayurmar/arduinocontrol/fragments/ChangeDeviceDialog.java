@@ -1,4 +1,4 @@
-package ru.ayurmar.arduinocontrol.view;
+package ru.ayurmar.arduinocontrol.fragments;
 
 /*
  * Диалоговое окно смены устройства для текущего пользователя

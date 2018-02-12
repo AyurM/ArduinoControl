@@ -5,7 +5,7 @@ import java.util.List;
 
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
-import ru.ayurmar.arduinocontrol.view.AboutDeviceDialog;
+import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
 
 public interface IWidgetView extends IBasicView {
 
