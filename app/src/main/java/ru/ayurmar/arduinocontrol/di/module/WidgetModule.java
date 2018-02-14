@@ -10,12 +10,14 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.reactivex.disposables.CompositeDisposable;
+import ru.ayurmar.arduinocontrol.interfaces.model.IFirebaseHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.model.AppPrefHelper;
 import ru.ayurmar.arduinocontrol.model.AppRepository;
 import ru.ayurmar.arduinocontrol.model.AppScheduler;
+import ru.ayurmar.arduinocontrol.model.FirebaseHelper;
 
 @Module
 public class WidgetModule {
@@ -35,8 +37,15 @@ public class WidgetModule {
 
     @Provides
     @Singleton
-    IRepository provideAppRepository(IPrefHelper prefHelper){
-        return new AppRepository(prefHelper);
+    IFirebaseHelper provideFirebaseHelper(IScheduler scheduler,
+                                          CompositeDisposable disposable){
+        return new FirebaseHelper(scheduler, disposable);
+    }
+
+    @Provides
+    @Singleton
+    IRepository provideAppRepository(IPrefHelper prefHelper, IFirebaseHelper firebaseHelper){
+        return new AppRepository(prefHelper, firebaseHelper);
     }
 
     @Provides

@@ -5,14 +5,9 @@ public class FarhomeDevice {
     private String mUser;
     private String mName;
     private String mModel;
+    private String mId;
 
     public FarhomeDevice(){
-    }
-
-    public FarhomeDevice(String user, String name, String model){
-        this.mUser = user;
-        this.mName = name;
-        this.mModel = model;
     }
 
     public String getUser() {
@@ -37,5 +32,21 @@ public class FarhomeDevice {
 
     public void setName(String name) {
         mName = name;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof FarhomeDevice)){
+            return false;
+        }
+        return mId.equals(((FarhomeDevice) obj).getId());
     }
 }

@@ -33,7 +33,7 @@ import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
-import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeOldWidget;
 import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
 
 public class WidgetPresenter<V extends IWidgetView>
@@ -48,7 +48,7 @@ public class WidgetPresenter<V extends IWidgetView>
     private IWidgetView mView;
     private String mDeviceSn = "";
     private FarhomeDevice mFarhomeDevice;
-    private List<FarhomeWidget> mWidgetList = new ArrayList<>();
+    private List<FarhomeOldWidget> mWidgetList = new ArrayList<>();
     private List<String> mAvailableDevices = new ArrayList<>();
     private List<String> mAvailableDevicesNames = new ArrayList<>();
     private DatabaseReference mUserDevicesRef;
@@ -69,18 +69,19 @@ public class WidgetPresenter<V extends IWidgetView>
         mView = view;
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null){
-            mUserDevicesRef = FirebaseDatabase.getInstance()
-                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid()
-                            + "/" + DEVICES_ROOT);
-            getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
-                    .subscribeOn(getScheduler().computation())
-                    .observeOn(getScheduler().main())
-                    .subscribe(deviceSn -> {
-                        mDeviceSn = deviceSn;
-                        Log.d(sLogTag, "mDeviceSn = " + mDeviceSn);
-                        loadUserDevices();
-                    });
+//            mUserDevicesRef = FirebaseDatabase.getInstance()
+//                    .getReference(USERS_ROOT + "/" + firebaseUser.getUid()
+//                            + "/" + DEVICES_ROOT);
+//            getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
+//                    .subscribeOn(getScheduler().computation())
+//                    .observeOn(getScheduler().main())
+//                    .subscribe(deviceSn -> {
+//                        mDeviceSn = deviceSn;
+//                        Log.d(sLogTag, "mDeviceSn = " + mDeviceSn);
+//                        loadUserDevices();
+//                    });
         }
+        getRepository().loadUserDevices();
     }
 
     @Override
@@ -219,8 +220,8 @@ public class WidgetPresenter<V extends IWidgetView>
                     }
                     Log.d(sLogTag, "loadWidgets()" + dataSnapshot.toString());
                     for(DataSnapshot widget : dataSnapshot.getChildren()){
-                        FarhomeWidget farhomeWidget = widget.getValue(FarhomeWidget.class);
-                        mWidgetList.add(farhomeWidget);
+                        FarhomeOldWidget farhomeOldWidget = widget.getValue(FarhomeOldWidget.class);
+                        mWidgetList.add(farhomeOldWidget);
                     }
                     Log.d(sLogTag, "Parsed " + mWidgetList.size() + " widgets!");
                     if(mView != null){
@@ -315,7 +316,7 @@ public class WidgetPresenter<V extends IWidgetView>
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Log.d(sLogTag, "Widgets onChildChanged: " + s +
                         "; " + dataSnapshot.toString());
-                FarhomeWidget changedWidget = dataSnapshot.getValue(FarhomeWidget.class);
+                FarhomeOldWidget changedWidget = dataSnapshot.getValue(FarhomeOldWidget.class);
                 if(mView != null){
                     mView.updateWidget(changedWidget);
                 }
@@ -342,7 +343,7 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void updateWidgetInDb(FarhomeWidget widget){
+    public void updateWidgetInDb(FarhomeOldWidget widget){
 //        getDisposable().add(getRepository().updateWidget(widget)
 //                .subscribeOn(getScheduler().computation())
 //                .observeOn(getScheduler().main())
@@ -362,7 +363,7 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void onEditWidgetClick(FarhomeWidget widget){
+    public void onEditWidgetClick(FarhomeOldWidget widget){
         mView.showEditWidgetDialog(widget);
     }
 
@@ -458,7 +459,7 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void onSendSmsClick(FarhomeWidget widget){
+    public void onSendSmsClick(FarhomeOldWidget widget){
         String message = widget.getName() + " " + widget.getValue(); //заменить на команды для GSM-модуля
         getDisposable().add(getRepository()
                 .getStringPreference(PreferencesActivity.KEY_PREF_PHONE_NUMBER)

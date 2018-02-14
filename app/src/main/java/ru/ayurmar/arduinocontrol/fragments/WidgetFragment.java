@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,7 +35,7 @@ import ru.ayurmar.arduinocontrol.Utils;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
-import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeOldWidget;
 
 
 public class WidgetFragment extends BasicFragment implements IWidgetView {
@@ -79,7 +78,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
         mNoConnectionTextView = view.findViewById(R.id.widget_no_connection_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
         addDeviceButton.setOnClickListener(view1 -> mPresenter.onAddDeviceClick());
 
@@ -197,7 +197,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showWidgetList(List<FarhomeWidget> widgets){
+    public void showWidgetList(List<FarhomeOldWidget> widgets){
         mRecyclerView.setAdapter(new WidgetAdapter(widgets));
         showNoItemsUI(widgets.isEmpty());
     }
@@ -213,15 +213,15 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public List<FarhomeWidget> getWidgetList(){
+    public List<FarhomeOldWidget> getWidgetList(){
         return ((WidgetAdapter) mRecyclerView.getAdapter()).getItemsList();
     }
 
     @Override
-    public void updateWidget(FarhomeWidget widget){
-        List<FarhomeWidget> adapterList = getWidgetList();
+    public void updateWidget(FarhomeOldWidget widget){
+        List<FarhomeOldWidget> adapterList = getWidgetList();
         for(int i = 0; i < adapterList.size(); i++){
-            FarhomeWidget oldWidget = adapterList.get(i);
+            FarhomeOldWidget oldWidget = adapterList.get(i);
             if(oldWidget.getDbkey().equals(widget.getDbkey())){
                 oldWidget.setName(widget.getName());
                 oldWidget.setTimestamp(widget.getTimestamp());
@@ -262,7 +262,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showEditWidgetDialog(FarhomeWidget widget){
+    public void showEditWidgetDialog(FarhomeOldWidget widget){
 //        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
 //        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
 //        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
@@ -321,27 +321,27 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
-        private FarhomeWidget mWidget;
+        private FarhomeOldWidget mWidget;
         private int mPosition = -1;
         private TextView mTextViewName;
         private TextView mTextViewValue;
         private TextView mTextViewDate;
-        private ImageButton mButtonEdit;
-        private ImageButton mButtonSms;
-        private ImageButton mButtonDelete;
+//        private ImageButton mButtonEdit;
+//        private ImageButton mButtonSms;
+//        private ImageButton mButtonDelete;
 
         WidgetHolder(View itemView){
             super(itemView);
             mTextViewName = itemView.findViewById(R.id.widget_item_text_view_name);
             mTextViewValue = itemView.findViewById(R.id.widget_item_text_view_value);
             mTextViewDate = itemView.findViewById(R.id.widget_item_text_view_last_update_time);
-            mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
-            mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
-            mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
-            mButtonDelete.setVisibility(View.GONE);
+//            mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
+//            mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
+//            mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
+//            mButtonDelete.setVisibility(View.GONE);
         }
 
-        void bindWidget(FarhomeWidget widget, int position) {
+        void bindWidget(FarhomeOldWidget widget, int position) {
             mWidget = widget;
             mPosition = position;
 
@@ -362,9 +362,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                     getContext()));
 
             mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
-            mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
-            mButtonSms.setOnClickListener(view -> mPresenter.onSendSmsClick(mWidget));
-            mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));
+//            mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
+//            mButtonSms.setOnClickListener(view -> mPresenter.onSendSmsClick(mWidget));
+//            mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));
         }
 
 //        private void toggleValueLoadingUI(boolean isLoading){
@@ -373,9 +373,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{
-        private List<FarhomeWidget> mWidgets;
+        private List<FarhomeOldWidget> mWidgets;
 
-        WidgetAdapter(List<FarhomeWidget> list){
+        WidgetAdapter(List<FarhomeOldWidget> list){
             this.mWidgets = list;
         }
 
@@ -383,7 +383,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         public WidgetHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
             View view = layoutInflater
-                    .inflate(R.layout.item_widget, parent, false);
+                    .inflate(R.layout.item_small_widget, parent, false);
             return new WidgetHolder(view);
         }
 
@@ -397,7 +397,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             return mWidgets.size();
         }
 
-        private List<FarhomeWidget> getItemsList(){
+        private List<FarhomeOldWidget> getItemsList(){
             return mWidgets;
         }
     }

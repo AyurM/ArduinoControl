@@ -2,7 +2,7 @@ package ru.ayurmar.arduinocontrol.interfaces.presenter;
 
 
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeOldWidget;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
 
@@ -18,7 +18,7 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void renameCurrentDevice(String newName);
 
-    void updateWidgetInDb(FarhomeWidget widget);
+    void updateWidgetInDb(FarhomeOldWidget widget);
 
     void onAddWidgetClick();
 
@@ -26,11 +26,11 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void bindDeviceToUser(String deviceSn, String deviceName);
 
-    void onEditWidgetClick(FarhomeWidget widget);
+    void onEditWidgetClick(FarhomeOldWidget widget);
 
     void deleteWidget(int position);
 
-    void onSendSmsClick(FarhomeWidget widget);
+    void onSendSmsClick(FarhomeOldWidget widget);
 
     void onWidgetValueClick(int position);
 
