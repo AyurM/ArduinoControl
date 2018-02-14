@@ -9,4 +9,6 @@ public interface IWidgetsObserver {
     void update(FarhomeWidget widget);
 
     void update(WidgetGroup widgetGroup);
+
+    void updateWidgetLoadingState(boolean isLoading);
 }

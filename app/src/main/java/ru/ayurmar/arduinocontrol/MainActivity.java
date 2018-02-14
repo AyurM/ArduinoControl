@@ -80,6 +80,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLogoutPositiveClick(){
         FirebaseAuth.getInstance().signOut();
+
+        FragmentManager fm = getSupportFragmentManager();
+        IWidgetView widgetView = (IWidgetView) fm.findFragmentById(R.id.main_fragment_container);
+        if(widgetView != null){
+            widgetView.onLogoutClick();
+        }
         Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();

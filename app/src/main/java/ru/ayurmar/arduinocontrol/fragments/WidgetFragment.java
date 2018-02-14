@@ -34,8 +34,11 @@ import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.Utils;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
+import ru.ayurmar.arduinocontrol.model.AlarmWidget;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
-import ru.ayurmar.arduinocontrol.model.FarhomeOldWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.model.InfoWidget;
+import ru.ayurmar.arduinocontrol.model.SwitchWidget;
 
 
 public class WidgetFragment extends BasicFragment implements IWidgetView {
@@ -139,7 +142,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                         .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
             } else if(requestCode == sChangeDeviceCode){
                 String deviceSn = data.getStringExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX);
-                mPresenter.loadDevice(deviceSn);
+                mPresenter.changeDevice(deviceSn);
             } else if(requestCode == sAddDeviceCode){
                 String deviseSn = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_SN_INDEX);
                 String deviceName = data.getStringExtra(AddDeviceDialog.ADDED_DEVICE_NAME_INDEX);
@@ -152,6 +155,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                 mPresenter.renameCurrentDevice(newName);
             }
         }
+    }
+
+    @Override
+    public void onLogoutClick(){
+        mPresenter.resetFirebaseHelper();
     }
 
     @Override
@@ -197,7 +205,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showWidgetList(List<FarhomeOldWidget> widgets){
+    public void showWidgetList(List<FarhomeWidget> widgets){
         mRecyclerView.setAdapter(new WidgetAdapter(widgets));
         showNoItemsUI(widgets.isEmpty());
     }
@@ -213,19 +221,25 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public List<FarhomeOldWidget> getWidgetList(){
+    public List<FarhomeWidget> getWidgetList(){
         return ((WidgetAdapter) mRecyclerView.getAdapter()).getItemsList();
     }
 
     @Override
-    public void updateWidget(FarhomeOldWidget widget){
-        List<FarhomeOldWidget> adapterList = getWidgetList();
+    public void updateWidget(FarhomeWidget widget){
+        List<FarhomeWidget> adapterList = getWidgetList();
         for(int i = 0; i < adapterList.size(); i++){
-            FarhomeOldWidget oldWidget = adapterList.get(i);
+            FarhomeWidget oldWidget = adapterList.get(i);
             if(oldWidget.getDbkey().equals(widget.getDbkey())){
                 oldWidget.setName(widget.getName());
                 oldWidget.setTimestamp(widget.getTimestamp());
-                oldWidget.setValue(widget.getValue());
+                if(oldWidget instanceof AlarmWidget){
+                    ((AlarmWidget) oldWidget).setValue(widget.getValue());
+                } else if(oldWidget instanceof InfoWidget){
+                    ((InfoWidget) oldWidget).setValue(widget.getValue());
+                } else if(oldWidget instanceof SwitchWidget){
+                    ((SwitchWidget) oldWidget).setValue(widget.getValue());
+                }
                 mRecyclerView.getAdapter().notifyItemChanged(i);
                 break;
             }
@@ -262,7 +276,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showEditWidgetDialog(FarhomeOldWidget widget){
+    public void showEditWidgetDialog(FarhomeWidget widget){
 //        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
 //        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
 //        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
@@ -271,12 +285,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
-    public void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList){
+    public void showChangeDeviceDialog(ArrayList<String> deviceSnList, ArrayList<String> deviceNamesList){
         if(deviceSnList.isEmpty()){
             showMessage(R.string.ui_no_devices_found_text);
         }
         ChangeDeviceDialog deviceDialog = ChangeDeviceDialog
-                .newInstance((ArrayList<String>) deviceSnList, (ArrayList<String>) deviceNamesList);
+                .newInstance(deviceSnList, deviceNamesList);
         deviceDialog.setTargetFragment(WidgetFragment.this, sChangeDeviceCode);
         FragmentActivity activity = getActivity();
         if(activity != null){
@@ -321,7 +335,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
-        private FarhomeOldWidget mWidget;
+        private FarhomeWidget mWidget;
         private int mPosition = -1;
         private TextView mTextViewName;
         private TextView mTextViewValue;
@@ -341,7 +355,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 //            mButtonDelete.setVisibility(View.GONE);
         }
 
-        void bindWidget(FarhomeOldWidget widget, int position) {
+        void bindWidget(FarhomeWidget widget, int position) {
             mWidget = widget;
             mPosition = position;
 
@@ -352,12 +366,21 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             }
             mTextViewName.setText(mWidget.getName());
 
-            if(mWidget.getValue().length() > 3){
-                mTextViewValue.setTextSize(42);
-            } else {
-                mTextViewValue.setTextSize(48);
+            if(mWidget instanceof AlarmWidget || mWidget instanceof SwitchWidget){
+                if(mWidget.getValue() == 0.0f){
+                    mTextViewValue.setText(getString(R.string.ui_off_text));
+                } else {
+                    mTextViewValue.setText(getString(R.string.ui_on_text));
+                }
+            } else if(mWidget instanceof InfoWidget){
+                if(String.valueOf(mWidget.getValue()).length() > 3){
+                    mTextViewValue.setTextSize(42);
+                } else {
+                    mTextViewValue.setTextSize(48);
+                }
+                mTextViewValue.setText(String.valueOf(mWidget.getValue()));
             }
-            mTextViewValue.setText(mWidget.getValue());
+
             mTextViewDate.setText(Utils.formatDate(new Date(mWidget.getTimestamp()),
                     getContext()));
 
@@ -373,9 +396,9 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{
-        private List<FarhomeOldWidget> mWidgets;
+        private List<FarhomeWidget> mWidgets;
 
-        WidgetAdapter(List<FarhomeOldWidget> list){
+        WidgetAdapter(List<FarhomeWidget> list){
             this.mWidgets = list;
         }
 
@@ -397,7 +420,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             return mWidgets.size();
         }
 
-        private List<FarhomeOldWidget> getItemsList(){
+        private List<FarhomeWidget> getItemsList(){
             return mWidgets;
         }
     }

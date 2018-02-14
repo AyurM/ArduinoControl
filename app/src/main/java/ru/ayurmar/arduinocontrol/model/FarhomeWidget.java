@@ -1,6 +1,7 @@
 package ru.ayurmar.arduinocontrol.model;
 
 public abstract class FarhomeWidget {
+
     private String mName;
     private String mDbkey;
     private long mTimestamp;

@@ -10,4 +10,6 @@ public interface IUserDevicesObserver {
     void update(List<FarhomeDevice> devices);
 
     void update(FarhomeDevice device);
+
+    void updateDeviceLoadingState(boolean isLoading);
 }

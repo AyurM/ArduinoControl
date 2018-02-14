@@ -15,9 +15,9 @@ public interface IFirebaseHelper {
 
     void removeWidgetsObserver(IWidgetsObserver observer);
 
-    void notifyUserDevicesObservers();
+    void notifyDeviceObservers();
 
-    void notifyWidgetsObservers();
+    void notifyWidgetObservers();
 
     void loadUserDevices();
 
@@ -26,4 +26,12 @@ public interface IFirebaseHelper {
     FarhomeDevice getCurrentDevice();
 
     WidgetGroup getAllWidgets();
+
+    void renameCurrentDevice(String name);
+
+    void bindDeviceToUser(String deviceSn, String deviceName);
+
+    void changeDevice(String deviceId);
+
+    void reset();
 }

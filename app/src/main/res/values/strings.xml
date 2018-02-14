@@ -26,9 +26,11 @@
     <string name="login_invalid_email">Account is blocked or does not exist!</string>
 
     <!--UI text-->
-    <string name="ui_version_text" translatable="false">FarHome v0.3.4-beta</string>
+    <string name="ui_version_text" translatable="false">FarHome v0.4.0-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
+    <string name="ui_on_text">ON</string>
+    <string name="ui_off_text">OFF</string>
     <string name="ui_widget_button_edit_description">Edit</string>
     <string name="ui_widget_button_delete_description">Delete</string>
     <string name="ui_widget_button_sms_description">Send SMS</string>

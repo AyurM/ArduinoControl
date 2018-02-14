@@ -29,6 +29,8 @@
     <!--UI надписи-->
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Отмена</string>
+    <string name="ui_on_text">ВКЛ</string>
+    <string name="ui_off_text">ВЫКЛ</string>
     <string name="ui_widget_button_edit_description">Правка</string>
     <string name="ui_widget_button_delete_description">Удалить</string>
     <string name="ui_widget_button_sms_description">Отправить SMS</string>

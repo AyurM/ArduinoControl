@@ -51,13 +51,13 @@ public class AppRepository implements IRepository {
     }
 
     @Override
-    public void notifyUserDevicesObservers(){
-        mFirebaseHelper.notifyUserDevicesObservers();
+    public void notifyDeviceObservers(){
+        mFirebaseHelper.notifyDeviceObservers();
     }
 
     @Override
-    public void notifyWidgetsObservers(){
-        mFirebaseHelper.notifyWidgetsObservers();
+    public void notifyWidgetObservers(){
+        mFirebaseHelper.notifyWidgetObservers();
     }
 
     @Override
@@ -78,5 +78,25 @@ public class AppRepository implements IRepository {
     @Override
     public List<FarhomeDevice> getUserDevices(){
         return mFirebaseHelper.getUserDevices();
+    }
+
+    @Override
+    public void renameCurrentDevice(String name){
+        mFirebaseHelper.renameCurrentDevice(name);
+    }
+
+    @Override
+    public void changeDevice(String deviceId){
+        mFirebaseHelper.changeDevice(deviceId);
+    }
+
+    @Override
+    public void bindDeviceToUser(String deviceSn, String deviceName){
+        mFirebaseHelper.bindDeviceToUser(deviceSn, deviceName);
+    }
+
+    @Override
+    public void reset(){
+        mFirebaseHelper.reset();
     }
 }

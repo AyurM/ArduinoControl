@@ -2,23 +2,19 @@ package ru.ayurmar.arduinocontrol.interfaces.presenter;
 
 
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
-import ru.ayurmar.arduinocontrol.model.FarhomeOldWidget;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
 
-    void loadDevice(String deviceSn);
-
-    void loadWidgets(String deviceSn);
-
-    void loadUserDevices();
-
     void onChangeDeviceClick();
+
+    void changeDevice(String deviceId);
 
     void onAboutDeviceClick();
 
     void renameCurrentDevice(String newName);
 
-    void updateWidgetInDb(FarhomeOldWidget widget);
+    void updateWidgetInDb(FarhomeWidget widget);
 
     void onAddWidgetClick();
 
@@ -26,17 +22,19 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void bindDeviceToUser(String deviceSn, String deviceName);
 
-    void onEditWidgetClick(FarhomeOldWidget widget);
+    void onEditWidgetClick(FarhomeWidget widget);
 
     void deleteWidget(int position);
 
-    void onSendSmsClick(FarhomeOldWidget widget);
+    void onSendSmsClick(FarhomeWidget widget);
 
     void onWidgetValueClick(int position);
 
     void onDeviceStatusClick();
 
     int getDeviceCount();
+
+    void resetFirebaseHelper();
 
 //    boolean isDeviceOnline();
 }

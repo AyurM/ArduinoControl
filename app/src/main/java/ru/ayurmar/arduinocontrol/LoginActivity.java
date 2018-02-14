@@ -20,8 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ru.ayurmar.arduinocontrol.model.DatabasePaths;
 import ru.ayurmar.arduinocontrol.model.FarhomeUser;
-import ru.ayurmar.arduinocontrol.presenter.WidgetPresenter;
 
 /*
     TODO:
@@ -207,7 +207,7 @@ public class LoginActivity extends BaseActivity implements
         if(firebaseUser != null){
             FarhomeUser newUser = new FarhomeUser(firebaseUser.getEmail());
             DatabaseReference usersRef = FirebaseDatabase.getInstance()
-                    .getReference(WidgetPresenter.USERS_ROOT);
+                    .getReference(DatabasePaths.USERS);
             usersRef.child(firebaseUser.getUid()).setValue(newUser);
         }
     }
