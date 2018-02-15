@@ -59,6 +59,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private TextView mLoadingInfoTextView;
     private TextView mNoConnectionTextView;
     private LinearLayout mNoItemsLayout;
+    private Button mRetryConnectionButton;
     private Menu mMenu;
 
     @Inject
@@ -83,8 +84,11 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
         Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
+        mRetryConnectionButton = view.findViewById(R.id.widget_retry_connection_button);
         addDeviceButton.setOnClickListener(view1 -> mPresenter.onAddDeviceClick());
+        mRetryConnectionButton.setOnClickListener(view1 -> mPresenter.onRetryToConnectClick());
 
         mPresenter.onAttach(this);
         return view;
@@ -172,6 +176,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     @Override
     public void showNoConnectionUI(boolean isConnected){
         mNoConnectionTextView.setVisibility(isConnected ? View.GONE : View.VISIBLE);
+        mRetryConnectionButton.setVisibility(isConnected ? View.GONE : View.VISIBLE);
         mNoItemsLayout.setVisibility(isConnected ? View.VISIBLE : View.GONE);
     }
 
@@ -195,6 +200,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
+    public void showWidgetList(List<FarhomeWidget> widgets){
+        mRecyclerView.setAdapter(new WidgetAdapter(widgets));
+        showNoItemsUI(widgets.isEmpty());
+    }
+
+    @Override
     public void updateDeviceUI(FarhomeDevice device){
         if(device != null && device.getName() != null){
             MainActivity activity = (MainActivity) getActivity();
@@ -202,12 +213,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
                 activity.changeToolbarTitle(device.getName());
             }
         }
-    }
-
-    @Override
-    public void showWidgetList(List<FarhomeWidget> widgets){
-        mRecyclerView.setAdapter(new WidgetAdapter(widgets));
-        showNoItemsUI(widgets.isEmpty());
     }
 
     @Override
@@ -362,6 +367,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         private TextView mTextViewName;
         private TextView mTextViewValue;
         private TextView mTextViewDate;
+        private LinearLayout mLayout;
 //        private ImageButton mButtonEdit;
 //        private ImageButton mButtonSms;
 //        private ImageButton mButtonDelete;
@@ -371,6 +377,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewName = itemView.findViewById(R.id.widget_item_text_view_name);
             mTextViewValue = itemView.findViewById(R.id.widget_item_text_view_value);
             mTextViewDate = itemView.findViewById(R.id.widget_item_text_view_last_update_time);
+            mLayout = itemView.findViewById(R.id.small_widget_item_layout);
 //            mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
 //            mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
 //            mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
@@ -389,10 +396,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewName.setText(mWidget.getName());
 
             if(mWidget instanceof AlarmWidget || mWidget instanceof SwitchWidget){
-                if(mWidget.getValue() == 0.0f){
-                    mTextViewValue.setText(getString(R.string.ui_off_text));
-                } else {
-                    mTextViewValue.setText(getString(R.string.ui_on_text));
+                mLayout.setBackgroundColor(getResources()
+                        .getColor(R.color.colorPrimaryTransparent));
+                mTextViewValue.setText(getString(mWidget.getValue() == 0.0f ?
+                        R.string.ui_off_text : R.string.ui_on_text));
+                if(mWidget instanceof SwitchWidget){
+                    mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mWidget));
                 }
             } else if(mWidget instanceof InfoWidget){
                 if(String.valueOf(mWidget.getValue()).length() > 3){
@@ -406,7 +415,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewDate.setText(Utils.formatDate(new Date(mWidget.getTimestamp()),
                     getContext()));
 
-            mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mPosition));
 //            mButtonEdit.setOnClickListener(view -> mPresenter.onEditWidgetClick(mWidget));
 //            mButtonSms.setOnClickListener(view -> mPresenter.onSendSmsClick(mWidget));
 //            mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));

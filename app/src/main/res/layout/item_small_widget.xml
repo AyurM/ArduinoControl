@@ -9,10 +9,10 @@
     card_view:cardElevation="4dp"
     >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/small_widget_item_layout"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:background="@color/colorPrimary">
+                  android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +27,6 @@
                 android:padding="8dp"
                 android:fontFamily="@font/open_sans"
                 android:text="@string/placeholder_widget_name_text"
-                android:textColor="@android:color/white"
                 android:textSize="24sp"/>
             <ImageButton
                 android:id="@+id/widget_item_button_edit"
@@ -53,7 +52,6 @@
                 android:padding="8dp"
                 android:fontFamily="@font/open_sans_regular"
                 android:text="@string/placeholder_widget_value_text"
-                android:textColor="@android:color/white"
                 android:textSize="48sp"
                 android:textStyle="bold"/>
 
@@ -68,7 +66,6 @@
                 android:paddingRight="8dp"
                 android:fontFamily="@font/open_sans"
                 android:text="@string/placeholder_widget_date_text"
-                android:textColor="@android:color/white"
                 android:textSize="14sp"/>
 
         </LinearLayout>

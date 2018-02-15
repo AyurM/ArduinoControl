@@ -32,10 +32,19 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_below="@+id/widget_loading_info_text_view"
+        android:layout_marginBottom="24dp"
         android:text="@string/message_no_connection_text"
         android:textSize="20sp"
         android:fontFamily="@font/open_sans"
         android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/widget_retry_connection_button"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/widget_no_connection_text_view"
+        android:text="@string/ui_retry_text"
+        android:visibility="gone"
+        style="@style/EditWidgetButton"/>
 
     <LinearLayout
         android:id="@+id/widget_no_items_layout"

@@ -20,6 +20,8 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onAddDeviceClick();
 
+    void onRetryToConnectClick();
+
     void bindDeviceToUser(String deviceSn, String deviceName);
 
     void onEditWidgetClick(FarhomeWidget widget);
@@ -28,7 +30,7 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onSendSmsClick(FarhomeWidget widget);
 
-    void onWidgetValueClick(int position);
+    void onWidgetValueClick(FarhomeWidget widget);
 
     void onDeviceStatusClick();
 

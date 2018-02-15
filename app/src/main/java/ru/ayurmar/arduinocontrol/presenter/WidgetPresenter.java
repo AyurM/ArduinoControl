@@ -1,10 +1,5 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
-/*
-TODO:
-- Отсылка команд в Firebase DB
- */
-
 import android.content.Context;
 import android.util.Log;
 
@@ -38,6 +33,7 @@ import ru.ayurmar.arduinocontrol.model.DatabasePaths;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
+import ru.ayurmar.arduinocontrol.model.SwitchWidget;
 import ru.ayurmar.arduinocontrol.model.WidgetGroup;
 
 public class WidgetPresenter<V extends IWidgetView>
@@ -63,20 +59,7 @@ public class WidgetPresenter<V extends IWidgetView>
         mView = view;
         getRepository().addWidgetsObserver(this);
         getRepository().addUserDevicesObserver(this);
-        if (!Utils.isOnline(mContext)) {
-            if(mView != null){
-                mView.showNoConnectionUI(false);
-            }
-            return;
-        }
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (firebaseUser != null){
-            getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
-                    .subscribeOn(getScheduler().computation())
-                    .observeOn(getScheduler().main())
-                    .subscribe(deviceSn -> getRepository().loadUserDevices(deviceSn));
-        }
-        Log.d(sLogTag, "WidgetPresenter is attached!");
+        start();
     }
 
     @Override
@@ -84,7 +67,6 @@ public class WidgetPresenter<V extends IWidgetView>
         super.onDetach();
         getRepository().removeWidgetsObserver(this);
         getRepository().removeUserDevicesObserver(this);
-        Log.d(sLogTag, "WidgetPresenter is detached!");
     }
 
     @Override
@@ -170,12 +152,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void updateWidgetInDb(FarhomeWidget widget){
-//        getDisposable().add(getRepository().updateWidget(widget)
-//                .subscribeOn(getScheduler().computation())
-//                .observeOn(getScheduler().main())
-//                .doOnError(throwable -> mView
-//                        .showMessage(R.string.message_database_error_text))
-//                .subscribe());
+
     }
 
     @Override
@@ -186,6 +163,11 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onAddDeviceClick(){
         mView.showAddDeviceDialog();
+    }
+
+    @Override
+    public void onRetryToConnectClick(){
+        start();
     }
 
     @Override
@@ -309,49 +291,11 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void onWidgetValueClick(int position){
-//        FarhomeWidget widget = mView.getWidgetList().get(position);
-//        WidgetType widgetType = widget.getWidgetType();
-//        if(widgetType == WidgetType.ALARM_SENSOR){
-//            return;
-//        }
-//        if(Utils.isOnline(mContext)){
-//            widget.setValueLoading(true);
-//            mView.updateWidgetValue(position);  //включить анимацию загрузки значения
-//            Single<ResponseBody> blynkRequest;
-//            if(widgetType == WidgetType.DISPLAY){
-//                blynkRequest = getRepository().requestValueForWidget(widget);
-//            } else {
-//                blynkRequest = getRepository().sendValueFromWidget(widget);
-//            }
-//            getDisposable().add(blynkRequest
-//                    .subscribeOn(getScheduler().io())
-//                    .timeout(TIMEOUT_DURATION_S, TimeUnit.SECONDS)
-//                    .observeOn(getScheduler().main())
-//                    .doAfterSuccess(response -> updateWidgetInDb(widget))
-//                    .subscribe(response -> {
-//                                String responseString = response.string();
-//                                if(widgetType == WidgetType.DISPLAY){
-//                                    handleDisplayRequestResponse(responseString, widget);
-//                                } else {
-//                                    handleButtonSendResponse(responseString, widget);
-//                                }
-//                                widget.setLastUpdateTime(new Date());
-//                                widget.setValueLoading(false);
-//                                mView.updateWidgetValue(position);},
-//                            throwable -> {
-//                                widget.setValueLoading(false);
-//                                mView.updateWidgetValue(position);
-//                                if(throwable instanceof TimeoutException){
-//                                    mView
-//                                            .showLongMessage(R.string.message_timeout_error_text);
-//                                } else {
-//                                    mView.showMessage(throwable.getMessage());
-//                                }
-//                            }));
-//        } else {
-//            mView.showLongMessage(R.string.message_no_connection_use_sms_text);
-//        }
+    public void onWidgetValueClick(FarhomeWidget widget){
+        if(widget instanceof SwitchWidget){
+            float newValue = widget.getValue() == 0.0f ? 1.0f : 0.0f;
+            getRepository().updateWidgetValue(widget, newValue);
+        }
     }
 
     @Override
@@ -385,6 +329,22 @@ public class WidgetPresenter<V extends IWidgetView>
 //    public boolean isDeviceOnline(){
 //        return mIsDeviceOnline;
 //    }
+
+    private void start(){
+        if (!Utils.isOnline(mContext)) {
+            if(mView != null){
+                mView.showNoConnectionUI(false);
+            }
+        } else {
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (firebaseUser != null){
+                if(mView != null){
+                    mView.showNoConnectionUI(true);
+                }
+                getRepository().loadUserDevices(firebaseUser.getUid());
+            }
+        }
+    }
 
     private boolean isCorrectPhoneNumber(String phoneNumber){
         return ((phoneNumber.startsWith("+7") && phoneNumber.length() == 12) ||

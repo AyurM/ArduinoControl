@@ -7,6 +7,7 @@ import io.reactivex.Single;
 import ru.ayurmar.arduinocontrol.interfaces.model.IFirebaseHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
+import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.interfaces.model.IUserDevicesObserver;
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidgetsObserver;
 
@@ -15,10 +16,13 @@ public class AppRepository implements IRepository {
 
     private final IPrefHelper mPrefHelper;
     private final IFirebaseHelper mFirebaseHelper;
+    private final IScheduler mScheduler;
 
-    public AppRepository(IPrefHelper prefHelper, IFirebaseHelper firebaseHelper){
+    public AppRepository(IPrefHelper prefHelper, IFirebaseHelper firebaseHelper,
+                         IScheduler scheduler){
         this.mPrefHelper = prefHelper;
         this.mFirebaseHelper = firebaseHelper;
+        this.mScheduler = scheduler;
     }
 
     @Override
@@ -67,8 +71,11 @@ public class AppRepository implements IRepository {
     }
 
     @Override
-    public void loadUserDevices(String lastDeviceId){
-        mFirebaseHelper.loadUserDevices(lastDeviceId);
+    public void loadUserDevices(String userId){
+        getStringPreference(userId + "deviceSn")
+                .subscribeOn(mScheduler.computation())
+                .observeOn(mScheduler.main())
+                .subscribe(deviceSn -> mFirebaseHelper.loadUserDevices(deviceSn));
     }
 
     @Override
@@ -99,6 +106,11 @@ public class AppRepository implements IRepository {
     @Override
     public void bindDeviceToUser(String deviceSn, String deviceName){
         mFirebaseHelper.bindDeviceToUser(deviceSn, deviceName);
+    }
+
+    @Override
+    public void updateWidgetValue(FarhomeWidget widget, float newValue){
+        mFirebaseHelper.updateWidgetValue(widget, newValue);
     }
 
     @Override

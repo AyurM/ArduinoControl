@@ -186,6 +186,16 @@ public class FirebaseHelper implements IFirebaseHelper {
     }
 
     @Override
+    public void updateWidgetValue(FarhomeWidget widget, float newValue){
+        Map<String, Object> widgetUpdates = new HashMap<>();
+        widgetUpdates.put("/" + widget.getDbkey() +"/value", newValue);
+        RxFirebaseDatabase.updateChildren(mSwitchWidgetsRef, widgetUpdates)
+                .subscribeOn(mScheduler.io())
+                .observeOn(mScheduler.main())
+                .subscribe();
+    }
+
+    @Override
     public void reset(){
         mUserDevices.clear();
         mCurrentDeviceIndex = 0;

@@ -44,8 +44,9 @@ public class WidgetModule {
 
     @Provides
     @Singleton
-    IRepository provideAppRepository(IPrefHelper prefHelper, IFirebaseHelper firebaseHelper){
-        return new AppRepository(prefHelper, firebaseHelper);
+    IRepository provideAppRepository(IPrefHelper prefHelper, IFirebaseHelper firebaseHelper,
+                                     IScheduler scheduler){
+        return new AppRepository(prefHelper, firebaseHelper, scheduler);
     }
 
     @Provides

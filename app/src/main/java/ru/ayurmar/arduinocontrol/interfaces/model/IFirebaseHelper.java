@@ -37,5 +37,7 @@ public interface IFirebaseHelper {
 
     void changeDevice(String deviceId);
 
+    void updateWidgetValue(FarhomeWidget widget, float newValue);
+
     void reset();
 }
