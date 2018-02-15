@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:card_view="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:weightSum="10">
+    <android.support.v7.widget.CardView
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp"
+        style="@style/CategoryScreenCardView"
+        >
+        <RelativeLayout
+            android:id="@+id/category_control_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/category_card_background">
+            <TextView
+                android:id="@+id/category_control_title"
+                android:text="@string/category_control"
+                style="@style/CategoryScreenTitle"/>
+
+            <ImageView
+                android:layout_below="@+id/category_control_title"
+                android:layout_above="@+id/category_control_value"
+                android:src="@drawable/control_category_icon"
+                android:contentDescription="@string/control_icon_desc"
+                style="@style/CategoryScreenImageView"/>
+
+            <TextView
+                android:id="@+id/category_control_value"
+                android:text="3 датчика"
+                style="@style/CategoryScreenWidgetsText"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp"
+        style="@style/CategoryScreenCardView"
+        >
+        <RelativeLayout
+            android:id="@+id/category_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/category_card_background">
+            <TextView
+                android:id="@+id/info_control_title"
+                android:text="@string/category_info"
+                style="@style/CategoryScreenTitle"/>
+
+            <ImageView
+                android:layout_below="@+id/info_control_title"
+                android:layout_above="@+id/info_control_value"
+                android:src="@drawable/info_category_icon"
+                android:contentDescription="@string/info_icon_desc"
+                style="@style/CategoryScreenImageView"/>
+
+            <TextView
+                android:id="@+id/info_control_value"
+                android:text="4 датчика"
+                style="@style/CategoryScreenWidgetsText"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp"
+        style="@style/CategoryScreenCardView"
+        >
+        <RelativeLayout
+            android:id="@+id/category_alarm_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/category_card_background">
+            <TextView
+                android:id="@+id/alarm_control_title"
+                android:text="@string/category_alarm"
+                style="@style/CategoryScreenTitle"/>
+
+            <ImageView
+                android:layout_below="@+id/alarm_control_title"
+                android:layout_above="@+id/alarm_control_value"
+                android:src="@drawable/alarm_category_icon"
+                android:contentDescription="@string/alarm_icon_desc"
+                style="@style/CategoryScreenImageView"/>
+
+            <TextView
+                android:id="@+id/alarm_control_value"
+                android:text="5 датчиков"
+                style="@style/CategoryScreenWidgetsText"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="2dp"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp"
+        >
+        <TextView
+            android:id="@+id/all_widgets_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/category_all_widgets"
+            android:background="@drawable/category_card_background"
+            style="@style/CategoryScreenTitle"/>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

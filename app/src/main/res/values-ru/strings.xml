@@ -26,6 +26,17 @@
     <string name="login_weak_password">Небезопасный пароль!</string>
     <string name="login_invalid_email">Аккаунт не существует или заблокирован!</string>
 
+    <!--Выбор категории датчиков-->
+    <string name="category_alarm">Сигнализация</string>
+    <string name="category_info">Информация</string>
+    <string name="category_control">Управление</string>
+    <string name="category_all_widgets">Все датчики</string>
+    <plurals name="category_widgets">
+        <item quantity="one">%d датчик</item>
+        <item quantity="few">%d датчика</item>
+        <item quantity="many">%d датчиков</item>
+    </plurals>
+
     <!--UI надписи-->
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Отмена</string>

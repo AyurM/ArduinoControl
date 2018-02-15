@@ -32,33 +32,7 @@
         <item name="android:padding">8dp</item>
     </style>
 
-    <style name="LoginScreenButton">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:layout_height">52dp</item>
-        <item name="android:background">@drawable/login_button_selector</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:padding">8dp</item>
-    </style>
-
-    <style name="AppToolbar">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_alignParentTop">true</item>
-        <item name="android:background">?attr/colorPrimary</item>
-        <item name="android:minHeight">?attr/actionBarSize</item>
-        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
-    </style>
-
-    <style name="LoginScreenTextView">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">@color/colorDrawerText</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:paddingLeft">16dp</item>
-        <item name="android:paddingRight">16dp</item>
-        <item name="android:fontFamily">@font/open_sans</item>
-    </style>
-
+    <!--Dialog windows-->
     <style name="DialogTitleTextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -84,13 +58,6 @@
         <item name="android:layout_marginBottom">16dp</item>
     </style>
 
-    <style name="LoginScreenEditText">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:drawablePadding">16dp</item>
-        <item name="android:fontFamily">@font/open_sans</item>
-    </style>
-
     <style name="AboutDeviceTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -99,6 +66,33 @@
         <item name="android:fontFamily">@font/open_sans</item>
     </style>
 
+    <!--Login Screen-->
+    <style name="LoginScreenEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="LoginScreenTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/colorDrawerText</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="LoginScreenButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:background">@drawable/login_button_selector</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <!--Stuff-->
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
@@ -108,4 +102,54 @@
         <item name="android:windowExitAnimation">@anim/dialog_close</item>
     </style>
 
+    <style name="AppToolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+    <!--Category Screen-->
+    <style name="CategoryScreenCardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
+    </style>
+
+    <style name="CategoryScreenTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorDrawerText</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="CategoryScreenWidgetsText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorDrawerText</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="CategoryScreenImageView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
 </resources>

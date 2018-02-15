@@ -363,7 +363,6 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
         private FarhomeWidget mWidget;
-        private int mPosition = -1;
         private TextView mTextViewName;
         private TextView mTextViewValue;
         private TextView mTextViewDate;
@@ -384,9 +383,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 //            mButtonDelete.setVisibility(View.GONE);
         }
 
-        void bindWidget(FarhomeWidget widget, int position) {
+        void bindWidget(FarhomeWidget widget) {
             mWidget = widget;
-            mPosition = position;
 
             if(mWidget.getName().length() > 12){
                 mTextViewName.setTextSize(20);
@@ -442,7 +440,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
         @Override
         public void onBindViewHolder(WidgetHolder holder, int position) {
-            holder.bindWidget(mWidgets.get(position), position);
+            holder.bindWidget(mWidgets.get(position));
         }
 
         @Override

@@ -25,6 +25,19 @@
     <string name="login_weak_password">Weak password!</string>
     <string name="login_invalid_email">Account is blocked or does not exist!</string>
 
+    <!--Category Screen-->
+    <string name="category_alarm">Alarm</string>
+    <string name="category_info">Information</string>
+    <string name="category_control">Control</string>
+    <string name="category_all_widgets">All widgets</string>
+    <string name="alarm_icon_desc" translatable="false">alarm icon</string>
+    <string name="info_icon_desc" translatable="false">information icon</string>
+    <string name="control_icon_desc" translatable="false">control icon</string>
+    <plurals name="category_widgets">
+        <item quantity="one">%d widget</item>
+        <item quantity="other">%d widgets</item>
+    </plurals>
+
     <!--UI text-->
     <string name="ui_version_text" translatable="false">FarHome v0.4.1-beta</string>
     <string name="ui_ok_text">OK</string>
