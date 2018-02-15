@@ -3,7 +3,6 @@ package ru.ayurmar.arduinocontrol.model;
 /*
     TODO:
    - добавление нового устройства
-   - оповещения об изменениях виджетов
  */
 
 import android.util.Log;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import durdinapps.rxfirebase2.DataSnapshotMapper;
+import durdinapps.rxfirebase2.RxFirebaseChildEvent;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -38,6 +38,10 @@ public class FirebaseHelper implements IFirebaseHelper {
     private final CompositeDisposable mDisposable;
     private long mDeviceCount;
     private int mCurrentDeviceIndex;
+    private String mLastDeviceId = "";
+    private DatabaseReference mAlarmWidgetsRef;
+    private DatabaseReference mInfoWidgetsRef;
+    private DatabaseReference mSwitchWidgetsRef;
 
     public FirebaseHelper(IScheduler scheduler, CompositeDisposable disposable){
         this.mDisposable = disposable;
@@ -84,6 +88,13 @@ public class FirebaseHelper implements IFirebaseHelper {
         }
     }
 
+    @Override
+    public void notifyWidgetObservers(RxFirebaseChildEvent<? extends FarhomeWidget> event){
+        for(int i = 0; i < mWidgetsObservers.size(); i++){
+            mWidgetsObservers.get(i).update(event);
+        }
+    }
+
 
     private void notifyWidgetObserversLoading(boolean isLoading){
         for(int i = 0; i < mWidgetsObservers.size(); i++){
@@ -110,9 +121,10 @@ public class FirebaseHelper implements IFirebaseHelper {
     }
 
     @Override
-    public void loadUserDevices(){
+    public void loadUserDevices(String lastDeviceId){
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
+            mLastDeviceId = lastDeviceId;
             DatabaseReference userDevicesRef = FirebaseDatabase.getInstance()
                     .getReference(DatabasePaths.USERS + "/" + firebaseUser.getUid()
                             + "/" + DatabasePaths.DEVICES);
@@ -169,6 +181,7 @@ public class FirebaseHelper implements IFirebaseHelper {
             }
         }
         notifyDeviceObservers();
+        mDisposable.dispose();  //убрать слушатели от предыдущего устройства
         loadWidgets(deviceId);
     }
 
@@ -199,14 +212,14 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
                 .subscribe(device -> {
-                            if(mUserDevices.contains(device)){
-                                return;
+                            if(!mUserDevices.contains(device)){
+                                mUserDevices.add(device);
                             }
-                            mUserDevices.add(device);
                             Log.d("FARHOME", device.getName());
                             if(mUserDevices.size() == mDeviceCount){
                                 Log.d("FARHOME",
                             "Загружено " + mUserDevices.size() + " устройств!");
+                                updateCurrentDeviceIndex();
                                 notifyDeviceObserversLoading(false);
                                 notifyDeviceObservers();
                                 loadWidgets(mUserDevices.get(mCurrentDeviceIndex).getId());
@@ -223,20 +236,29 @@ public class FirebaseHelper implements IFirebaseHelper {
         if(deviceSn == null || deviceSn.isEmpty()){
             return;
         }
-
-        notifyWidgetObserversLoading(true);
-        loadAlarmWidgets(deviceSn);
-        loadInfoWidgets(deviceSn);
-        loadSwitchWidgets(deviceSn);
-    }
-
-    private void loadAlarmWidgets(String deviceSn){
-        DatabaseReference alarmRef = FirebaseDatabase.getInstance()
+        mAlarmWidgetsRef = FirebaseDatabase.getInstance()
                 .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
                         DatabasePaths.CATEGORY_ALARM);
-        RxFirebaseDatabase.observeSingleValueEvent(alarmRef,
+
+        mInfoWidgetsRef = FirebaseDatabase.getInstance()
+                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
+                        DatabasePaths.CATEGORY_INFO);
+
+        mSwitchWidgetsRef = FirebaseDatabase.getInstance()
+                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
+                        DatabasePaths.CATEGORY_SWITCH);
+        mWidgetGroup.clear();
+        notifyWidgetObserversLoading(true);
+        loadAlarmWidgets();
+        loadInfoWidgets();
+        loadSwitchWidgets();
+    }
+
+    private void loadAlarmWidgets(){
+        RxFirebaseDatabase.observeSingleValueEvent(mAlarmWidgetsRef,
                 DataSnapshotMapper.listOf(AlarmWidget.class))
                 .subscribeOn(mScheduler.io())
+                .doOnSuccess(widgets -> addAlarmWidgetsListener())
                 .subscribe(alarmWidgets -> {
                     mWidgetGroup.setAlarmWidgets(alarmWidgets);
                     Log.d("FARHOME", "Найдено " + mWidgetGroup.getAlarmWidgetsCount() +
@@ -246,13 +268,11 @@ public class FirebaseHelper implements IFirebaseHelper {
                 });
     }
 
-    private void loadInfoWidgets(String deviceSn){
-        DatabaseReference infoRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
-                        DatabasePaths.CATEGORY_INFO);
-        RxFirebaseDatabase.observeSingleValueEvent(infoRef,
+    private void loadInfoWidgets(){
+        RxFirebaseDatabase.observeSingleValueEvent(mInfoWidgetsRef,
                 DataSnapshotMapper.listOf(InfoWidget.class))
                 .subscribeOn(mScheduler.io())
+                .doOnSuccess(widgets -> addInfoWidgetsListener())
                 .subscribe(infoWidgets -> {
                     mWidgetGroup.setInfoWidgets(infoWidgets);
                     Log.d("FARHOME", "Найдено " + mWidgetGroup.getInfoWidgetsCount() +
@@ -262,13 +282,11 @@ public class FirebaseHelper implements IFirebaseHelper {
                 });
     }
 
-    private void loadSwitchWidgets(String deviceSn){
-        DatabaseReference switchRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
-                        DatabasePaths.CATEGORY_SWITCH);
-        RxFirebaseDatabase.observeSingleValueEvent(switchRef,
+    private void loadSwitchWidgets(){
+        RxFirebaseDatabase.observeSingleValueEvent(mSwitchWidgetsRef,
                 DataSnapshotMapper.listOf(SwitchWidget.class))
                 .subscribeOn(mScheduler.io())
+                .doOnSuccess(widgets -> addSwitchWidgetsListener())
                 .subscribe(switchWidgets -> {
                     mWidgetGroup.setSwitchWidgets(switchWidgets);
                     Log.d("FARHOME", "Найдено " + mWidgetGroup.getSwitchWidgetsCount() +
@@ -278,90 +296,109 @@ public class FirebaseHelper implements IFirebaseHelper {
                 });
     }
 
-    private void addAlarmWidgetsListener(String deviceSn){
-        DatabaseReference alarmRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
-                        DatabasePaths.CATEGORY_ALARM);
-        Disposable alarmDisposable = RxFirebaseDatabase.observeChildEvent(alarmRef,
+    private void addAlarmWidgetsListener(){
+        Disposable alarmDisposable = RxFirebaseDatabase.observeChildEvent(mAlarmWidgetsRef,
                 AlarmWidget.class)
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
                 .subscribe(alarmEvent -> {
+                    AlarmWidget widget = alarmEvent.getValue();
                     switch (alarmEvent.getEventType()){
                         case ADDED:
-                            mWidgetGroup.getAlarmWidgets().add(alarmEvent.getValue());
-                            break;
+                            if(!mWidgetGroup.getAlarmWidgets().contains(widget)){
+                                mWidgetGroup.getAlarmWidgets().add(alarmEvent.getValue());
+                                notifyWidgetObservers(alarmEvent);
+                            }
+                            return;
                         case CHANGED:
-                            mWidgetGroup.updateWidget(alarmEvent.getValue());
+                            mWidgetGroup.updateWidget(widget);
                             break;
                         case MOVED:
-                            mWidgetGroup.updateWidget(alarmEvent.getValue());
+                            mWidgetGroup.updateWidget(widget);
                             break;
                         case REMOVED:
-                            mWidgetGroup.getAlarmWidgets().remove(alarmEvent.getValue());
+                            mWidgetGroup.getAlarmWidgets().remove(widget);
                             break;
                     }
+                    notifyWidgetObservers(alarmEvent);
                 },
                         throwable -> Log.e("FARHOME",
                                 "Ошибка в событии тревожных датчиков!"));
         mDisposable.add(alarmDisposable);
     }
 
-    private void addInfoWidgetsListener(String deviceSn){
-        DatabaseReference infoRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
-                        DatabasePaths.CATEGORY_INFO);
-        Disposable infoDisposable = RxFirebaseDatabase.observeChildEvent(infoRef,
+    private void addInfoWidgetsListener(){
+        Disposable infoDisposable = RxFirebaseDatabase.observeChildEvent(mInfoWidgetsRef,
                 InfoWidget.class)
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
                 .subscribe(infoEvent -> {
+                            InfoWidget widget = infoEvent.getValue();
                             switch (infoEvent.getEventType()){
                                 case ADDED:
-                                    mWidgetGroup.getInfoWidgets().add(infoEvent.getValue());
-                                    break;
+                                    if(!mWidgetGroup.getInfoWidgets().contains(widget)){
+                                        mWidgetGroup.getInfoWidgets().add(widget);
+                                        notifyWidgetObservers(infoEvent);
+                                    }
+                                    return;
                                 case CHANGED:
-                                    mWidgetGroup.updateWidget(infoEvent.getValue());
+                                    mWidgetGroup.updateWidget(widget);
                                     break;
                                 case MOVED:
-                                    mWidgetGroup.updateWidget(infoEvent.getValue());
+                                    mWidgetGroup.updateWidget(widget);
                                     break;
                                 case REMOVED:
-                                    mWidgetGroup.getInfoWidgets().remove(infoEvent.getValue());
+                                    mWidgetGroup.getInfoWidgets().remove(widget);
                                     break;
                             }
+                            notifyWidgetObservers(infoEvent);
                         },
                         throwable -> Log.e("FARHOME",
                                 "Ошибка в событии информационных датчиков!"));
         mDisposable.add(infoDisposable);
     }
 
-    private void addSwitchWidgetsListener(String deviceSn){
-        DatabaseReference switchRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.WIDGETS + "/" + deviceSn + "/" +
-                        DatabasePaths.CATEGORY_SWITCH);
-        Disposable switchDisposable = RxFirebaseDatabase.observeChildEvent(switchRef,
+    private void addSwitchWidgetsListener(){
+        Disposable switchDisposable = RxFirebaseDatabase.observeChildEvent(mSwitchWidgetsRef,
                 SwitchWidget.class)
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
                 .subscribe(switchEvent -> {
+                            SwitchWidget widget = switchEvent.getValue();
                             switch (switchEvent.getEventType()){
                                 case ADDED:
-                                    mWidgetGroup.getSwitchWidgets().add(switchEvent.getValue());
-                                    break;
+                                    if(!mWidgetGroup.getSwitchWidgets().contains(widget)){
+                                        mWidgetGroup.getSwitchWidgets().add(widget);
+                                        notifyWidgetObservers(switchEvent);
+                                    }
+                                    return;
                                 case CHANGED:
-                                    mWidgetGroup.updateWidget(switchEvent.getValue());
+                                    mWidgetGroup.updateWidget(widget);
                                     break;
                                 case MOVED:
-                                    mWidgetGroup.updateWidget(switchEvent.getValue());
+                                    mWidgetGroup.updateWidget(widget);
                                     break;
                                 case REMOVED:
-                                    mWidgetGroup.getSwitchWidgets().remove(switchEvent.getValue());
+                                    mWidgetGroup.getSwitchWidgets().remove(widget);
                                     break;
                             }
+                            notifyWidgetObservers(switchEvent);
                         },
                         throwable -> Log.e("FARHOME",
                                 "Ошибка в событии управляющих датчиков!"));
         mDisposable.add(switchDisposable);
+    }
+
+    private void updateCurrentDeviceIndex(){
+        if(mLastDeviceId.isEmpty()){
+            mCurrentDeviceIndex = 0;
+            return;
+        }
+        for(int i = 0; i < mUserDevices.size(); i++){
+            if(mLastDeviceId.equals(mUserDevices.get(i).getId())){
+                mCurrentDeviceIndex = i;
+                break;
+            }
+        }
     }
 }

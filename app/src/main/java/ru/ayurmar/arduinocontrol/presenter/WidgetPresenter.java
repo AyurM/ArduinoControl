@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import durdinapps.rxfirebase2.RxFirebaseChildEvent;
 import io.reactivex.disposables.CompositeDisposable;
 import ru.ayurmar.arduinocontrol.PreferencesActivity;
 import ru.ayurmar.arduinocontrol.R;
@@ -68,7 +69,14 @@ public class WidgetPresenter<V extends IWidgetView>
             }
             return;
         }
-        getRepository().loadUserDevices();
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (firebaseUser != null){
+            getRepository().getStringPreference(firebaseUser.getUid() + "deviceSn")
+                    .subscribeOn(getScheduler().computation())
+                    .observeOn(getScheduler().main())
+                    .subscribe(deviceSn -> getRepository().loadUserDevices(deviceSn));
+        }
+        Log.d(sLogTag, "WidgetPresenter is attached!");
     }
 
     @Override
@@ -87,9 +95,22 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void update(FarhomeWidget widget){
-        if(mView != null){
-            mView.updateWidget(widget);
+    public void update(RxFirebaseChildEvent<? extends FarhomeWidget> event){
+        if(mView == null){
+            return;
+        }
+        switch (event.getEventType()){
+            case ADDED:
+                mView.addWidget(event.getValue());
+                break;
+            case CHANGED:
+                mView.updateWidget(event.getValue());
+                break;
+            case MOVED:
+                break;
+            case REMOVED:
+                mView.deleteWidget(event.getValue());
+                break;
         }
     }
 
@@ -189,6 +210,8 @@ public class WidgetPresenter<V extends IWidgetView>
         if(deviceId.equals(getRepository().getCurrentDevice().getId())){
             return;
         }
+        getRepository().saveStringPreference(FirebaseAuth.getInstance()
+                .getCurrentUser().getUid() + "deviceSn", deviceId);
         getRepository().changeDevice(deviceId);
     }
 

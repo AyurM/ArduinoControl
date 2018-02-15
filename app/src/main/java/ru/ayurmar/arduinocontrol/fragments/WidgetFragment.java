@@ -247,6 +247,28 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     @Override
+    public void addWidget(FarhomeWidget widget){
+        List<FarhomeWidget> adapterList = getWidgetList();
+        adapterList.add(widget);
+        mRecyclerView.getAdapter().notifyItemInserted(adapterList.size() - 1);
+        showNoItemsUI(adapterList.isEmpty());
+    }
+
+    @Override
+    public void deleteWidget(FarhomeWidget widget){
+        List<FarhomeWidget> adapterList = getWidgetList();
+        for(int i = 0; i < adapterList.size(); i++){
+            FarhomeWidget oldWidget = adapterList.get(i);
+            if(oldWidget.getDbkey().equals(widget.getDbkey())){
+                adapterList.remove(i);
+                mRecyclerView.getAdapter().notifyItemRemoved(i);
+                showNoItemsUI(adapterList.isEmpty());
+                break;
+            }
+        }
+    }
+
+    @Override
     public void showAddWidgetDialog(){
         Intent intent = new Intent(getContext(), AddWidgetActivity.class);
         intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, false);

@@ -38,6 +38,10 @@ public interface IWidgetView extends IBasicView {
 
     void updateWidget(FarhomeWidget widget);
 
+    void addWidget(FarhomeWidget widget);
+
+    void deleteWidget(FarhomeWidget widget);
+
     void updateDeviceUI(FarhomeDevice device);
 
     void onChangeDeviceClick();

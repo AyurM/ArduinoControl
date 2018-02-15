@@ -92,6 +92,10 @@ public class WidgetGroup {
         return result;
     }
 
+    public boolean contains(FarhomeWidget widget){
+        return getWidgets().contains(widget);
+    }
+
     public void setSwitchWidgets(List<SwitchWidget> switchWidgets) {
         mSwitchWidgets = switchWidgets;
     }

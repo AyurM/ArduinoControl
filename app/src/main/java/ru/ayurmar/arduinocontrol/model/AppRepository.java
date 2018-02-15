@@ -2,6 +2,7 @@ package ru.ayurmar.arduinocontrol.model;
 
 import java.util.List;
 
+import durdinapps.rxfirebase2.RxFirebaseChildEvent;
 import io.reactivex.Single;
 import ru.ayurmar.arduinocontrol.interfaces.model.IFirebaseHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IPrefHelper;
@@ -61,8 +62,13 @@ public class AppRepository implements IRepository {
     }
 
     @Override
-    public void loadUserDevices(){
-        mFirebaseHelper.loadUserDevices();
+    public void notifyWidgetObservers(RxFirebaseChildEvent<? extends FarhomeWidget> event){
+        mFirebaseHelper.notifyWidgetObservers(event);
+    }
+
+    @Override
+    public void loadUserDevices(String lastDeviceId){
+        mFirebaseHelper.loadUserDevices(lastDeviceId);
     }
 
     @Override

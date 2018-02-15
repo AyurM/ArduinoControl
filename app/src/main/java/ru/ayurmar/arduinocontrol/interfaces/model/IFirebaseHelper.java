@@ -2,7 +2,9 @@ package ru.ayurmar.arduinocontrol.interfaces.model;
 
 import java.util.List;
 
+import durdinapps.rxfirebase2.RxFirebaseChildEvent;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 import ru.ayurmar.arduinocontrol.model.WidgetGroup;
 
 public interface IFirebaseHelper {
@@ -19,7 +21,9 @@ public interface IFirebaseHelper {
 
     void notifyWidgetObservers();
 
-    void loadUserDevices();
+    void notifyWidgetObservers(RxFirebaseChildEvent<? extends FarhomeWidget> event);
+
+    void loadUserDevices(String lastDeviceId);
 
     List<FarhomeDevice> getUserDevices();
 
