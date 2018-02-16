@@ -45,6 +45,7 @@
     <string name="ui_on_text">ON</string>
     <string name="ui_off_text">OFF</string>
     <string name="ui_retry_text">Retry</string>
+    <string name="ui_widget_switch_icon_desc" translatable="false">switch icon</string>
     <string name="ui_widget_button_edit_description">Edit</string>
     <string name="ui_widget_button_delete_description">Delete</string>
     <string name="ui_widget_button_sms_description">Send SMS</string>

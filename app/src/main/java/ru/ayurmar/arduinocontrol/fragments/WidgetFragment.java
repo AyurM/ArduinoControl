@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -366,7 +367,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         private TextView mTextViewName;
         private TextView mTextViewValue;
         private TextView mTextViewDate;
-        private LinearLayout mLayout;
+        private ImageView mIconImageView;
 //        private ImageButton mButtonEdit;
 //        private ImageButton mButtonSms;
 //        private ImageButton mButtonDelete;
@@ -376,7 +377,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mTextViewName = itemView.findViewById(R.id.widget_item_text_view_name);
             mTextViewValue = itemView.findViewById(R.id.widget_item_text_view_value);
             mTextViewDate = itemView.findViewById(R.id.widget_item_text_view_last_update_time);
-            mLayout = itemView.findViewById(R.id.small_widget_item_layout);
+            mIconImageView = itemView.findViewById(R.id.widget_item_icon_image_view);
 //            mButtonEdit = itemView.findViewById(R.id.widget_item_button_edit);
 //            mButtonSms = itemView.findViewById(R.id.widget_item_button_sms);
 //            mButtonDelete = itemView.findViewById(R.id.widget_item_button_delete);
@@ -385,6 +386,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
         void bindWidget(FarhomeWidget widget) {
             mWidget = widget;
+            toggleValueLoadingUI(false);
 
             if(mWidget.getName().length() > 12){
                 mTextViewName.setTextSize(20);
@@ -393,21 +395,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             }
             mTextViewName.setText(mWidget.getName());
 
-            if(mWidget instanceof AlarmWidget || mWidget instanceof SwitchWidget){
-                mLayout.setBackgroundColor(getResources()
-                        .getColor(R.color.colorPrimaryTransparent));
-                mTextViewValue.setText(getString(mWidget.getValue() == 0.0f ?
-                        R.string.ui_off_text : R.string.ui_on_text));
-                if(mWidget instanceof SwitchWidget){
-                    mTextViewValue.setOnClickListener(view -> mPresenter.onWidgetValueClick(mWidget));
-                }
+            if(mWidget instanceof AlarmWidget){
+                bindAlarmWidget();
+            } else if(mWidget instanceof SwitchWidget){
+                bindSwitchWidget();
             } else if(mWidget instanceof InfoWidget){
-                if(String.valueOf(mWidget.getValue()).length() > 3){
-                    mTextViewValue.setTextSize(42);
-                } else {
-                    mTextViewValue.setTextSize(48);
-                }
-                mTextViewValue.setText(String.valueOf(mWidget.getValue()));
+                bindInfoWidget();
             }
 
             mTextViewDate.setText(Utils.formatDate(new Date(mWidget.getTimestamp()),
@@ -418,9 +411,46 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 //            mButtonDelete.setOnClickListener(view -> showConfirmDeleteDialog(mPosition));
         }
 
-//        private void toggleValueLoadingUI(boolean isLoading){
-//            mTextViewValue.setAlpha(isLoading ? 0.1f : 1f);
-//        }
+        private void bindAlarmWidget(){
+            mIconImageView.setVisibility(View.VISIBLE);
+            mTextViewValue.setVisibility(View.GONE);
+            mIconImageView.setImageDrawable(mWidget.getValue() == 0.0f ?
+                    getResources().getDrawable(R.drawable.ok_icon) :
+                    getResources().getDrawable(R.drawable.alert_icon));
+            mIconImageView.setOnClickListener(view -> {
+                toggleValueLoadingUI(true);
+                mPresenter.onWidgetValueClick(mWidget);
+            });
+        }
+
+        private void bindSwitchWidget(){
+            mIconImageView.setVisibility(View.VISIBLE);
+            mTextViewValue.setVisibility(View.GONE);
+            mIconImageView.setImageDrawable(mWidget.getValue() == 0.0f ?
+                    getResources().getDrawable(R.drawable.power_off) :
+                    getResources().getDrawable(R.drawable.power_on));
+            mIconImageView.setOnClickListener(view -> {
+                toggleValueLoadingUI(true);
+                mPresenter.onWidgetValueClick(mWidget);
+            });
+        }
+
+        private void bindInfoWidget(){
+            if(String.valueOf(mWidget.getValue()).length() > 4){
+                mTextViewValue.setTextSize(42);
+            } else {
+                mTextViewValue.setTextSize(48);
+            }
+            mTextViewValue.setText(String.valueOf(mWidget.getValue()));
+        }
+
+        private void toggleValueLoadingUI(boolean isLoading){
+            if(mWidget instanceof SwitchWidget){
+                mIconImageView.setAlpha(isLoading ? 0.1f : 1f);
+            } else {
+                mTextViewValue.setAlpha(isLoading ? 0.1f : 1f);
+            }
+        }
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{

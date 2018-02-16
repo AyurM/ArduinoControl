@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,6 +190,7 @@ public class FirebaseHelper implements IFirebaseHelper {
     public void updateWidgetValue(FarhomeWidget widget, float newValue){
         Map<String, Object> widgetUpdates = new HashMap<>();
         widgetUpdates.put("/" + widget.getDbkey() +"/value", newValue);
+        widgetUpdates.put("/" + widget.getDbkey() +"/timestamp", ServerValue.TIMESTAMP);
         RxFirebaseDatabase.updateChildren(mSwitchWidgetsRef, widgetUpdates)
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
