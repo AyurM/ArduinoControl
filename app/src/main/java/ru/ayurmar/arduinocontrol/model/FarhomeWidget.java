@@ -1,23 +1,13 @@
 package ru.ayurmar.arduinocontrol.model;
 
+public abstract class FarhomeWidget {
 
-public class FarhomeWidget {
-    public static final String ON = "ВКЛ";
-    public static final String OFF = "ВЫКЛ";
-
-    private String mDbkey;
     private String mName;
-    private String mValue;
+    private String mDbkey;
     private long mTimestamp;
+    private float mValue;
 
     public FarhomeWidget(){
-    }
-
-    public FarhomeWidget(String dbkey, String name, String value, long timestamp) {
-        mDbkey = dbkey;
-        mName = name;
-        mValue = value;
-        mTimestamp = timestamp;
     }
 
     public String getName() {
@@ -28,18 +18,12 @@ public class FarhomeWidget {
         mName = name;
     }
 
-    public String getValue() {
-        return mValue;
+    public String getDbkey() {
+        return mDbkey;
     }
 
-    public void setValue(String value) {
-        if(value.equals("true")){
-            mValue = ON;
-        } else if(value.equals("false")){
-            mValue = OFF;
-        } else {
-            mValue = value;
-        }
+    public void setDbkey(String dbkey) {
+        mDbkey = dbkey;
     }
 
     public long getTimestamp() {
@@ -50,11 +34,19 @@ public class FarhomeWidget {
         mTimestamp = timestamp;
     }
 
-    public String getDbkey() {
-        return mDbkey;
+    public float getValue() {
+        return mValue;
     }
 
-    public void setDbkey(String dbkey) {
-        mDbkey = dbkey;
+    protected void setValue(float value){
+        mValue = value;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof FarhomeWidget)){
+            return false;
+        }
+        return mDbkey.equals(((FarhomeWidget) obj).getDbkey());
     }
 }

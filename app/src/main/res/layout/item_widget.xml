@@ -55,7 +55,8 @@
                     android:id="@+id/widget_item_button_delete"
                     style="@style/WidgetImageButton"
                     android:contentDescription="@string/ui_widget_button_delete_description"
-                    android:src="@drawable/ic_delete"/>
+                    android:src="@drawable/ic_delete"
+                    android:visibility="gone"/>
             </LinearLayout>
         </RelativeLayout>
 

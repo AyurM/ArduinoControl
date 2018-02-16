@@ -1,11 +1,12 @@
 package ru.ayurmar.arduinocontrol.interfaces.view;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
-import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
+import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetView extends IBasicView {
 
@@ -27,13 +28,19 @@ public interface IWidgetView extends IBasicView {
 
     void onAboutDeviceClick();
 
-    void showChangeDeviceDialog(List<String> deviceSnList, List<String> deviceNamesList);
+    void onLogoutClick();
+
+    void showChangeDeviceDialog(ArrayList<String> deviceSnList, ArrayList<String> deviceNamesList);
 
     void showEditWidgetDialog(FarhomeWidget widget);
 
     void showSendSmsDialog(String message, String phoneNumber);
 
     void updateWidget(FarhomeWidget widget);
+
+    void addWidget(FarhomeWidget widget);
+
+    void deleteWidget(FarhomeWidget widget);
 
     void updateDeviceUI(FarhomeDevice device);
 

@@ -6,13 +6,9 @@ import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
 
-    void loadDevice(String deviceSn);
-
-    void loadWidgets(String deviceSn);
-
-    void loadUserDevices();
-
     void onChangeDeviceClick();
+
+    void changeDevice(String deviceId);
 
     void onAboutDeviceClick();
 
@@ -24,6 +20,8 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onAddDeviceClick();
 
+    void onRetryToConnectClick();
+
     void bindDeviceToUser(String deviceSn, String deviceName);
 
     void onEditWidgetClick(FarhomeWidget widget);
@@ -32,11 +30,13 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onSendSmsClick(FarhomeWidget widget);
 
-    void onWidgetValueClick(int position);
+    void onWidgetValueClick(FarhomeWidget widget);
 
     void onDeviceStatusClick();
 
     int getDeviceCount();
+
+    void resetFirebaseHelper();
 
 //    boolean isDeviceOnline();
 }

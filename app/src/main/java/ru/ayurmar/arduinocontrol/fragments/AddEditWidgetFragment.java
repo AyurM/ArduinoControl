@@ -19,10 +19,8 @@ import javax.inject.Inject;
 
 import ru.ayurmar.arduinocontrol.MainApp;
 import ru.ayurmar.arduinocontrol.R;
-import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
 import ru.ayurmar.arduinocontrol.interfaces.presenter.IAddEditWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IAddEditWidgetView;
-import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidgetView {
 
@@ -34,7 +32,7 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
     private EditText mEditTextPin;
     private Spinner mSpinnerType;
 
-    private WidgetType mSelectedType = null;
+//    private WidgetType mSelectedType = null;
     private boolean mIsEditMode;
     private boolean mIsDevMode;
     private String mWidgetId;
@@ -88,21 +86,21 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         mSpinnerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i){
-                    case 0:
-                        mSelectedType = WidgetType.BUTTON;
-                        break;
-                    case 1:
-                        mSelectedType = WidgetType.DISPLAY;
-                        break;
-                    default:
-                        mSelectedType = WidgetType.ALARM_SENSOR;
-                }
+//                switch (i){
+//                    case 0:
+//                        mSelectedType = WidgetType.BUTTON;
+//                        break;
+//                    case 1:
+//                        mSelectedType = WidgetType.DISPLAY;
+//                        break;
+//                    default:
+//                        mSelectedType = WidgetType.ALARM_SENSOR;
+//                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                mSelectedType = WidgetType.BUTTON;
+//                mSelectedType = WidgetType.BUTTON;
             }
         });
 
@@ -127,12 +125,12 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         super.onDestroy();
     }
 
-    @Override
-    public void fillEditForm(IWidget widget){
-        mEditTextName.setText(widget.getName());
-        mEditTextPin.setText(widget.getPin());
-        mSpinnerType.setSelection(widget.getWidgetType().ordinal());
-    }
+//    @Override
+//    public void fillEditForm(IWidget widget){
+//        mEditTextName.setText(widget.getName());
+//        mEditTextPin.setText(widget.getPin());
+////        mSpinnerType.setSelection(widget.getWidgetType().ordinal());
+//    }
 
     @Override
     public String getWidgetName(){
@@ -152,10 +150,10 @@ public class AddEditWidgetFragment extends BasicFragment implements IAddEditWidg
         }
     }
 
-    @Override
-    public WidgetType getWidgetType(){
-        return mSelectedType;
-    }
+//    @Override
+//    public WidgetType getWidgetType(){
+//        return mSelectedType;
+//    }
 
     @Override
     public void closeDialog(boolean isWidgetListChanged){

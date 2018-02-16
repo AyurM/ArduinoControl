@@ -9,14 +9,10 @@ import ru.ayurmar.arduinocontrol.interfaces.presenter.IAddEditWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IAddEditWidgetView;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
-import ru.ayurmar.arduinocontrol.interfaces.model.IWidget;
-import ru.ayurmar.arduinocontrol.model.WidgetType;
 
 
 public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
         extends BasicPresenter<V> implements IAddEditWidgetPresenter<V> {
-
-    private IWidget mWidget;
 
     @Inject
     public AddEditWidgetPresenter(IRepository repository, CompositeDisposable disposable,
@@ -33,14 +29,14 @@ public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
     public void onOkClick(boolean isEditMode, boolean isDevMode){
         String name = getView().getWidgetName();
         String pin = getView().getWidgetPin();
-        WidgetType type = getView().getWidgetType();
+//        WidgetType type = getView().getWidgetType();
         if(isEditMode && !isDevMode){
             if(name == null){
                 getView().showMessage(R.string.message_add_edit_empty_name_text);
                 return;
             }
         } else {
-            if(name == null || pin == null || type == null){
+            if(name == null || pin == null){
                 getView().showMessage(R.string.message_add_edit_error_text);
                 return;
             }
@@ -49,10 +45,10 @@ public class AddEditWidgetPresenter<V extends IAddEditWidgetView>
         Completable addEditResult;
 
         if(isEditMode){
-            mWidget.setName(name);
+//            mWidget.setName(name);
             if(isDevMode){
-                mWidget.setPin(pin);
-                mWidget.setWidgetType(type);
+//                mWidget.setPin(pin);
+//                mWidget.setWidgetType(type);
             }
 //            addEditResult = getRepository().updateWidget(mWidget);
         } else {
