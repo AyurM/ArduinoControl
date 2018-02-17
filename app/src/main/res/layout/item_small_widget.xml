@@ -9,7 +9,6 @@
     card_view:cardElevation="4dp"
     >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/small_widget_item_layout"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="none"
-        android:id="@+id/nav_drawer_menu_group_top">
+        >
         <item
             android:id="@+id/menu_settings"
             android:icon="@drawable/ic_settings"
@@ -20,7 +20,7 @@
     </group>
 
     <group android:checkableBehavior="none"
-           android:id="@+id/nav_drawer_menu_group_bottom">
+        >
         <item
             android:id="@+id/menu_logout"
             android:icon="@drawable/ic_logout"

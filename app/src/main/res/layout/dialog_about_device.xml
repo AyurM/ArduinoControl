@@ -14,7 +14,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <TextView
-            android:id="@+id/about_device_name_label"
             android:text="@string/ui_menu_name_text"
             android:textColor="@color/colorPrimaryDark"
             style="@style/AboutDeviceTextView"/>
@@ -31,7 +30,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <TextView
-            android:id="@+id/about_device_model_label"
             android:text="@string/ui_menu_model_text"
             android:textColor="@color/colorPrimaryDark"
             style="@style/AboutDeviceTextView"/>
@@ -48,7 +46,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp">
         <TextView
-            android:id="@+id/about_device_sn_label"
             android:text="@string/ui_menu_serial_number_text"
             android:textColor="@color/colorPrimaryDark"
             style="@style/AboutDeviceTextView"/>

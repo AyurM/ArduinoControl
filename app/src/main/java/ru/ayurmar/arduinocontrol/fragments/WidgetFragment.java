@@ -61,7 +61,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private TextView mNoConnectionTextView;
     private LinearLayout mNoItemsLayout;
     private Button mRetryConnectionButton;
-    private Menu mMenu;
+//    private Menu mMenu;
 
     @Inject
     IWidgetPresenter<IWidgetView> mPresenter;
@@ -107,33 +107,29 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         super.onDestroy();
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        mMenu = menu;
-        inflater.inflate(R.menu.menu_main_widget, menu);
-        MenuItem addWidgetItem = mMenu.findItem(R.id.menu_item_add_widget);
-        addWidgetItem.setVisible(false);   //hide "Add Widget" menu item
-        showDeviceOnlineStatus(false);
-    }
+//    @Override
+//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+//        super.onCreateOptionsMenu(menu, inflater);
+//        mMenu = menu;
+//        inflater.inflate(R.menu.menu_main_widget, menu);
+//        MenuItem addWidgetItem = mMenu.findItem(R.id.menu_item_add_widget);
+//        addWidgetItem.setVisible(false);   //hide "Add Widget" menu item
+//        showDeviceOnlineStatus(false);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_device_status:
-                mPresenter.onDeviceStatusClick();
-                return true;
-            case R.id.menu_item_add_widget:
-                mPresenter.onAddWidgetClick();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+//        switch (item.getItemId()) {
+//            case R.id.menu_item_device_status:
+//                mPresenter.onDeviceStatusClick();
+//                return true;
+//            case R.id.menu_item_add_widget:
+//                mPresenter.onAddWidgetClick();
+//                return true;
+//            default:
+//                return super.onOptionsItemSelected(item);
+//        }
+        return true;
     }
 
     @Override
@@ -143,8 +139,8 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 //                mPresenter.loadWidgetListFromDb();
 //            } else
             if(requestCode == sConfirmDeleteCode){
-                mPresenter.deleteWidget(data
-                        .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
+//                mPresenter.deleteWidget(data
+//                        .getIntExtra(DeleteConfirmationFragment.EXTRA_POSITION, -1));
             } else if(requestCode == sChangeDeviceCode){
                 String deviceSn = data.getStringExtra(ChangeDeviceDialog.SELECTED_DEVICE_INDEX);
                 mPresenter.changeDevice(deviceSn);
@@ -167,12 +163,12 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mPresenter.resetFirebaseHelper();
     }
 
-    @Override
-    public void showDeviceOnlineStatus(boolean isOnline){
-        mMenu.findItem(R.id.menu_item_device_status)
-                .setIcon(isOnline ? R.drawable.ic_device_online :
-                                    R.drawable.ic_device_offline);
-    }
+//    @Override
+//    public void showDeviceOnlineStatus(boolean isOnline){
+//        mMenu.findItem(R.id.menu_item_device_status)
+//                .setIcon(isOnline ? R.drawable.ic_device_online :
+//                                    R.drawable.ic_device_offline);
+//    }
 
     @Override
     public void showNoConnectionUI(boolean isConnected){
@@ -303,14 +299,14 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         }
     }
 
-    @Override
-    public void showEditWidgetDialog(FarhomeWidget widget){
+//    @Override
+//    public void showEditWidgetDialog(FarhomeWidget widget){
 //        Intent intent = new Intent(getContext(), AddWidgetActivity.class);
 //        intent.putExtra(AddWidgetActivity.IS_EDIT_MODE, true);
 //        intent.putExtra(AddWidgetActivity.IS_DEV_MODE, mIsDevMode);
 //        intent.putExtra(AddWidgetActivity.WIDGET_ID, widget.getId().toString());
 //        startActivityForResult(intent, sAddWidgetRequestCode);
-    }
+//    }
 
     @Override
     public void showChangeDeviceDialog(ArrayList<String> deviceSnList, ArrayList<String> deviceNamesList){
@@ -353,21 +349,21 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         return mPresenter.getDeviceCount();
     }
 
-    private void showConfirmDeleteDialog(int position){
-        DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
-        fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
-        FragmentActivity activity = getActivity();
-        if(activity != null){
-            fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
-        }
-    }
+//    private void showConfirmDeleteDialog(int position){
+//        DeleteConfirmationFragment fragment = DeleteConfirmationFragment.newInstance(position);
+//        fragment.setTargetFragment(WidgetFragment.this, sConfirmDeleteCode);
+//        FragmentActivity activity = getActivity();
+//        if(activity != null){
+//            fragment.show(getActivity().getSupportFragmentManager(), sConfirmDeleteTag);
+//        }
+//    }
 
     private class WidgetHolder extends RecyclerView.ViewHolder{
         private FarhomeWidget mWidget;
-        private TextView mTextViewName;
-        private TextView mTextViewValue;
-        private TextView mTextViewDate;
-        private ImageView mIconImageView;
+        private final TextView mTextViewName;
+        private final TextView mTextViewValue;
+        private final TextView mTextViewDate;
+        private final ImageView mIconImageView;
 //        private ImageButton mButtonEdit;
 //        private ImageButton mButtonSms;
 //        private ImageButton mButtonDelete;
@@ -388,12 +384,16 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
             mWidget = widget;
             toggleValueLoadingUI(false);
 
-            if(mWidget.getName().length() > 12){
-                mTextViewName.setTextSize(20);
+            if(mWidget.getName() == null){
+                mTextViewName.setText(R.string.placeholder_device_no_name_text);
             } else {
-                mTextViewName.setTextSize(24);
+                if(mWidget.getName().length() > 12){
+                    mTextViewName.setTextSize(20);
+                } else {
+                    mTextViewName.setTextSize(24);
+                }
+                mTextViewName.setText(mWidget.getName());
             }
-            mTextViewName.setText(mWidget.getName());
 
             if(mWidget instanceof AlarmWidget){
                 bindAlarmWidget();
@@ -454,7 +454,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     }
 
     private class WidgetAdapter extends RecyclerView.Adapter<WidgetHolder>{
-        private List<FarhomeWidget> mWidgets;
+        private final List<FarhomeWidget> mWidgets;
 
         WidgetAdapter(List<FarhomeWidget> list){
             this.mWidgets = list;

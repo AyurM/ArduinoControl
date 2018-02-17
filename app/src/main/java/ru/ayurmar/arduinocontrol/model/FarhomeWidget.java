@@ -7,7 +7,7 @@ public abstract class FarhomeWidget {
     private long mTimestamp;
     private float mValue;
 
-    public FarhomeWidget(){
+    FarhomeWidget(){
     }
 
     public String getName() {
@@ -38,7 +38,7 @@ public abstract class FarhomeWidget {
         return mValue;
     }
 
-    protected void setValue(float value){
+    void setValue(float value){
         mValue = value;
     }
 

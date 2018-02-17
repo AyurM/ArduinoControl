@@ -82,8 +82,8 @@ public class ChangeDeviceDialog extends DialogFragment {
     }
 
     private class ChangeDeviceAdapter extends BaseAdapter{
-        Context mContext;
-        ArrayList<String> mDeviceList;
+        final Context mContext;
+        final ArrayList<String> mDeviceList;
         private LayoutInflater mInflater = null;
 
         ChangeDeviceAdapter(Context context, ArrayList<String> deviceList){

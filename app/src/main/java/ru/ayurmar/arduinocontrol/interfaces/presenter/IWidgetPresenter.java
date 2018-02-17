@@ -14,9 +14,7 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void renameCurrentDevice(String newName);
 
-    void updateWidgetInDb(FarhomeWidget widget);
-
-    void onAddWidgetClick();
+//    void onAddWidgetClick();
 
     void onAddDeviceClick();
 
@@ -26,13 +24,13 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
 
     void onEditWidgetClick(FarhomeWidget widget);
 
-    void deleteWidget(int position);
+//    void deleteWidget(int position);
 
     void onSendSmsClick(FarhomeWidget widget);
 
     void onWidgetValueClick(FarhomeWidget widget);
 
-    void onDeviceStatusClick();
+//    void onDeviceStatusClick();
 
     int getDeviceCount();
 

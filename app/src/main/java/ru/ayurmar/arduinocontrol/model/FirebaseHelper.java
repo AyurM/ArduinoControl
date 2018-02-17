@@ -1,9 +1,5 @@
 package ru.ayurmar.arduinocontrol.model;
 
-/*
-    TODO:
-   - добавление нового устройства
- */
 
 import android.util.Log;
 
@@ -14,6 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +19,10 @@ import java.util.Map;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
 import durdinapps.rxfirebase2.RxFirebaseChildEvent;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
+import io.reactivex.Completable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import ru.ayurmar.arduinocontrol.R;
 import ru.ayurmar.arduinocontrol.interfaces.model.IFirebaseHelper;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
 import ru.ayurmar.arduinocontrol.interfaces.model.IUserDevicesObserver;
@@ -31,10 +30,10 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IWidgetsObserver;
 
 public class FirebaseHelper implements IFirebaseHelper {
 
-    private List<FarhomeDevice> mUserDevices = new ArrayList<>();
-    private List<IUserDevicesObserver> mDevicesObservers = new ArrayList<>();
-    private List<IWidgetsObserver> mWidgetsObservers = new ArrayList<>();
-    private WidgetGroup mWidgetGroup = new WidgetGroup();
+    private final List<FarhomeDevice> mUserDevices = new ArrayList<>();
+    private final List<IUserDevicesObserver> mDevicesObservers = new ArrayList<>();
+    private final List<IWidgetsObserver> mWidgetsObservers = new ArrayList<>();
+    private final WidgetGroup mWidgetGroup = new WidgetGroup();
     private final IScheduler mScheduler;
     private final CompositeDisposable mDisposable;
     private long mDeviceCount;
@@ -73,6 +72,12 @@ public class FirebaseHelper implements IFirebaseHelper {
     public void notifyDeviceObservers(){
         for(int i = 0; i < mDevicesObservers.size(); i++){
             mDevicesObservers.get(i).update(mUserDevices.get(mCurrentDeviceIndex));
+        }
+    }
+
+    private void notifyErrorDeviceObservers(int errorMessage){
+        for(int i = 0; i < mDevicesObservers.size(); i++){
+            mDevicesObservers.get(i).handleDeviceError(errorMessage);
         }
     }
 
@@ -138,7 +143,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .flattenAsObservable(snList -> snList)
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
-                .subscribe(deviceSn -> loadUserDevice(deviceSn));
+                .subscribe(deviceSn -> loadUserDevice(deviceSn, false));
         }
     }
 
@@ -170,7 +175,46 @@ public class FirebaseHelper implements IFirebaseHelper {
 
     @Override
     public void bindDeviceToUser(String deviceSn, String deviceName){
-
+        for(FarhomeDevice device : mUserDevices){
+            if(deviceSn.equals(device.getId())){
+                notifyErrorDeviceObservers(R.string.message_device_already_yours);
+                return;
+            }
+        }
+        DatabaseReference deviceRef = FirebaseDatabase.getInstance()
+                .getReference(DatabasePaths.DEVICES + "/" + deviceSn);
+        RxFirebaseDatabase.observeSingleValueEvent(deviceRef, FarhomeDevice.class)
+                .subscribeOn(mScheduler.io())
+                .observeOn(mScheduler.main())
+                .doOnComplete(() -> notifyErrorDeviceObservers(R.string.message_sn_not_exist))
+                .flatMapCompletable(device -> {
+                    Map<String, Object> deviceUpdates = new HashMap<>();
+                    if(device.getUser() == null){
+                        //устройство не имеет владельца, можно привязывать
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        if(user != null){
+                            deviceUpdates.put(DatabasePaths.USERS + "/" + user.getUid() + "/" +
+                                    DatabasePaths.DEVICES + "/" + deviceSn, deviceName);
+                            deviceUpdates.put(DatabasePaths.DEVICES + "/" + deviceSn + "/user",
+                                    user.getUid());
+                            deviceUpdates.put(DatabasePaths.DEVICES + "/" + deviceSn + "/name",
+                                    deviceName);
+                        }
+                    }
+                    if(deviceUpdates.isEmpty()){
+                        //у устройства уже есть владелец
+                        return Completable.error(IOException::new);
+                    }
+                    return RxFirebaseDatabase.updateChildren(FirebaseDatabase.getInstance()
+                            .getReference(), deviceUpdates);
+                })
+                .subscribe(() -> loadUserDevice(deviceSn, true),
+                        throwable -> {
+                            if(throwable instanceof IOException){
+                                notifyErrorDeviceObservers(R.string.message_device_already_has_owner);
+                            } else {
+                                notifyErrorDeviceObservers(R.string.message_database_error_text);
+                            }});
     }
 
     @Override
@@ -182,7 +226,7 @@ public class FirebaseHelper implements IFirebaseHelper {
             }
         }
         notifyDeviceObservers();
-        mDisposable.dispose();  //убрать слушатели от предыдущего устройства
+        mDisposable.clear();  //убрать слушатели от предыдущего устройства
         loadWidgets(deviceId);
     }
 
@@ -204,7 +248,7 @@ public class FirebaseHelper implements IFirebaseHelper {
         mDeviceCount = 0;
         mDevicesObservers.clear();
         mWidgetsObservers.clear();
-        mDisposable.dispose();
+        mDisposable.clear();
     }
 
     private static List<String> getSerialNumbers(DataSnapshot dataSnapshot){
@@ -217,7 +261,7 @@ public class FirebaseHelper implements IFirebaseHelper {
         return snList;
     }
 
-    private void loadUserDevice(String deviceSn){
+    private void loadUserDevice(String deviceSn, boolean isBindingNewDevice){
         DatabaseReference deviceRef = FirebaseDatabase.getInstance()
                 .getReference(DatabasePaths.DEVICES + "/" + deviceSn);
         RxFirebaseDatabase.observeSingleValueEvent(deviceRef, FarhomeDevice.class)
@@ -226,6 +270,10 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .subscribe(device -> {
                             if(!mUserDevices.contains(device)){
                                 mUserDevices.add(device);
+                                if(isBindingNewDevice){
+                                    mLastDeviceId = deviceSn;
+                                    mDeviceCount = mUserDevices.size();
+                                }
                             }
                             Log.d("FARHOME", device.getName());
                             if(mUserDevices.size() == mDeviceCount){
@@ -239,7 +287,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                         },
                         throwable -> {
                                 Log.d("FARHOME", "Ошибка при загрузке" +
-                                    "устройств!");
+                                    "устройства!");
                                 notifyDeviceObserversLoading(false);
                         });
     }

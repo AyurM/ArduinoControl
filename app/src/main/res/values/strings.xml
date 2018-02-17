@@ -33,22 +33,13 @@
     <string name="alarm_icon_desc" translatable="false">alarm icon</string>
     <string name="info_icon_desc" translatable="false">information icon</string>
     <string name="control_icon_desc" translatable="false">control icon</string>
-    <plurals name="category_widgets">
-        <item quantity="one">%d widget</item>
-        <item quantity="other">%d widgets</item>
-    </plurals>
 
     <!--UI text-->
-    <string name="ui_version_text" translatable="false">FarHome v0.4.1-beta</string>
+    <string name="ui_version_text" translatable="false">FarHome v0.4.2-beta</string>
     <string name="ui_ok_text">OK</string>
     <string name="ui_cancel_text">Cancel</string>
-    <string name="ui_on_text">ON</string>
-    <string name="ui_off_text">OFF</string>
     <string name="ui_retry_text">Retry</string>
     <string name="ui_widget_switch_icon_desc" translatable="false">switch icon</string>
-    <string name="ui_widget_button_edit_description">Edit</string>
-    <string name="ui_widget_button_delete_description">Delete</string>
-    <string name="ui_widget_button_sms_description">Send SMS</string>
     <string name="ui_drawer_header_description">Drawer header</string>
     <string name="ui_about_text">About</string>
     <string name="ui_no_devices_found_text">No devices found</string>
@@ -77,7 +68,6 @@
     <string name="ui_menu_empty_device_name_error_text">Device name is empty!</string>
     <string name="ui_menu_select_device_text">Select device</string>
     <string name="ui_menu_edit_widget_text">Edit widget</string>
-    <string name="ui_menu_device_status_text">Device status</string>
     <string name="ui_menu_settings_text">Settings</string>
     <string name="ui_menu_about_text">About</string>
     <string name="ui_menu_logout_text">Log out</string>
@@ -87,7 +77,6 @@
     <string name="ui_pref_phone_number_default_value">Enter your phone number</string>
     <string name="ui_pref_general_settings_category">General settings</string>
     <string name="ui_pref_developer_settings_category">Developer settings</string>
-    <string name="ui_pref_developer_settings_available">Developer settings available</string>
     <string name="preferenceScreen">preferenceScreen</string>
     <string name="devPreferencesCategory">devPreferencesCategory</string>
 
@@ -102,10 +91,9 @@
     <string name="message_wrong_number_format_error_text">Wrong number format!</string>
     <string name="message_database_error_text">Database error!</string>
     <string name="message_add_edit_error_text">No empty fields allowed</string>
-    <string name="message_device_not_found_text">Device not found!</string>
-    <string name="message_no_widgets_found_text">No widgets found for this device!</string>
     <string name="message_add_edit_empty_name_text">Widget name can\'t be empty</string>
     <string name="message_sn_not_exist">Device does not exist!</string>
+    <string name="message_device_already_yours">This device belongs to you!</string>
     <string name="message_device_already_has_owner">This device belongs to another user!</string>
 
     <!--Placeholders-->
@@ -117,9 +105,9 @@
     <string name="placeholder_device_no_name_text">Unnamed</string>
 
     <!--Navigation Drawer-->
-    <string name="drawer_list_item">Navigation drawer item</string>
-    <string name="drawer_open">Show</string>
-    <string name="drawer_close">Hide</string>
+    <string name="drawer_list_item" translatable="false">Navigation drawer item</string>
+    <string name="drawer_open" translatable="false">Show</string>
+    <string name="drawer_close" translatable="false">Hide</string>
 
     <string-array name="widget_types_array">
         <item>Button</item>

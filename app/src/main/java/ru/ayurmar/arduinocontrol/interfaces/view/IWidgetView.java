@@ -10,7 +10,7 @@ import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetView extends IBasicView {
 
-    void showDeviceOnlineStatus(boolean isOnline);
+//    void showDeviceOnlineStatus(boolean isOnline);
 
     void showLoadingUI(boolean isLoading);
 
@@ -32,7 +32,7 @@ public interface IWidgetView extends IBasicView {
 
     void showChangeDeviceDialog(ArrayList<String> deviceSnList, ArrayList<String> deviceNamesList);
 
-    void showEditWidgetDialog(FarhomeWidget widget);
+//    void showEditWidgetDialog(FarhomeWidget widget);
 
     void showSendSmsDialog(String message, String phoneNumber);
 

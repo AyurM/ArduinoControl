@@ -1,20 +1,12 @@
 package ru.ayurmar.arduinocontrol.presenter;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,7 +21,6 @@ import ru.ayurmar.arduinocontrol.interfaces.presenter.IWidgetPresenter;
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.interfaces.model.IRepository;
 import ru.ayurmar.arduinocontrol.interfaces.model.IScheduler;
-import ru.ayurmar.arduinocontrol.model.DatabasePaths;
 import ru.ayurmar.arduinocontrol.model.FarhomeDevice;
 import ru.ayurmar.arduinocontrol.fragments.AboutDeviceDialog;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
@@ -39,12 +30,9 @@ import ru.ayurmar.arduinocontrol.model.WidgetGroup;
 public class WidgetPresenter<V extends IWidgetView>
         extends BasicPresenter<V> implements IWidgetPresenter<V>, IWidgetsObserver,
         IUserDevicesObserver{
-
-    private static final String sLogTag = "FARHOME";
     
-    private Context mContext;
+    private final Context mContext;
     private IWidgetView mView;
-    private String mDeviceSn = "";
 
     @Inject
     public WidgetPresenter(IRepository repository, CompositeDisposable disposable,
@@ -65,8 +53,7 @@ public class WidgetPresenter<V extends IWidgetView>
     @Override
     public void onDetach(){
         super.onDetach();
-        getRepository().removeWidgetsObserver(this);
-        getRepository().removeUserDevicesObserver(this);
+        getRepository().reset();
     }
 
     @Override
@@ -115,7 +102,10 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void update(List<FarhomeDevice> devices){
+    public void handleDeviceError(int errorMessage){
+        if(mView != null){
+            mView.showMessage(errorMessage);
+        }
     }
 
     @Override
@@ -150,15 +140,10 @@ public class WidgetPresenter<V extends IWidgetView>
         }
     }
 
-    @Override
-    public void updateWidgetInDb(FarhomeWidget widget){
-
-    }
-
-    @Override
-    public void onAddWidgetClick(){
-        mView.showAddWidgetDialog();
-    }
+//    @Override
+//    public void onAddWidgetClick(){
+//        mView.showAddWidgetDialog();
+//    }
 
     @Override
     public void onAddDeviceClick(){
@@ -172,7 +157,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void onEditWidgetClick(FarhomeWidget widget){
-        mView.showEditWidgetDialog(widget);
+//        mView.showEditWidgetDialog(widget);
     }
 
     @Override
@@ -199,48 +184,7 @@ public class WidgetPresenter<V extends IWidgetView>
 
     @Override
     public void bindDeviceToUser(String deviceSn, String deviceName){
-        DatabaseReference deviceRootRef = FirebaseDatabase.getInstance()
-                .getReference(DatabasePaths.DEVICES);
-        deviceRootRef.child(deviceSn).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                FarhomeDevice farhomeDevice = dataSnapshot.getValue(FarhomeDevice.class);
-                if(farhomeDevice != null){
-                    //устройство найдено, но принадлежит другому пользователю
-                    if(farhomeDevice.getUser() != null){
-                        if(mView != null){
-                            mView.showLongMessage(R.string.message_device_already_has_owner);
-                        }
-                        return;
-                    }
-                    Log.d(sLogTag, dataSnapshot.toString());
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if(user != null){
-                        //закрепить устройство за данным юзером
-                        mDeviceSn = deviceSn;
-                        getRepository().saveStringPreference(user.getUid() +
-                                "deviceSn", mDeviceSn);
-                        DatabaseReference dbRef = FirebaseDatabase.getInstance()
-                                .getReference();
-                        Map<String, Object> deviceUpdates = new HashMap<>();
-                        deviceUpdates.put(DatabasePaths.USERS + "/" + user.getUid() + "/" +
-                        DatabasePaths.DEVICES + "/" + deviceSn, deviceName);
-                        deviceUpdates.put(DatabasePaths.DEVICES + "/" + deviceSn + "/user",
-                                user.getUid());
-                        deviceUpdates.put(DatabasePaths.DEVICES + "/" + deviceSn + "/name",
-                                deviceName);
-                        dbRef.updateChildren(deviceUpdates);
-                    }
-                } else{
-                    if(mView != null){
-                        mView.showLongMessage(R.string.message_sn_not_exist);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+        getRepository().bindDeviceToUser(deviceSn, deviceName);
     }
 
     @Override
@@ -253,8 +197,8 @@ public class WidgetPresenter<V extends IWidgetView>
         return getRepository().getUserDevices().size();
     }
 
-    @Override
-    public void deleteWidget(int position){
+//    @Override
+//    public void deleteWidget(int position){
 //        if (position == -1) {
 //            return;
 //        }
@@ -265,7 +209,7 @@ public class WidgetPresenter<V extends IWidgetView>
 //                .doOnError(throwable -> mView
 //                        .showMessage(R.string.message_database_error_text))
 //                .subscribe(() -> loadWidgetListFromDb()));
-    }
+//    }
 
     @Override
     public void onSendSmsClick(FarhomeWidget widget){
@@ -298,8 +242,8 @@ public class WidgetPresenter<V extends IWidgetView>
         }
     }
 
-    @Override
-    public void onDeviceStatusClick(){
+//    @Override
+//    public void onDeviceStatusClick(){
 //        if(Utils.isOnline(mContext)){
 //            getDisposable().add(getRepository().isDeviceOnline()
 //                    .subscribeOn(getScheduler().io())
@@ -323,7 +267,7 @@ public class WidgetPresenter<V extends IWidgetView>
 //        } else {
 //            mView.showLongMessage(R.string.message_no_connection_use_sms_text);
 //        }
-    }
+//    }
 
 //    @Override
 //    public boolean isDeviceOnline(){

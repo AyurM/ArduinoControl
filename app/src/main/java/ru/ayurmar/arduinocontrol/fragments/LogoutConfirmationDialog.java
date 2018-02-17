@@ -20,7 +20,7 @@ public class LogoutConfirmationDialog extends DialogFragment {
         void onLogoutPositiveClick();
     }
 
-    LogoutDialogListener mListener;
+    private LogoutDialogListener mListener;
 
     @SuppressWarnings("deprecation")
     @Override
