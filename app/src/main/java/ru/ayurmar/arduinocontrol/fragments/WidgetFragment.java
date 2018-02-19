@@ -7,12 +7,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +48,7 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private static final int sChangeDeviceCode = 2;
     private static final int sAddDeviceCode = 3;
     private static final int sRenameDeviceCode = 4;
-    private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
+//    private static final String sConfirmDeleteTag = "CONFIRM_DELETE_DIALOG";
     private static final String sChangeDeviceTag = "CHANGE_DEVICE_DIALOG";
     private static final String sAddDeviceTag = "ADD_DEVICE_DIALOG";
     private static final String sRenameDeviceTag = "RENAME_DEVICE_DIALOG";
@@ -61,16 +60,19 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
     private TextView mNoConnectionTextView;
     private LinearLayout mNoItemsLayout;
     private Button mRetryConnectionButton;
+    private int mWidgetCategory;
 //    private Menu mMenu;
 
     @Inject
     IWidgetPresenter<IWidgetView> mPresenter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
+        mWidgetCategory = 0;
     }
 
     @Override
@@ -83,15 +85,38 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
         mLoadingInfoTextView = view.findViewById(R.id.widget_loading_info_text_view);
         mNoConnectionTextView = view.findViewById(R.id.widget_no_connection_text_view);
         mRecyclerView = view.findViewById(R.id.widget_recycler_view);
+
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),
+//                LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mWidgetCategory = tab.getPosition();
+                showWidgetList(mPresenter.getAllWidgets());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         Button addDeviceButton = view.findViewById(R.id.widget_add_device_button);
         mRetryConnectionButton = view.findViewById(R.id.widget_retry_connection_button);
         addDeviceButton.setOnClickListener(view1 -> mPresenter.onAddDeviceClick());
         mRetryConnectionButton.setOnClickListener(view1 -> mPresenter.onRetryToConnectClick());
 
-        mPresenter.onAttach(this);
+        mPresenter.onAttach(this, mWidgetCategory);
         return view;
     }
 
@@ -198,7 +223,34 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 
     @Override
     public void showWidgetList(List<FarhomeWidget> widgets){
-        mRecyclerView.setAdapter(new WidgetAdapter(widgets));
+        List<FarhomeWidget> adapterWidgets = new ArrayList<>();
+        switch (mWidgetCategory){
+            case 1:
+                for(FarhomeWidget widget : widgets){
+                    if(widget instanceof SwitchWidget){
+                        adapterWidgets.add(widget);
+                    }
+                }
+                break;
+            case 2:
+                for(FarhomeWidget widget : widgets){
+                    if(widget instanceof InfoWidget){
+                        adapterWidgets.add(widget);
+                    }
+                }
+                break;
+            case 3:
+                for(FarhomeWidget widget : widgets){
+                    if(widget instanceof AlarmWidget){
+                        adapterWidgets.add(widget);
+                    }
+                }
+                break;
+            default:
+                adapterWidgets = widgets;
+                break;
+        }
+        mRecyclerView.setAdapter(new WidgetAdapter(adapterWidgets));
         showNoItemsUI(widgets.isEmpty());
     }
 

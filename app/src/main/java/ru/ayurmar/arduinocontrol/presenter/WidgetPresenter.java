@@ -42,7 +42,7 @@ public class WidgetPresenter<V extends IWidgetView>
     }
 
     @Override
-    public void onAttach(V view){
+    public void onAttach(V view, int widgetCategory){
         super.onAttach(view);
         mView = view;
         getRepository().addWidgetsObserver(this);
@@ -240,6 +240,11 @@ public class WidgetPresenter<V extends IWidgetView>
             float newValue = widget.getValue() == 0.0f ? 1.0f : 0.0f;
             getRepository().updateWidgetValue(widget, newValue);
         }
+    }
+
+    @Override
+    public List<FarhomeWidget> getAllWidgets(){
+        return getRepository().getAllWidgets().getWidgets();
     }
 
 //    @Override

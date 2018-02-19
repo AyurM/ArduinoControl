@@ -5,6 +5,36 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize">
+
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:icon="@drawable/ic_all_widgets"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:icon="@drawable/ic_control_widgets"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:icon="@drawable/ic_info_widgets"/>
+
+        <android.support.design.widget.TabItem
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:icon="@drawable/ic_alarm_widgets"/>
+
+    </android.support.design.widget.TabLayout>
+
     <ProgressBar
         android:id="@+id/widget_progress_bar"
         style="@style/Widget.AppCompat.ProgressBar"
@@ -79,6 +109,7 @@
         android:id="@+id/widget_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/widget_no_items_layout"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/tab_layout"
         android:scrollbars="vertical"/>
 </RelativeLayout>

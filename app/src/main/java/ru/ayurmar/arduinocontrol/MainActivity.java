@@ -172,15 +172,15 @@ public class MainActivity extends AppCompatActivity
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.drawer_open,
                 R.string.drawer_close){
-//            public void onDrawerClosed(View view) {
-//                super.onDrawerClosed(view);
-////                invalidateOptionsMenu();
-//            }
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+//                invalidateOptionsMenu();
+            }
 
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-////                invalidateOptionsMenu();
-//            }
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+//                invalidateOptionsMenu();
+            }
         };
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);

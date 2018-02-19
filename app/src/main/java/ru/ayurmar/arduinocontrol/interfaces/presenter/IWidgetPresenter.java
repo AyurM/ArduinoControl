@@ -1,10 +1,14 @@
 package ru.ayurmar.arduinocontrol.interfaces.presenter;
 
 
+import java.util.List;
+
 import ru.ayurmar.arduinocontrol.interfaces.view.IWidgetView;
 import ru.ayurmar.arduinocontrol.model.FarhomeWidget;
 
 public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter<V>{
+
+    void onAttach(V mainView, int widgetCategory);
 
     void onChangeDeviceClick();
 
@@ -35,6 +39,8 @@ public interface IWidgetPresenter<V extends IWidgetView> extends IBasicPresenter
     int getDeviceCount();
 
     void resetFirebaseHelper();
+
+    List<FarhomeWidget> getAllWidgets();
 
 //    boolean isDeviceOnline();
 }
