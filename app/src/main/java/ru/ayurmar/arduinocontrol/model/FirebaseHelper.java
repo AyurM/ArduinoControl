@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -144,6 +145,8 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .subscribeOn(mScheduler.io())
                 .observeOn(mScheduler.main())
                 .subscribe(deviceSn -> loadUserDevice(deviceSn, false));
+
+            sendFcmToken(FirebaseInstanceId.getInstance().getToken());
         }
     }
 
@@ -199,6 +202,8 @@ public class FirebaseHelper implements IFirebaseHelper {
                                     user.getUid());
                             deviceUpdates.put(DatabasePaths.DEVICES + "/" + deviceSn + "/name",
                                     deviceName);
+                            deviceUpdates.put(DatabasePaths.WIDGETS + "/" + deviceSn + "/user",
+                                    user.getUid());
                         }
                     }
                     if(deviceUpdates.isEmpty()){
@@ -460,5 +465,15 @@ public class FirebaseHelper implements IFirebaseHelper {
                 break;
             }
         }
+    }
+
+    private void sendFcmToken(String token){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Map<String, Object> tokenUpdate = new HashMap<>();
+        tokenUpdate.put(DatabasePaths.USERS + "/" + user.getUid() + "/fcmtoken",
+                token);
+        RxFirebaseDatabase.updateChildren(FirebaseDatabase.getInstance()
+                .getReference(), tokenUpdate)
+                .subscribe();
     }
 }
