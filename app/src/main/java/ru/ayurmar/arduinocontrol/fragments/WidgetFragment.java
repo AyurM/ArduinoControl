@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -93,16 +95,23 @@ public class WidgetFragment extends BasicFragment implements IWidgetView {
 //                LinearLayoutManager.HORIZONTAL, false));
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
+        tabLayout.getTabAt(0).getIcon()
+                .setColorFilter(ContextCompat.getColor(getContext(), R.color.colorAccent),
+                        PorterDuff.Mode.SRC_IN);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mWidgetCategory = tab.getPosition();
+                int tabIconColor = ContextCompat.getColor(getContext(), R.color.colorAccent);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
                 showWidgetList(mPresenter.getAllWidgets());
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                int tabIconColor = ContextCompat.getColor(getContext(), android.R.color.white);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
             }
 
             @Override

@@ -21,12 +21,12 @@
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:icon="@drawable/ic_control_widgets"/>
+            android:icon="@drawable/ic_remote_control"/>
 
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:icon="@drawable/ic_info_widgets"/>
+            android:icon="@drawable/ic_measurements"/>
 
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"

@@ -6,9 +6,7 @@
     <color name="colorBackground">#e0f2f1</color>
     <color name="colorAccent">#181d8b</color>
 
-    <color name="colorCategory">#F4EFDE</color>
-    <!--<color name="colorCategory">#92d9ed</color>-->
-
     <color name="colorDrawerText">#DE000000</color>
     <color name="colorDrawerIcon">#99000000</color>
 </resources>
+

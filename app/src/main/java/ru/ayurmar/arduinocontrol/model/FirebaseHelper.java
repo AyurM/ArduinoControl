@@ -30,6 +30,7 @@ import ru.ayurmar.arduinocontrol.interfaces.model.IUserDevicesObserver;
 import ru.ayurmar.arduinocontrol.interfaces.model.IWidgetsObserver;
 
 public class FirebaseHelper implements IFirebaseHelper {
+    private static final String TAG = "FARHOME";
 
     private final List<FarhomeDevice> mUserDevices = new ArrayList<>();
     private final List<IUserDevicesObserver> mDevicesObservers = new ArrayList<>();
@@ -171,7 +172,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                         getCurrentDevice().setName(name);
                         notifyDeviceObservers();
                     },
-                            throwable -> Log.e("FARHOME", "Ошибка при" +
+                            throwable -> Log.e(TAG, "Ошибка при" +
                                     "переименовании устройства!"));
         }
     }
@@ -261,7 +262,7 @@ public class FirebaseHelper implements IFirebaseHelper {
         Iterable<DataSnapshot> children = dataSnapshot.getChildren();
         for (DataSnapshot child : children) {
             snList.add(child.getKey());
-            Log.d("FARHOME", child.getKey());
+            Log.d(TAG, child.getKey());
         }
         return snList;
     }
@@ -280,9 +281,9 @@ public class FirebaseHelper implements IFirebaseHelper {
                                     mDeviceCount = mUserDevices.size();
                                 }
                             }
-                            Log.d("FARHOME", device.getName());
+                            Log.d(TAG, device.getName());
                             if(mUserDevices.size() == mDeviceCount){
-                                Log.d("FARHOME",
+                                Log.d(TAG,
                             "Загружено " + mUserDevices.size() + " устройств!");
                                 updateCurrentDeviceIndex();
                                 notifyDeviceObserversLoading(false);
@@ -291,7 +292,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                             }
                         },
                         throwable -> {
-                                Log.d("FARHOME", "Ошибка при загрузке" +
+                                Log.d(TAG, "Ошибка при загрузке" +
                                     "устройства!");
                                 notifyDeviceObserversLoading(false);
                         });
@@ -326,7 +327,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .doOnSuccess(widgets -> addAlarmWidgetsListener())
                 .subscribe(alarmWidgets -> {
                     mWidgetGroup.setAlarmWidgets(alarmWidgets);
-                    Log.d("FARHOME", "Найдено " + mWidgetGroup.getAlarmWidgetsCount() +
+                    Log.d(TAG, "Найдено " + mWidgetGroup.getAlarmWidgetsCount() +
                             " тревожных датчиков!");
                     notifyWidgetObserversLoading(false);
                     notifyWidgetObservers();
@@ -340,7 +341,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .doOnSuccess(widgets -> addInfoWidgetsListener())
                 .subscribe(infoWidgets -> {
                     mWidgetGroup.setInfoWidgets(infoWidgets);
-                    Log.d("FARHOME", "Найдено " + mWidgetGroup.getInfoWidgetsCount() +
+                    Log.d(TAG, "Найдено " + mWidgetGroup.getInfoWidgetsCount() +
                             " информационных датчиков!");
                     notifyWidgetObserversLoading(false);
                     notifyWidgetObservers();
@@ -354,7 +355,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                 .doOnSuccess(widgets -> addSwitchWidgetsListener())
                 .subscribe(switchWidgets -> {
                     mWidgetGroup.setSwitchWidgets(switchWidgets);
-                    Log.d("FARHOME", "Найдено " + mWidgetGroup.getSwitchWidgetsCount() +
+                    Log.d(TAG, "Найдено " + mWidgetGroup.getSwitchWidgetsCount() +
                             " управляющих датчиков!");
                     notifyWidgetObserversLoading(false);
                     notifyWidgetObservers();
@@ -387,7 +388,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                     }
                     notifyWidgetObservers(alarmEvent);
                 },
-                        throwable -> Log.e("FARHOME",
+                        throwable -> Log.e(TAG,
                                 "Ошибка в событии тревожных датчиков!"));
         mDisposable.add(alarmDisposable);
     }
@@ -418,7 +419,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                             }
                             notifyWidgetObservers(infoEvent);
                         },
-                        throwable -> Log.e("FARHOME",
+                        throwable -> Log.e(TAG,
                                 "Ошибка в событии информационных датчиков!"));
         mDisposable.add(infoDisposable);
     }
@@ -449,7 +450,7 @@ public class FirebaseHelper implements IFirebaseHelper {
                             }
                             notifyWidgetObservers(switchEvent);
                         },
-                        throwable -> Log.e("FARHOME",
+                        throwable -> Log.e(TAG,
                                 "Ошибка в событии управляющих датчиков!"));
         mDisposable.add(switchDisposable);
     }
